@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}CELEBOBO{% endblock %}</title>
+
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'assets/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="row w-100 m-0">
+          <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+
+            {% block content %}{% endblock %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'assets/js/vendor.bundle.base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

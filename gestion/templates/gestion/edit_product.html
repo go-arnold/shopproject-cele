@@ -1,0 +1,202 @@
+{% extends 'gestion/base.html' %}
+{% load static %}
+{% block title %}Modifier un produit - Cele Admin{% endblock %}
+
+{% block content %}
+            <div class="page-header">
+              <h3 class="page-title"> Gestion Generale des produits </h3>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item active" aria-current="page">Modifier le produit</li>
+                  <li class="breadcrumb-item"><a href="{% url 'home' %}">Client</a></li>
+                </ol>
+              </nav>
+            </div>
+            
+            <!-- Afficher les messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <div class="row">
+              <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Modifier le produit: {{ product.name }}</h4>
+                    <p class="card-description"> Modifiez les informations du produit </p>
+                    <form method="post" enctype="multipart/form-data" class="forms-sample">
+                        {% csrf_token %}
+                
+                      <div class="form-group">
+                        <label for="name">Nom du produit</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="price_primary">Prix d'achat du produit</label>
+                        <input type="number" class="form-control" id="price_primary" name="price_primary" step="0.01" value="{{ product.price_primary }}" required max="10000">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="price">Prix de vente du produit</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" value="{{ product.price }}" required max="10000">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="image">L'image du produit</label>
+                        {% if product.image %}
+                            <div class="mb-2">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 200px; height: auto;">
+                            </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <small class="form-text text-muted">Laissez vide pour conserver l'image actuelle</small>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="badge">Badge sur le produit</label>
+                        <input type="text" class="form-control" id="badge" name="badge" value="{{ product.badge }}" required>
+                      </div>                    
+                      
+                      <div class="form-group">
+                        <label for="category">Catégorie</label>
+                        <select class="form-control" id="category" name="category">
+                            {% for cat_value, cat_label in categories %}
+                                <option value="{{ cat_value }}" {% if product.category == cat_value %}selected{% endif %}>{{ cat_label }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <input type="number" class="form-control" id="rating" name="rating" min="0" max="5" step="0.1" value="{{ product.rating }}" required>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="reviews">Nombre d'avis</label>
+                        <input type="number" class="form-control" id="reviews" name="reviews" min="0" value="{{ product.reviews }}" required>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" maxlength="100" minlength="20" rows="4" required>{{ product.description }}</textarea>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="date_wish">Devrait être vendu avant le</label>
+                        <input type="date" class="form-control" id="date_wish" name="date_wish" value="{{ product.date_wish|date:'Y-m-d' }}">
+                      </div>
+
+                      <!-- Section Features -->
+                      <div class="form-group">
+                        <label>Caractéristiques du produit</label>
+                        <div id="features-container">
+                          {% for feature in product.features.all %}
+                          <div class="feature-item mb-2">
+                            <div class="input-group">
+                              <input type="text" class="form-control" name="features[]" value="{{ feature.name }}">
+                              <div class="input-group-append">
+                                <button class="btn btn-danger btn-sm remove-feature" type="button">
+                                  <i class="mdi mdi-delete"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          {% empty %}
+                          <div class="feature-item mb-2">
+                            <div class="input-group">
+                              <input type="text" class="form-control" name="features[]" placeholder="Ex: Écran 6.5 pouces">
+                              <div class="input-group-append">
+                                <button class="btn btn-danger btn-sm remove-feature" type="button" style="display:none;">
+                                  <i class="mdi mdi-delete"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm mt-2" id="add-feature">
+                          <i class="mdi mdi-plus"></i> Ajouter une caractéristique
+                        </button>
+                      </div>
+
+                      <button type="submit" class="btn btn-primary mr-2">Enregistrer les modifications</button>
+                      <a href="{% url 'gestion:admin_products' %}" class="btn btn-dark">Annuler</a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+             </div>
+    {% endblock %}
+    
+    {% block extra_js %}
+    <script src="{% static 'admin-cele/assets/vendors/js/vendor.bundle.base.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/vendors/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/vendors/progressbar.js/progressbar.min.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/js/off-canvas.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/js/misc.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/js/settings.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/js/todolist.js' %}"></script>
+    <script src="{% static 'admin-cele/assets/js/dashboard.js' %}"></script>
+
+    <!-- Script pour gérer les features dynamiques -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addFeatureBtn = document.getElementById('add-feature');
+        const featuresContainer = document.getElementById('features-container');
+        
+        // Fonction pour ajouter une nouvelle feature
+        addFeatureBtn.addEventListener('click', function() {
+            const featureItem = document.createElement('div');
+            featureItem.className = 'feature-item mb-2';
+            featureItem.innerHTML = `
+                <div class="input-group">
+                    <input type="text" class="form-control" name="features[]" placeholder="Ex: Batterie 5000mAh">
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-sm remove-feature" type="button">
+                            <i class="mdi mdi-delete"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            featuresContainer.appendChild(featureItem);
+            updateRemoveButtons();
+        });
+        
+        // Fonction pour supprimer une feature
+        featuresContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-feature') || e.target.closest('.remove-feature')) {
+                const featureItem = e.target.closest('.feature-item');
+                featureItem.remove();
+                updateRemoveButtons();
+            }
+        });
+        
+        // Fonction pour afficher/masquer les boutons de suppression
+        function updateRemoveButtons() {
+            const featureItems = featuresContainer.querySelectorAll('.feature-item');
+            featureItems.forEach((item, index) => {
+                const removeBtn = item.querySelector('.remove-feature');
+                if (featureItems.length > 1) {
+                    removeBtn.style.display = 'block';
+                } else {
+                    removeBtn.style.display = 'none';
+                }
+            });
+        }
+        
+        updateRemoveButtons();
+    });
+    </script>
+    {% endblock %}

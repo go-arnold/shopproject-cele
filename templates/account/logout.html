@@ -1,0 +1,85 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block head_title %}{% trans "Déconnexion" %}{% endblock %}
+
+{% block extra_head %}
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- plugins:css -->
+<link rel="stylesheet" href="{% static 'assets2/css/materialdesignicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets2/css/vendor.bundle.base.css' %}">
+<link rel="stylesheet" href="{% static 'assets2/css/style.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="container-scroller">
+  <div class="container-fluid page-body-wrapper full-page-wrapper">
+    <div class="row w-100 m-0">
+      <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+        <div class="card col-lg-4 mx-auto">
+          <div class="card-body px-5 py-5">
+            
+            <h3 class="card-title text-center mb-3">
+              <img src="{% static 'assets2/images/logo/logo-white.png' %}" alt="logo celebobo" style="max-width: 50%;">
+            </h3>
+            <h3 class="text-center mb-3 mt-3" style="color:#EF88AD">{% trans "Déconnexion" %}</h3>
+
+            {% if messages %}
+              <div class="messages mb-3">
+                {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="text-center mb-4">
+              <span class="iconify" data-icon="mdi-logout" style="font-size: 3rem; color: #EF88AD;"></span>
+            </div>
+
+            <p class="text-center mb-4" style="color: #666; font-size: 1.1rem;">
+              {% trans "Êtes-vous sûr(e) de vouloir vous déconnecter ?" %}
+            </p>
+
+            <form method="post" action="{% url 'account_logout' %}">
+              {% csrf_token %}
+              
+              {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+              {% endif %}
+
+              <div class="row">
+                <div class="col-6">
+                  <button type="submit" class="btn btn-block enter-btn" style="background-color: #640D5F;">
+                    <span class="iconify" data-icon="mdi-account"></span>
+                    {% trans "Oui, se déconnecter" %}
+                  </button>
+                </div>
+                <div class="col-6">
+                  <a href="{% url 'home' %}" class="btn btn-block" 
+                     style="background-color: #6c757d; color: white; text-decoration: none; padding: 12px; display: inline-block; text-align: center; border-radius: 4px;">
+                    <span class="iconify" data-icon="mdi-arrow"></span>
+                    {% trans "Annuler" %}
+                  </a>
+                </div>
+              </div>
+            </form>
+
+            <div class="text-center mt-4">
+              <p class="terms" style="font-size: 0.9rem; color: #888;">
+                {% trans "Vous serez redirigé(e) vers la page d'accueil après déconnexion" %}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- row ends -->
+  </div>
+  <!-- page-body-wrapper ends -->
+</div>
+{% endblock %}

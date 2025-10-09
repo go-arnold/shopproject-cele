@@ -1,0 +1,18 @@
+mkdir shopproject && cd shopproject
+python -m venv .venv
+source .venv/bin/activate   # ou .venv\Scripts\activate sur Windows
+
+if PC is restricting access to running the scripts, in powershell:  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+pip install Django gunicorn psycopg2-binary dj-database-url python-dotenv django-allauth whitenoise django-cloudinary-storage Pillow  
+
+django-admin startproject shopproject .
+python manage.py startapp accounts
+
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+
+
+VNYMEW4AAQNG5HRUJ31RB7WQ

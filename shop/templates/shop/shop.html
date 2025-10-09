@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CeleBobo - Boutique Électronique</title>
+    <link rel="stylesheet" href="styles1.css">  
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="main.html" class="logo">
+                <img src="assets/images/logo/logo-white.png" alt="Celebobo logo" style="width:200px; height:auto;">
+            </a>
+            <ul class="nav-links">
+                <li><a href="main.html">Accueil</a></li>
+                <li><a href="#products">Produits</a></li>
+                <li><a href="#about">À Propos</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#support">Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+                <button class="cart-button" onclick="toggleCart()">
+                    🛒 <span id="cart-text">Panier</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="#home" onclick="closeMobileMenu()">Accueil</a>
+        <a href="#products" onclick="closeMobileMenu()">Produits</a>
+        <a href="#about" onclick="closeMobileMenu()">À Propos</a>
+        <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Mon Panier</h3>
+            <button class="cart-close" onclick="closeCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p style="text-align: center; color: #666; padding: 2rem;">Votre panier est vide</p>
+        </div>
+        <div class="cart-total">
+            <h3>Total: <span id="cart-total">0$</span></h3>
+            <button class="checkout-button" onclick="checkout()">Commander</button>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-banner"></div>
+            <div class="hero-content fade-in">
+                <h1>L'Excellence Technologique</h1>
+                <p>Découvrez notre sélection premium d'appareils et accessoires électroniques de dernière génération. Innovation, qualité et performance au rendez-vous.</p>
+                <a href="#products" class="cta-button">Découvrir nos produits</a>
+            </div>
+        </section>
+
+        <!-- Search and Filter Section -->
+        <section class="search-filter-section">
+            <div class="search-filter-container">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="search-input" placeholder="Rechercher un produit..." oninput="filterProducts()">
+                    <span class="search-icon"><img src="https://icons8.com/icon/42237/search" alt=""><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48">
+<path d="M46,40.02c0.005-0.262-0.092-0.526-0.293-0.727l-9-9c-0.391-0.391-1.023-0.391-1.414,0L35,30.586l-1.953-1.953	C34.287,26.362,35,23.764,35,21c0-0.289,0-1.615,0-2c0-8.822-7.178-16-16-16S3,10.178,3,19c0,0.338,0,1.662,0,2	c0,8.822,7.178,16,16,16c3.285,0,6.34-0.998,8.884-2.702l2.409,2.409L30.586,37l-0.293,0.293c-0.391,0.391-0.391,1.023,0,1.414	l7.274,7.274c0.671,0.671,1.552,1.006,2.433,1.006s1.762-0.335,2.433-1.006l3.274-3.274C45.902,42.512,46,42.256,46,42	C46,41.744,45.995,40.269,46,40.02z"></path><rect width="7.071" height="4.243" x="27.464" y="28.879" fill="#fff" transform="rotate(45.001 31 31)"></rect><path d="M32,36c-0.256,0-0.512-0.098-0.707-0.293l-5-5c-0.391-0.391-0.391-1.023,0-1.414l3-3c0.391-0.391,1.023-0.391,1.414,0l5,5	c0.391,0.391,0.391,1.023,0,1.414l-3,3C32.512,35.902,32.256,36,32,36z M28.414,30L32,33.586L33.586,32L30,28.414L28.414,30z"></path><path fill="#fff" d="M31,36l7.275,7.275c0.953,0.953,2.498,0.953,3.451,0L45,40l-9-9L31,36z"></path><path d="M40,44.989c-0.919,0-1.783-0.358-2.433-1.008l-7.274-7.274C30.105,36.52,30,36.266,30,36s0.105-0.52,0.293-0.707l5-5	c0.391-0.391,1.023-0.391,1.414,0l9,9C45.895,39.48,46,39.734,46,40s-0.105,0.52-0.293,0.707l-3.275,3.274	C41.783,44.631,40.919,44.989,40,44.989z M32.414,36l6.568,6.567c0.544,0.545,1.493,0.545,2.036,0L43.586,40L36,32.414L32.414,36z"></path><circle cx="19" cy="19" r="15" fill="#fff"></circle><path d="M19,35c-8.822,0-16-7.178-16-16S10.178,3,19,3s16,7.178,16,16S27.822,35,19,35z M19,5C11.28,5,5,11.28,5,19s6.28,14,14,14	s14-6.28,14-14S26.72,5,19,5z"></path>
+</svg></span>
+                </div>
+                <div class="filters">
+                    <div class="filter-group">
+                        <span class="filter-label">Catégorie</span>
+                        <div class="filter-buttons" id="category-filters">
+                            <button class="filter-btn active" data-category="all">Tout</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label"></span>
+                        <select class="filter-select" id="price-filter" onchange="filterProducts()">
+                            <option value="all">Tous les prix</option>
+                            <option value="0-500">0$ - 500$</option>
+                            <option value="500-1000">500$ - 1000$</option>
+                            <option value="1000-2000">1000$ - 2000$</option>
+                            <option value="2000+">2000$++</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="clear-filters" onclick="clearFilters()">Effacer filtres</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="section">
+            <h2 class="section-title">Nos Produits</h2>
+            <div class="products-grid" id="products-grid">
+                <!-- Products will be loaded here -->
+            </div>
+            <div class="no-results" id="no-results" style="display: none;">
+                <h3>Aucun produit trouvé</h3>
+                <p>Essayez de modifier vos critères de recherche</p>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
+            <div class="testimonials-container">
+                <h2 class="section-title">Témoignages Clients</h2>
+                <div class="testimonials-grid" id="testimonials-grid">
+                    <!-- Testimonials will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Chat  -->
+        <section class="live-chat-section" id="support">
+            <div class="chat-container">
+                <h2 class="section-title">Support Client en Direct</h2>
+                <div class="chat-header">
+                    <div class="chat-status"></div>
+                    <div>
+                        <div class="chat-title">Sarah - Support CeleBobo</div>
+                        <div class="chat-subtitle">En ligne • Répond généralement sous 2 min</div>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div class="chat-input-container">
+                    <div class="image-preview" id="image-preview">
+                        <img src="" alt="Image preview" class="preview-image" id="preview-image">
+                        <button class="remove-image" onclick="removeImagePreview()">×</button>
+                    </div>
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            id="chat-input" 
+                            placeholder="Tapez votre message..." 
+                            rows="1"
+                            onkeypress="handleKeyPress(event)"
+                            oninput="autoResize(this)"
+                        ></textarea>
+                        <div class="input-actions">
+                            <label for="image-upload" class="image-upload-btn" title="Ajouter une image">
+                                📎
+                            </label>
+                            <input type="file" id="image-upload" accept="image/*" onchange="handleImageUpload(event)">
+                            <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Envoyer">
+                                ➤
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Modal -->
+        <div class="image-modal" id="image-modal" onclick="closeImageModal()">
+            <img src="" alt="Image agrandie" class="modal-image" id="modal-image">
+        </div>
+
+        <!-- About Section -->
+        <section id="about" class="section about">
+            <div class="about-content">
+                <div class="about-text fade-in">
+                    <h2>À Propos de CeleBobo</h2>
+                    <p>Depuis plus de 10 ans, CeleBobo est votre partenaire de confiance dans l'univers de la technologie. Nous sélectionnons avec soin les meilleurs produits/ accessoires électroniques pour vous offrir une expérience d'achat exceptionnelle.</p>
+                    <p>Notre mission est de démocratiser l'accès aux technologies innovantes tout en maintenant un service client irréprochable. Chaque produit que nous proposons est testé et validé par nos experts.</p>
+                    <p>Rejoignez des milliers de clients satisfaits qui nous font confiance pour leurs besoins technologiques.</p>
+                </div>
+                <div class="about-image">
+                    <span class="about-emoji"> <img src="assets/images/single-image-1.jpg" alt="s-image" style="width : 100%; height:auto; text-align: center;"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <h2 class="section-title">Contactez-Nous</h2>
+            <form class="contact-form" onsubmit="submitContact(event)">
+                <div class="form-group">
+                    <label for="name">Nom</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Sujet</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">Envoyer le message</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>CeleBobo</h3>
+                <p>Votre boutique d'accessoires électroniques de confiance depuis 2013.</p>
+                <p>📍 123 Patrice Emery Lumumba, 75001 Bukavu</p>
+                <p>📞 01 23 45 67 89</p>
+                <p>✉️ contact@CeleBobo.fr</p>
+            </div>
+            <div class="footer-section">
+                <h3>Nos Services</h3>
+                <a href="#">Livraison Express</a>
+                <a href="#">Service Client 24/7</a>
+                <a href="#">Garantie Étendue</a>
+                <a href="#">Installation & Setup</a>
+            </div>
+            <div class="footer-section">
+                <h3>Informations</h3>
+                <a href="#">Conditions de vente</a>
+                <a href="#">Politique de confidentialité</a>
+                <a href="#">Mentions légales</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 CeleBobo. Tous droits réservés.</p>
+        </div>
+    </footer>   
+
+    <script src="script1.js"></script>
+</body>
+</html>

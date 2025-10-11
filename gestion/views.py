@@ -7,8 +7,9 @@ from django.core.paginator import Paginator
 from gestion.decorators import admin_required
 from django.http import JsonResponse
 from datetime import timedelta
-from django.db.models import Sum, F
+from django.db.models import Sum, F, DecimalField
 from django.utils.timezone import now
+from django.db.models.functions import Coalesce
 
 
 def is_admin_user(user):
@@ -17,76 +18,93 @@ def is_admin_user(user):
 
 @admin_required
 def dashboard(request):
-    """Page principale du dashboard"""
-    # Statistiques de base
-    total_products = Product.objects.count()
-    recent_products = Product.objects.order_by('-date_added')[:5]
+    """Dashboard basé sur les ventes réelles"""
     today = now().date()
     current_month = today.month
     current_year = today.year
 
-    # --- Données de base ---
-    produits = Product.objects.select_related('category_fk')
+    ventes = Vente.objects.select_related('produit', 'produit__category_fk')
 
-    produits_mois_courant = produits.filter(
-        date_added__month=current_month,
-        date_added__year=current_year
+    # --- Mois courant & précédent ---
+    ventes_mois_courant = ventes.filter(
+        date_achat__month=current_month,
+        date_achat__year=current_year
     )
 
-    produits_mois_precedent = produits.filter(
-        date_added__month=(current_month - 1 if current_month > 1 else 12),
-        date_added__year=(current_year if current_month > 1 else current_year - 1)
+    ventes_mois_precedent = ventes.filter(
+        date_achat__month=(current_month - 1 if current_month > 1 else 12),
+        date_achat__year=(current_year if current_month > 1 else current_year - 1)
     )
 
-    # --- a. Croissance potentielle ---
-    profit_actuel = produits.aggregate(
-        total_profit=Sum(F('price') - F('price_primary'))
+    # --- a. Croissance potentielle (profit) ---
+    # CORRECTION: Ajouter output_field pour éviter le mélange de types
+    profit_actuel = ventes_mois_courant.aggregate(
+        total_profit=Sum(
+            F('price_final') - F('produit__price_primary'),
+            output_field=DecimalField()
+        )
     )['total_profit'] or 0
 
-    profit_precedent = produits_mois_precedent.aggregate(
-        total_profit=Sum(F('price') - F('price_primary'))
+    profit_precedent = ventes_mois_precedent.aggregate(
+        total_profit=Sum(
+            F('price_final') - F('produit__price_primary'),
+            output_field=DecimalField()
+        )
     )['total_profit'] or 0
 
     croissance_pourcentage = 0
     if profit_precedent > 0:
         croissance_pourcentage = ((profit_actuel - profit_precedent) / profit_precedent) * 100
 
-    # --- b. Revenu attendu (mois courant) ---
-    revenu_courant = produits_mois_courant.aggregate(total=Sum('price'))['total'] or 0
-    revenu_precedent = produits_mois_precedent.aggregate(total=Sum('price'))['total'] or 0
+    # --- b. Revenu mensuel (ventes du mois courant) ---
+    revenu_courant = ventes_mois_courant.aggregate(total=Sum('price_final'))['total'] or 0
+    revenu_precedent = ventes_mois_precedent.aggregate(total=Sum('price_final'))['total'] or 0
 
     revenu_pourcentage = 0
     if revenu_precedent > 0:
         revenu_pourcentage = ((revenu_courant - revenu_precedent) / revenu_precedent) * 100
 
     # --- c. Revenu quotidien ---
-    produits_aujourdhui = produits.filter(date_added__date=today)
-    produits_hier = produits.filter(date_added__date=today - timedelta(days=1))
+    ventes_aujourdhui = ventes.filter(date_achat__date=today)
+    ventes_hier = ventes.filter(date_achat__date=today - timedelta(days=1))
 
-    revenu_jour = produits_aujourdhui.aggregate(total=Sum('price'))['total'] or 0
-    revenu_hier = produits_hier.aggregate(total=Sum('price'))['total'] or 0
+    revenu_jour = ventes_aujourdhui.aggregate(total=Sum('price_final'))['total'] or 0
+    revenu_hier = ventes_hier.aggregate(total=Sum('price_final'))['total'] or 0
 
     revenu_journalier_pourcentage = 0
     if revenu_hier > 0:
         revenu_journalier_pourcentage = ((revenu_jour - revenu_hier) / revenu_hier) * 100
 
-    # --- d. Revenu mensuel attendu (catégorie Habillement) ---
+    # --- d. Revenu mensuel (catégorie Habits) ---
     habits_categories = [
-        'Habits/Homme', 'Habits/Femme', 'Habits/Enfants', 'Habits/Souliers'
+        'Habits/Homme', 'Habits/Femme', 'Habits/Enfants', 'Habits/Souliers', 'Habits/Neutre'
     ]
 
-    # 🟢 maintenant on filtre uniquement sur Category.name
-    habits_mois_courant = produits_mois_courant.filter(category_fk__name__in=habits_categories)
-    habits_mois_precedent = produits_mois_precedent.filter(category_fk__name__in=habits_categories)
+    habits_mois_courant = ventes_mois_courant.filter(produit__category_fk__name__in=habits_categories)
+    habits_mois_precedent = ventes_mois_precedent.filter(produit__category_fk__name__in=habits_categories)
 
-    revenu_habits_courant = habits_mois_courant.aggregate(total=Sum('price'))['total'] or 0
-    revenu_habits_precedent = habits_mois_precedent.aggregate(total=Sum('price'))['total'] or 0
+    revenu_habits_courant = habits_mois_courant.aggregate(total=Sum('price_final'))['total'] or 0
+    revenu_habits_precedent = habits_mois_precedent.aggregate(total=Sum('price_final'))['total'] or 0
 
     habits_pourcentage = 0
     if revenu_habits_precedent > 0:
         habits_pourcentage = ((revenu_habits_courant - revenu_habits_precedent) / revenu_habits_precedent) * 100
 
-    # --- Envoi au template ---
+    # --- Autres infos du tableau de bord ---
+    total_ventes = ventes.count()
+    recent_ventes = ventes.order_by('-date_achat')[:5]
+
+    # --- Données pour les méthodes de paiement ---
+    methodes_stats = (
+        ventes.values('method')
+        .annotate(total=Coalesce(Sum('price_final'), 0, output_field=DecimalField()))
+        .order_by('method')
+    )
+
+    # On convertit en un format JSON utilisable dans JS
+    methods_labels = [item['method'] for item in methodes_stats]
+    methods_data = [float(item['total']) for item in methodes_stats]
+
     context = {
         'croissance_potentielle': round(profit_actuel, 2),
         'croissance_pourcentage': round(croissance_pourcentage, 2),
@@ -100,12 +118,16 @@ def dashboard(request):
         'revenu_habits': round(revenu_habits_courant, 2),
         'revenu_habits_pourcentage': round(habits_pourcentage, 2),
 
-        'total_products': total_products,
-        'recent_products': recent_products,
+        'total_ventes': total_ventes,
+        'recent_ventes': recent_ventes,
+
+        'methods_labels': methods_labels,
+        'methods_data': methods_data,
     }
 
     return render(request, 'gestion/dashboard1.html', context)
 
+    
 # 🟢 Liste des produits
 @admin_required
 def admin_products(request):

@@ -138,21 +138,40 @@
                     <h4 class="card-title">Historique des transactions</h4>
                     <canvas id="transaction-history" class="transaction-chart"></canvas>
                     <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
+                                            
                       <div class="text-md-center text-xl-left">
-                        <h6 class="mb-1">Virement vers AirtelMoney</h6>
-                        <p class="text-muted mb-0">07 Jan 2026, 09:12</p>
+                        <h6 class="mb-1">Ventes avec AirtelMoney</h6>
+                        <p class="text-muted mb-0">Derniere mise a jour: {{ today.date }}</p>
                       </div>
                       <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-                        <h6 class="font-weight-bold mb-0">$236</h6>
+                        <h6 class="font-weight-bold mb-0">{{ methods_data.0 }} $</h6>
                       </div>
                     </div>
                     <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
                       <div class="text-md-center text-xl-left">
-                        <h6 class="mb-1">Virement vers OrangeMoney</h6>
-                        <p class="text-muted mb-0">07 Jan 2026, 09:12</p>
+                        <h6 class="mb-1">Ventes avec Cash</h6>
+                        <p class="text-muted mb-0">Derniere mise a jour {{ today }}</p>
                       </div>
                       <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-                        <h6 class="font-weight-bold mb-0">$593</h6>
+                        <h6 class="font-weight-bold mb-0">{{ methods_data.1 }} $</h6>
+                      </div>
+                    </div>
+                    <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
+                      <div class="text-md-center text-xl-left">
+                        <h6 class="mb-1">Ventes avec Mpesa</h6>
+                        <p class="text-muted mb-0">Derniere mise a jour {{ today.date }}</p>
+                      </div>
+                      <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
+                        <h6 class="font-weight-bold mb-0">{{ methods_data.2 }} $</h6>
+                      </div>
+                    </div>
+                    <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
+                      <div class="text-md-center text-xl-left">
+                        <h6 class="mb-1">Ventes avec OrangeMoney</h6>
+                        <p class="text-muted mb-0">Derniere mise a jour {{ today.date }}</p>
+                      </div>
+                      <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
+                        <h6 class="font-weight-bold mb-0">{{ methods_data.3 }} $</h6>
                       </div>
                     </div>
                   </div>
@@ -641,6 +660,17 @@
     <script src="{% static 'admin-cele/assets/js/todolist.js' %}"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
+     <script>
+      const METHODS_LABELS = {{ methods_labels|safe }};
+      const METHODS_DATA = {{ methods_data|safe }};
+     </script>
+    <script>
+        window.transactionData = {
+          labels: {{ methods_labels|safe }},
+          data: {{ methods_data|safe }}
+        };
+        console.log(window.transactionData);
+    </script>
     <script src="{% static 'admin-cele/assets/js/dashboard.js' %}"></script>
 {% endblock %}
           

@@ -2530,7 +2530,7 @@ $(function() {
           longitude: 4.8088888888889,
           href: "#",
           tooltip: {
-            content: "<span style=\"font-weight:bold;\">OrangeMoney (84087)</span><br />Population : 29791"
+            content: "<span style=\"font-weight:bold;\">Orange (84087)</span><br />Population : 29791"
           }
         },
         "town-78621": {
@@ -7489,7 +7489,7 @@ $(function() {
           longitude: 6.1183333333333,
           href: "#",
           tooltip: {
-            content: "<span style=\"font-weight:bold;\">FlOrangeMoney (57221)</span><br />Population : 11580"
+            content: "<span style=\"font-weight:bold;\">FlOrange (57221)</span><br />Population : 11580"
           }
         },
         "town-62525": {

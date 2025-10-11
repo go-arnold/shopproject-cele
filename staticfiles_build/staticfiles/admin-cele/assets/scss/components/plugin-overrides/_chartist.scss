@@ -30,13 +30,13 @@
 // Data -3
 
 .ct-series-c .ct-line {
-  stroke: lighten($OrangeMoney, 15);
+  stroke: lighten($Orange, 15);
   stroke-width: 3px;
   stroke-dasharray: 10px 20px;
 }
 
 .ct-series-c .ct-point {
-  stroke: lighten($OrangeMoney, 1);
+  stroke: lighten($Orange, 1);
   stroke-width: 10px;
   stroke-linecap: round;
 }
@@ -61,7 +61,7 @@
 // Data -3
 
 .ct-series-c .ct-bar {
-  stroke: lighten($OrangeMoney, 15);
+  stroke: lighten($Orange, 15);
   stroke-width: 20px;
   stroke-dasharray: 0;
   stroke-linecap: squre;
@@ -96,7 +96,7 @@
 // Data -4
 
 .ct-series-d .ct-slice-pie {
-  fill: lighten($OrangeMoney, 15);
+  fill: lighten($Orange, 15);
   stroke-width: 4px;
 }
 // Pie Chart Starts
@@ -118,7 +118,7 @@
 
 // Data -d
 .ct-series-a .ct-slice-donut-solid {
-  fill: lighten($OrangeMoney, 15);
+  fill: lighten($Orange, 15);
 }
 
 // E-commerce Dashboard Chart

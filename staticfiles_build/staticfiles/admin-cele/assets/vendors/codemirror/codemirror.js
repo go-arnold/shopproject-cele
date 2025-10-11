@@ -3512,7 +3512,7 @@
     if (y != null) { cm.curOp.scrollTop = y; }
   }
 
-  function scrollTOrangeMoney(cm, range) {
+  function scrollTOrange(cm, range) {
     resolveScrollToPos(cm);
     cm.curOp.scrollToPos = range;
   }
@@ -8561,7 +8561,7 @@
         range.margin = margin || 0;
 
         if (range.from.line != null) {
-          scrollTOrangeMoney(this, range);
+          scrollTOrange(this, range);
         } else {
           scrollToCoordsRange(this, range.from, range.to, range.margin);
         }

@@ -172,7 +172,7 @@
         },
         {
           value: 5,
-          text: 'OrangeMoney'
+          text: 'Orange'
         }
       ]
     });

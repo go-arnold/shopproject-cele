@@ -27,8 +27,8 @@
             <div class="form-group">
                 <label for="category">Catégorie <span class="required">*</span></label>
                 <select id="category" name="category" required>
-                    {% for cat_value, cat_label in categories %}
-                    <option value="{{ cat_value }}">{{ cat_label }}</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -42,12 +42,12 @@
 
         <div class="form-row">
             <div class="form-group">
-                <label for="price">Prix actuel ($) <span class="required">*</span></label>
+                <label for="price">Prix actuel (en $) :<span class="required">*</span></label>
                 <input type="number" id="price" name="price" step="0.01" required>
             </div>
 
             <div class="form-group">
-                <label for="price_primary">Prix original ($)</label>
+                <label for="price_primary">Prix original (en $):</label>
                 <input type="number" id="price_primary" name="price_primary" step="0.01">
                 <div class="help-text">Prix barré (si promotion)</div>
             </div>

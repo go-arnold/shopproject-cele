@@ -62,8 +62,8 @@
                       <div class="form-group">
                         <label for="category">Catégorie</label>
                         <select class="form-control" id="category" name="category">
-                            {% for cat_value, cat_label in categories %}
-                                <option value="{{ cat_value }}">{{ cat_label }}</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
                             {% endfor %}
                         </select>
                       </div>

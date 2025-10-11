@@ -68,8 +68,8 @@
                       <div class="form-group">
                         <label for="category">Catégorie</label>
                         <select class="form-control" id="category" name="category">
-                            {% for cat_value, cat_label in categories %}
-                                <option value="{{ cat_value }}" {% if product.category == cat_value %}selected{% endif %}>{{ cat_label }}</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if product.category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
                             {% endfor %}
                         </select>
                       </div>

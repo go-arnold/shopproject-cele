@@ -1,0 +1,77 @@
+{% extends 'gestion/base.html' %}
+{% load static %}
+{% block title %}Modifier une vente - Cele Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Modification d'une vente</h4>
+        <form class="form-sample" method="post">
+          {% csrf_token %}
+          <p class="card-description">1. Détails de la vente</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="produit">Produit vendu :</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" list="produits" name="produit_id" id="produit"
+                         value="{{ vente.produit.id }}" required>
+                </div>
+                <datalist id="produits">
+                  {% for produit in produits %}
+                  <option value="{{ produit.id }}">{{ produit.name }}</option>
+                  {% endfor %}
+                </datalist>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="date_achat">Date d'achat :</label>
+                <div class="col-sm-9">
+                  <input type="date" class="form-control" name="date_achat" id="date_achat" 
+                         value="{{ vente.date_achat|date:'Y-m-d' }}" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="price_final">Prix final :</label>
+                <div class="col-sm-9">
+                  <input type="number" step="0.01" class="form-control" name="price_final" id="price_final"
+                         value="{{ vente.price_final|default:vente.produit.price }}">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="payment_method">Méthode de paiement :</label>
+                <div class="col-sm-9">
+                  <select class="form-control" id="payment_method" name="method">
+                    {% for value, label in methods %}
+                      <option value="{{ value }}" {% if vente.method == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="card-description text-warning">⚠️ Vérifiez bien les informations avant d’enregistrer les modifications.</p>
+
+          <button type="submit" class="btn btn-primary mt-3">Enregistrer les modifications</button>
+          <a href="{% url 'gestion:liste_ventes' %}" class="btn btn-light mt-3">Annuler</a>
+          <a href="{% url 'gestion:supprimer_vente' vente.id %}" class="btn btn-danger mt-3 ">Supprimer la vente</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

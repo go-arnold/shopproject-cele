@@ -33,87 +33,104 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$12.34</h3>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+3,5%</p>
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <div class="icon icon-box-success ">
-                          <span class="mdi mdi-arrow-top-right icon-item"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <h6 class="text-muted font-weight-normal">Croissance potentielle</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$17.34</h3>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+11%</p>
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <div class="icon icon-box-success">
-                          <span class="mdi mdi-arrow-top-right icon-item"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <h6 class="text-muted font-weight-normal">Revenu actuel</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$12.34</h3>
-                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2,4%</p>
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <div class="icon icon-box-danger">
-                          <span class="mdi mdi-arrow-bottom-left icon-item"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <h6 class="text-muted font-weight-normal">Revenu quotidien</h6>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-9">
-                        <div class="d-flex align-items-center align-self-start">
-                          <h3 class="mb-0">$31.53</h3>
-                          <p class="text-success ml-2 mb-0 font-weight-medium">+3,5%</p>
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <div class="icon icon-box-success ">
-                          <span class="mdi mdi-arrow-top-right icon-item"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <h6 class="text-muted font-weight-normal">Dépense actuelle</h6>
-                  </div>
-                </div>
-              </div>
+  <!-- a. Croissance potentielle -->
+  <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-9">
+            <div class="d-flex align-items-center align-self-start">
+              <h3 class="mb-0">${{ croissance_potentielle }}</h3>
+              <p class="{% if croissance_pourcentage >= 0 %}text-success{% else %}text-danger{% endif %} ml-2 mb-0 font-weight-medium">
+                {% if croissance_pourcentage >= 0 %}+{% endif %}{{ croissance_pourcentage }}%
+              </p>
             </div>
+          </div>
+          <div class="col-3">
+            <div class="icon {% if croissance_pourcentage > 0 %}icon-box-success{% else %}icon-box-danger{% endif %}">
+              <span class="mdi {% if croissance_pourcentage > 0 %}mdi-arrow-top-right{% else %}mdi-arrow-bottom-left{% endif %} icon-item"></span>
+            </div>
+          </div>
+        </div>
+        <h6 class="text-muted font-weight-normal">Croissance potentielle</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- b. Revenu attendu du mois -->
+  <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-9">
+            <div class="d-flex align-items-center align-self-start">
+              <h3 class="mb-0">${{ revenu_mensuel }}</h3>
+              <p class="{% if revenu_mensuel_pourcentage >= 0 %}text-success{% else %}text-danger{% endif %} ml-2 mb-0 font-weight-medium">
+                {% if revenu_mensuel_pourcentage >= 0 %}+{% endif %}{{ revenu_mensuel_pourcentage }}%
+              </p>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="icon {% if revenu_mensuel_pourcentage > 0 %}icon-box-success{% else %}icon-box-danger{% endif %}">
+              <span class="mdi {% if revenu_mensuel_pourcentage > 0 %}mdi-arrow-top-right{% else %}mdi-arrow-bottom-left{% endif %} icon-item"></span>
+            </div>
+          </div>
+        </div>
+        <h6 class="text-muted font-weight-normal">Revenu mensuel attendu</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- c. Revenu quotidien -->
+  <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-9">
+            <div class="d-flex align-items-center align-self-start">
+              <h3 class="mb-0">${{ revenu_quotidien }}</h3>
+              <p class="{% if revenu_quotidien_pourcentage >= 0 %}text-success{% else %}text-danger{% endif %} ml-2 mb-0 font-weight-medium">
+                {% if revenu_quotidien_pourcentage >= 0 %}+{% endif %}{{ revenu_quotidien_pourcentage }}%
+              </p>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="icon {% if revenu_quotidien_pourcentage > 0 %}icon-box-success{% else %}icon-box-danger{% endif %}">
+              <span class="mdi {% if revenu_quotidien_pourcentage > 0 %}mdi-arrow-top-right{% else %}mdi-arrow-bottom-left{% endif %} icon-item"></span>
+            </div>
+          </div>
+        </div>
+        <h6 class="text-muted font-weight-normal">Revenu quotidien attendu</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- d. Revenu habillement -->
+  <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-9">
+            <div class="d-flex align-items-center align-self-start">
+              <h3 class="mb-0">${{ revenu_habits }}</h3>
+              <p class="{% if revenu_habits_pourcentage >= 0 %}text-success{% else %}text-danger{% endif %} ml-2 mb-0 font-weight-medium">
+                {% if revenu_habits_pourcentage >= 0 %}+{% endif %}{{ revenu_habits_pourcentage }}%
+              </p>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="icon {% if revenu_habits_pourcentage > 0 %}icon-box-success{% else %}icon-box-danger{% endif %}">
+              <span class="mdi {% if revenu_habits_pourcentage > 0 %}mdi-arrow-top-right{% else %}mdi-arrow-bottom-left{% endif %} icon-item"></span>
+            </div>
+          </div>
+        </div>
+        <h6 class="text-muted font-weight-normal">Revenu dans l'habillement</h6>
+      </div>
+    </div>
+  </div>
+            </div>
+
+
             <div class="row">
               <div class="col-md-4 grid-margin stretch-card">
                 <div class="card">

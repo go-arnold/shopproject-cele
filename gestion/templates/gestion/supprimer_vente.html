@@ -1,0 +1,28 @@
+{% extends 'gestion/base.html' %}
+{% load static %}
+{% block title %}Supprimer une vente - Cele Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body text-center">
+        <h4 class="card-title text-danger">Suppression d'une vente</h4>
+        <p class="card-description">Êtes-vous sûr de vouloir supprimer cette vente ?</p>
+
+        <div class="alert alert-warning mt-3">
+          <strong>Produit :</strong> {{ vente.produit.name }} <br>
+          <strong>Date :</strong> {{ vente.date_achat|date:"d M Y" }} <br>
+          <strong>Prix final :</strong> {{ vente.price_final|default:vente.produit.price }} <small class="text-muted">usd$</small> <br>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+          <a href="{% url 'gestion:liste_ventes' %}" class="btn btn-light">Annuler</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

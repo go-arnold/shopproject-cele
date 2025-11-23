@@ -10,5 +10,5 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         if user.is_authenticated:
             if user.groups.filter(name__in=['revendeur', 'mukubwa']).exists():
                 return resolve_url('/cele-admin/')
-        # Sinon, retour à la page d'accueil
+        
         return resolve_url('/')

@@ -9,15 +9,13 @@ def admin_required(view_func):
     """
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
-        if not user.is_authenticated:
-            # Redirection vers allauth login, avec next paramètre
-            login_url = reverse('account_login')  # URL de allauth
+        if not user.is_authenticated:            
+            login_url = reverse('account_login')  
             return redirect(f"{login_url}?next={request.path}")
 
         if not user.groups.filter(name__in=['revendeur', 'mukubwa']).exists():
             messages.error(request, "Accès réservé aux revendeurs et mukubwas.")
-            return redirect('account_login')  # ou une page d'accès refusé
-
-        # OK : utilisateur autorisé
+            return redirect('account_login')  # ou je vais ajouter une page d'accès refusé 403 plus tard
+        
         return view_func(request, *args, **kwargs)
     return _wrapped_view

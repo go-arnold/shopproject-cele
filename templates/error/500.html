@@ -1,0 +1,269 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="dark" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <link rel="icon"
+              type="image/x-icon"
+              sizes="32x32"
+              href="{% static 'static-img/favicon.ico' %}">
+        <link rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="{% static 'static-img/sicon-32.png' %}">
+        <link rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="{% static 'static-img/sicon-16.png' %}">
+        <title>500 - Erreur interne du serveur</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;display=swap"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+              rel="stylesheet" />
+        <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Range slider - CORRIGÉ avec couleur primary */
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #374151;
+            outline: none;
+            border-radius: 2px;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #640D5F;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .range-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #640D5F;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .range-slider::-webkit-slider-track {
+            height: 4px;
+            background: #374151;
+            border-radius: 2px;
+        }
+
+        .range-slider::-moz-range-track {
+            height: 4px;
+            background: #374151;
+            border-radius: 2px;
+        }
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        main {
+            position: relative;
+            z-index: 20;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: all 0.72s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 80;
+            backdrop-filter: blur(10px);
+            background: rgba(18, 18, 28, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform .28s ease-in-out;
+        }
+
+        .mobile-tabbar.hide {
+            transform: translateY(110%);
+        }
+
+        /* Version mobile compacte - ULTRA COMPACT */
+        @media (max-width: 640px) {
+            .product-grid-mobile {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.5rem;
+            }
+
+            .product-card-compact {
+                padding: 0.5rem;
+            }
+
+            .product-card-compact .aspect-square {
+                height: 0;
+                padding-top: 75%;
+                position: relative;
+                background-size: cover;
+                background-position: center;
+            }
+
+            .product-card-compact h3 {
+                font-size: 0.8rem;
+                line-height: 1.1;
+                margin-top: 0.5rem;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .product-card-compact .description-text {
+                font-size: 0.7rem;
+                line-height: 1.2;
+                margin-top: 0.25rem;
+            }
+
+            .product-card-compact .rating-section {
+                margin-top: 0.4rem;
+                gap: 0.15rem;
+            }
+
+            .product-card-compact .rating-section .material-symbols-outlined {
+                font-size: 0.75rem !important;
+            }
+
+            .product-card-compact .rating-section span:last-child {
+                font-size: 0.65rem;
+            }
+
+            .product-card-compact .price-section {
+                margin-top: 0.5rem;
+                padding-top: 0.5rem;
+            }
+
+            .product-card-compact .price-section p {
+                font-size: 1.1rem;
+            }
+
+            .product-card-compact .price-section button {
+                height: 1.75rem;
+                width: 1.75rem;
+            }
+
+            .product-card-compact .price-section button .material-symbols-outlined {
+                font-size: 1rem;
+            }
+        }
+
+        /* Version desktop - PLUS COMPACT */
+        @media (min-width: 1024px) {
+            .product-card-desktop {
+                max-width: 280px;
+            }
+
+            .product-card-desktop .aspect-square {
+                height: 0;
+                padding-top: 85%;
+                position: relative;
+            }
+        }
+
+        #mobileSearchContainer {
+            display: none;
+            position: fixed;
+            top: 4rem;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding: 0.75rem 1rem;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 27, 0.95);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #mobileSearchContainer.active {
+            display: block;
+            transform: translateY(0);
+        }
+        </style>
+        <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#640D5F",
+                        "background-light": "#f8f6f8",
+                        "background-dark": "#121826",
+                        "surface-dark": "#1F2937",
+                        "surface-light": "#FFFFFF",
+                        "text-light-primary": "#E5E7EB",
+                        "text-light-secondary": "#9CA3AF",
+                        "text-dark-primary": "#1F2937",
+                        "text-dark-secondary": "#4B5563",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+        </script>
+    </head>
+    <body class="bg-background-light dark:bg-background-dark font-display text-[#F0F0F0] antialiased">
+        <div class="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden p-4">
+            <div class="glitch-effect" data-alt="Abstract grid lines in magenta"></div>
+            <div class="relative z-10 flex w-full max-w-2xl flex-col items-center justify-center text-center">
+                <!-- HeadlineText Component: The 500 Error Code -->
+                <h1 class="text-primary tracking-tighter text-7xl font-black leading-none md:text-9xl">500</h1>
+                <!-- PageHeading Component: Error Title and Message -->
+                <div class="mt-4 flex w-full flex-col items-center gap-2">
+                    <p class="text-2xl font-bold tracking-tight text-[#F0F0F0] md:text-4xl">Erreur de serveur interne</p>
+                    <p class="max-w-md text-base font-normal leading-normal text-[#A0A0A0]">
+                        Désolé, une erreur interne du serveur s'est produite. Notre équipe a été informée et travaille à sa résolution.
+                    </p>
+                </div>
+                <!-- SingleButton Component: Primary CTA -->
+                <div class="mt-8 flex w-full max-w-xs justify-center">
+                    <button class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide transition-transform duration-200 ease-in-out hover:scale-105">
+                        <a href="{% url 'home' %}"><span class="truncate">Retour à la page d'accueil</span></a>
+                    </button>
+                </div>
+                <!-- MetaText Component: Secondary Link -->
+                <p class="mt-6 text-sm font-normal leading-normal text-[#A0A0A0] underline transition-colors duration-200 hover:text-primary">
+                    Contact Support
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,712 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Decouvrez tout ce dont vous avez besoin chez Celebobo</title>
+    <link rel="icon"
+          type="image/x-icon"
+          sizes="32x32"
+          href="{% static 'static-img/favicon.ico' %}">
+    <link rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="{% static 'static-img/sicon-32.png' %}">
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="{% static 'static-img/sicon-16.png' %}">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet" />
+    <style>
+    .material-symbols-outlined {
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    }
+
+    /* Animation for fade-in sections */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Canvas background */
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: transparent;
+    }
+
+    /* Mobile tab bar */
+    .mobile-tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background-color: rgba(18, 18, 28, 0.8);
+      color: #162127 ;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .mobile-tabbar.hide {
+      transform: translateY(100%);
+    }
+    </style>
+    <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Barre mobile masquée par défaut */
+    #mobileSearchContainer {
+      display: none;
+      position: fixed;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      padding: 0.75rem 1rem;
+      backdrop-filter: blur(10px);
+      background-color: rgba(18, 18, 27, 0.95);
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    #mobileSearchContainer.active {
+      display: block;
+      transform: translateY(0);
+    }
+
+    /* Tab-bar */
+    .mobile-tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background-color: rgba(18, 18, 28);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .mobile-tabbar.hide {
+      transform: translateY(100%);
+    }
+    </style>
+    <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#640D5F",
+            "background-light": "#f8f6f8",
+            "background-dark": "#12121c",
+          },
+          fontFamily: { display: ["Inter", "sans-serif"] },
+        },
+      },
+    };
+    </script>
+    <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#640D5F",
+            "background-light": "#f8f6f8",
+            "background-dark": "#121826",
+            "surface-dark": "#1F2937",
+            "surface-light": "#FFFFFF",
+            "text-light-primary": "#E5E7EB",
+            "text-light-secondary": "#9CA3AF",
+            "text-dark-primary": "#1F2937",
+            "text-dark-secondary": "#4B5563",
+          },
+          fontFamily: {
+            display: ["Inter", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px",
+          },
+        },
+      },
+    };
+    </script>
+  </head>
+  <body class="font-display bg-background-light dark:bg-background-dark text-[#EAEAEA] relative overflow-x-hidden">
+    <!-- Canvas particles background -->
+    <canvas id="particles"></canvas>
+    <div class="relative z-10 flex min-h-screen w-full flex-col group/design-root">
+      <div class="layout-container flex h-full grow flex-col">
+        <div class="flex flex-1 justify-center">
+          <div class="layout-content-container flex w-full flex-col items-center justify-center">
+            <!-- HEADER -->
+            <header class="flex-col px-4 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+              <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
+                <a class="hover:text-white transition-colors" href="#">Aide</a>
+                <a class="hover:text-white transition-colors" href="#">À propos</a>
+                <a class="hover:text-white transition-colors" href="#">Articles</a>
+              </div>
+              <div class="flex items-center gap-6 lg:gap-8 py-4">
+                <!-- LOGO -->
+                <div class="flex items-center gap-2.5">
+                  <a href="{% url 'home' %}">
+                    <img src="{% static 'static-img/logo-white.png' %}"
+                         alt="CELEBOBO"
+                         class="h-10 sm:h-12 lg:h-14 w-auto object-contain">
+                  </a>
+                </div>
+                <!-- Desktop Search -->
+                <form method="GET"
+                      action="{% url 'results' %}"
+                      class="flex-1 max-w-2xl mx-auto hidden md:block">
+                  <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                    <input name="q"
+                           class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                           placeholder="Rechercher un produit..."
+                           type="search" />
+                  </div>
+                </form>
+                <!-- Icons -->
+                <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                  <!-- Mobile Search Button -->
+                  <button id="mobileSearchBtn"
+                          class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <span class="material-symbols-outlined text-xl">search</span>
+                  </button>
+                  {% if not user.is_authenticated %}
+                    <!-- Desktop: Button S'inscrire -->
+                    <a href="{% url 'account_login' %}">
+                      <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
+                        S'inscrire / Se connecter
+                      </button>
+                    </a>
+                  {% endif %}
+                  {% if user.is_authenticated %}
+                    <!-- Favoris -->
+                    <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                      <a href="{% url 'favorites_list' %}"><span class="material-symbols-outlined text-xl">favorite</span></a>
+                    </button>
+                    <!-- Messages -->
+                    <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
+                      <span class="material-symbols-outlined text-xl">mail</span>
+                      <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
+                    </button>
+                  {% endif %}
+                  <!-- Panier -->
+                  <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                  </button>
+                  {% if user.is_authenticated %}
+                    <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
+                      <a href="#"><span class="material-symbols-outlined text-2xl">person</span></a>
+                    </button>
+                    <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                      <a href= "{% url 'account_logout' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor"
+                             class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                        </svg>
+                      </a>
+                    </button>
+                  {% endif %}
+                  <!-- Mobile: Icône de profil -->
+                  {% if not user.is_authenticated %}
+                    <button class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 bg-primary text-white  hover:bg-primary/90 transition">
+                      <a href="{% url 'account_login' %}"><span class="material-symbols-outlined text-2xl">person</span></a>
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            </header>
+            <!-- MOBILE SEARCH -->
+            <form method="GET"
+                  action="{% url 'results' %}"
+                  id="mobileSearchContainer"
+                  class="hidden px-4 py-3 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                <input name="q"
+                       class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                       placeholder="Rechercher un produit..."
+                       type="search" />
+              </div>
+            </form>
+            <!-- Main Content -->
+            <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 space-y-16 md:space-y-24 relative z-10">
+              <!-- Hero, Categories, New arrivals, etc. -->
+              <section class="@container">
+                <div class="@[480px]:p-4">
+                  <div class="flex min-h-[60vh] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-4 text-center"
+                       data-alt="Abstract dark purple and blue geometric pattern"
+                       style="background-image: linear-gradient( rgba(18, 18, 28, 0.5) 0%, rgba(18, 18, 28, 0.8) 100% ), url('{% static "static-img/bannerLL.png" %}')">
+                    <div class="flex flex-col gap-4">
+                      <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] md:text-6xl">
+                        Tout Ce Qu’il Vous Faut, Maintenant
+                      </h1>
+                      <p class="text-white/80 text-base font-normal leading-normal md:text-lg max-w-2xl mx-auto">
+                        Explorez les tendances du moment et trouvez tout ce dont vous avez besoin.
+                        Innovation, qualité et prix malins, tout pour améliorer votre quotidien.
+                        Faites-vous plaisir en quelques clics !
+                      </p>
+                    </div>
+                    <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/80 transition-transform duration-300 hover:scale-105">
+                      <a href="{% url 'all_products' %}" class="truncate">Acheter Maintenant</a>
+                    </button>
+                  </div>
+                </div>
+              </section>
+              <!-- Category Grid -->
+              <section>
+                <h2 class="text-white text-2xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-4 pt-5 text-center md:text-left">
+                  Acheter par Catégorie
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 p-4">
+                  {% for category in categories %}
+                    <a href="{% url 'category_detail' category.pk %}"
+                       class="group relative overflow-hidden rounded-lg aspect-[2/1] flex flex-col justify-end p-4 bg-cover bg-center transition-transform duration-300 hover:scale-105"
+                       data-alt="Stylish modern sneakers"
+                       style="background-image: linear-gradient( 0deg, rgba(18, 18, 28, 0.7) 0%, rgba(18, 18, 28, 0) 50% ), url('{{ category.image.url }}')">
+                      <p class="text-white text-lg font-bold leading-tight">{{ category.name }}</p>
+                    </a>
+                  {% endfor %}
+                </div>
+              </section>
+              <!-- New Arrivals -->
+              <section>
+                <h2 class="text-white text-2xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-4 pt-5 text-center md:text-left">
+                  Nouveautés
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+                  <!-- Product Card 1 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1 ">
+                    <div class="overflow-hidden rounded-lg ">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110 "
+                           data-alt="Plain white t-shirt on a hanger"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUQTciu9ZJG8_nROXo1BxLG8z_kUhAnv08Um6rRDwmLYZc15VFbgOWxf_iRwVfEbTRGDaaxugXI2IjyQ0fbwZIHHQrg-pUkzv3AX-GoO1gl44ZlbavOWxQOYfnoG5Akfqonrz3p-XgHcEsfsbmzYs7n_HZoIlHVTECAWaUApdu-XfWv0xpM5oRQi_GwMIWjKSFLw5g8QzNpzBJmVh-k8P9-Ch-LCTz5PsitqbYyqWCFXQfdhmAvBdLRY8891Ek0H-GxPJtp_Hn9kI" />
+                    </div>
+                    <h3 class="text-white font-bold">T-shirt Col Rond Classique</h3>
+                    <p class="text-[#888888] text-sm">Un essentiel intemporel pour toute garde-robe.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">25,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Product Card 2 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1 ">
+                    <div class="overflow-hidden rounded-lg ">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110 "
+                           data-alt="Modern slim-fit chino pants"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa45RVb-SH-85fDqJF1msStwY9iwGs3y8tefYtyP5KS4Nze59BuWxI6rvmD-LpmMLZrFmm5UxQh5NtXsF4c2OBSVYWmkh__sloudI3o0zTL43zsSER5KCxc0gcG67hg8c7gO4zepiLRR98SqLX-8Di58xsQZ9jC162GLA-amJLTauSMMbbeJYGRnx7gT4qKH3DOGxaXm7uHV9fByJnSTt1so_U8FGA4OsddWGrCTyN032kwhBr9FFljBMJlT25l9NCH1PBFxWfd9Y" />
+                    </div>
+                    <h3 class="text-white font-bold">Chinos Coupe Slim</h3>
+                    <p class="text-[#888888] text-sm">Polyvalent et élégant pour toute occasion.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">60,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Product Card 3 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1">
+                    <div class="overflow-hidden rounded-lg ">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                           data-alt="Comfortable hoodie with a unique design"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8F-CMEQcekPLNRnL-QqEOSxeJTrjrehiha9vOTHw8WPM-UaccyzAZYzrwOVJpUWnznRpC9L1v5DDUciucrnr2wi36s4TboCEVpVYRVtBJDgMkQzDKlC3f0YR7iGDj85_Z5tK-5rC729GbIqht2speSPt8YyOH6mtjW6VJatxuuujwKc-Hz05-dVZdgQkYGfLi8NEtXiVA3deQG8g-c2qBBmfIzOtE0I5V6253L4_geYPpjlulcGuJBpED4ZMBUvnhgXrHrh_J51Y" />
+                    </div>
+                    <h3 class="text-white font-bold">Sweat à Capuche Graphique</h3>
+                    <p class="text-[#888888] text-sm">Restez au chaud avec style.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">75,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Product Card 4 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1 ">
+                    <div class="overflow-hidden rounded-lg">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                           data-alt="A pair of stylish urban sneakers"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlPjnj_k8pTlDBuY1v8ay-5gugLYeh-4UqRL9SoA1cK6m8_YFIym0qxZFAzlomAWiL-cQ_8Hej2qW_ngS81WgrsmXJcmM07ZDMEy7owoC6obzHv3Hnfo6vnB-XKDnKKQWcBJd3sRDvekFlEDKkQ5n2vrZRNyAL4FCQLh3TOWSOKEBUvY2pylz5USA_dReFGRP0Rqaav94IivVRMfTkt9h00bpEGMhDEDe0pNF6YNwyb-Wu-AJCz67X-zl8Ytml8nfHYuKQT8Y0-zk" />
+                    </div>
+                    <h3 class="text-white font-bold">Baskets Urban Runner</h3>
+                    <p class="text-[#888888] text-sm">La performance rencontre le style urbain.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">120,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <button class="flex-shrink-0 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8  bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/80 transition-transform duration-300 hover:scale-105">
+                    <span class="truncate">Retrouver plus d'articles</span>
+                  </button>
+                </div>
+              </section>
+              <!-- Promotional Banner -->
+              <section class="p-4">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 bg-primary/20 rounded-xl p-8 md:p-12 text-center md:text-left">
+                  <div class="flex flex-col gap-4 max-w-xl">
+                    <h2 class="text-white text-3xl md:text-4xl font-black leading-tight tracking-tight">Soldes de Fin d'année !</h2>
+                    <p class="text-white/80 text-lg">
+                      Des offres incontournables sont là. Bénéficiez jusqu'à
+                      <span class="text-primary font-bold">-50%</span> sur
+                      des styles sélectionnés. N'attendez pas, votre nouvelle tenue
+                      préférée est à un clic.
+                    </p>
+                  </div>
+                  <button class="flex-shrink-0 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/80 transition-transform duration-300 hover:scale-105">
+                    <span class="truncate">Découvrir les Soldes</span>
+                  </button>
+                </div>
+              </section>
+              <!-- Best Sellers -->
+              <section>
+                <h2 class="text-white text-2xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-4 pt-5 text-center md:text-left">
+                  Nos Meilleures Ventes
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+                  <!-- Product Card 5 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1">
+                    <div class="overflow-hidden rounded-lg aspect-square">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                           data-alt="Leather jacket on a mannequin"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2H_NTxa0YDte_x_awaocflBR5r4nFka3XWjUgxykCrHiGv__qUKZVdZGAHUcVIJXth6loUy3KLVrqQyYJAEERtE3cms5OXNq9TzsnzOXdKc7RWIlWZbHkHI020ezih3kBZ8npmuhSX6y0iQXqhrjcnDFZPTBbpqjTXljPONjPc4XPm7VUpk7J_lxXr1R61hQ48vc5kw07BF-W7Vmh7kcLRA_-bP3pHOBBUTUOrGRzPshfbz5xjZOgft3ei-uRRlSUsf3wm7lNRpk" />
+                    </div>
+                    <h3 class="text-white font-bold">Veste en Cuir Maverick</h3>
+                    <p class="text-[#888888] text-sm">Un style iconique qui dure toute une vie.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">250,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Product Card 6 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1">
+                    <div class="overflow-hidden rounded-lg aspect-square">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                           data-alt="Comfortable and stylish sweatpants"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZeRKeQO6dzM5frPB2ABOz4cyhCr005IidMVoptLZSDRCxqu2HjQzpAOYUvCxlQ5fkyeRQyuONP6ZTH4vGZf2iHWo96GOW-AcfvmVVMy2Ce38eTc0dPgms3W71TPmBqoXK6x4uRSeHaILEnNV1v5YX6Is4qJzxhqrl-WNk-zlKne9etPJq9XPziDhlHB4Vp4_PviUEZvxyFXxeLMJD9SmnSa2YqGATUrI-mU09s3Q2nt7QvgpRzdKPYbGarVMDLcLoOYt0Ki5n2Vk" />
+                    </div>
+                    <h3 class="text-white font-bold">Joggers Luxe Lounge</h3>
+                    <p class="text-[#888888] text-sm">Élevez votre confort et votre style.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">65,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Product Card 7 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1">
+                    <div class="overflow-hidden rounded-lg aspect-square">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                           data-alt="Denim jacket hanging on a wall"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdKrycK_vm0Df3bJkM97zvF2hm7S0Hb4TftD8iERpqLvoi8vSrkF-jac-J6q9O5cyyEnyFby34nJCQRhZdPstOrvzMNDcBNqT3ULcMPXx7VmjubvmhL3WeVnXwnBPfWatve2k8cNhRTxKWS22yDrD8DYd7t9VMQ2feAHUsET-evvtgVDtFnC7MJysYEuolTI655mk0omEx2L5HJh_y8kSpBVDBYby1lAQUV9zX6R_oJX-eosYBJOkJ4YBjGks-JPWLkE6Jl9a-E9Q" />
+                    </div>
+                    <h3 class="text-white font-bold">Veste en Jean Quotidienne</h3>
+                    <p class="text-[#888888] text-sm">Une pièce de superposition indispensable.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">90,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- Product Card 8 -->
+                  <div class="group flex flex-col gap-3 bg-white/5 p-4 rounded-xl transition-all duration-300 hover:bg-white/10 hover:-translate-y-1">
+                    <div class="overflow-hidden rounded-lg aspect-square">
+                      <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                           data-alt="A minimalist silver watch"
+                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoAhIQPif1tBWB9u0rqp66qmy9VViIfI4GeXMt2IAyijOCWlq8UCzICsN6jq8L2o3fsKWBNNGG87eaqC1cEIHXuEUpMGj_9KWYR56KV0SZtrOuCJJVwCurEEX844Ba06zsq4w80KXmeMzLOFTC3cXISHsM0Wpf_z2tota6rCeQd9zbdgwzes_63wfRiZT-2-z5LtbHTwgTNopax7XLNjE5GEq9BzdHNmw5aqw5lRriLpApzw25nfT_nuAdjZ3tjjttqmq7dg_trvQ" />
+                    </div>
+                    <h3 class="text-white font-bold">Chronographe Minimaliste</h3>
+                    <p class="text-[#888888] text-sm">Élégance intemporelle au poignet.</p>
+                    <div class="flex items-center justify-between mt-auto">
+                      <p class="text-lg font-bold text-white">180,00 $</p>
+                      <button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary text-white hover:bg-primary/70 hover:text-white/60 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <!-- Section Contact -->
+              <section id="contact" class="fadse-in">
+                <div class="bg-white/5 rounded-xl p-8 md:p-12 text-center md:text-left">
+                  <h2 class="text-3xl font-bold text-white mb-4">Contactez-nous</h2>
+                  <p class="text-white/70 mb-8">
+                    Une question, une suggestion ? Nous serions ravis d’avoir de
+                    vos nouvelles.
+                  </p>
+                  <form class="max-w-2xl mx-auto flex flex-col gap-4">
+                    <input type="text"
+                           placeholder="Votre nom"
+                           class="bg-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:outline-none"
+                           required />
+                    <input type="email"
+                           placeholder="Votre email"
+                           class="bg-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:outline-none"
+                           required />
+                    <textarea rows="4"
+                              placeholder="Votre message"
+                              class="bg-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:outline-none"
+                              required></textarea>
+                    <button type="submit"
+                            class="mt-2 bg-primary hover:bg-primary/80 text-white font-bold py-3 rounded-lg transition-transform hover:scale-105">
+                      Envoyer
+                    </button>
+                  </form>
+                </div>
+              </section>
+              <section id="banner" class="fadse-in">
+                <div class="bg-white/5 rounded-xl">
+                  <img src="{% static 'static-img/bannerTwo.png' %}" alt="">
+                </div>
+              </section>
+            </main>
+            <!-- Footer -->
+            <footer class="bg-black/20 mt-16 w-full">
+              <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                  <div class="col-span-1 lg:col-span-2">
+                    <h3 class="text-white font-bold text-lg">Restez informé</h3>
+                    <p class="text-[#888888] mt-2 text-sm">
+                      Abonnez-vous à notre newsletter pour recevoir les dernières
+                      nouveautés sur les arrivages, les soldes et plus encore.
+                    </p>
+                    <form class="flex mt-4 gap-2">
+                      <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm"
+                             placeholder="Entrez votre e-mail"
+                             type="email" />
+                      <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/80 transition-colors"
+                              type="submit">S'abonner</button>
+                    </form>
+                  </div>
+                  <div class="col-span-1">
+                    <h4 class="font-bold text-white">Informations</h4>
+                    <ul class="space-y-2 mt-4 text-sm">
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">À propos</a>
+                      </li>
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Contact</a>
+                      </li>
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Carrières</a>
+                      </li>
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Blog</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-span-1">
+                    <h4 class="font-bold text-white">Service Client</h4>
+                    <ul class="space-y-2 mt-4 text-sm">
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">FAQ</a>
+                      </li>
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Livraison &amp;
+                        Retours</a>
+                      </li>
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Guide des tailles</a>
+                      </li>
+                      <li>
+                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Politique de
+                        confidentialité</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-span-1">
+                    <h4 class="font-bold text-white">Suivez-nous</h4>
+                    <div class="flex space-x-4 mt-4">
+                      <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                        <svg aria-hidden="true"
+                             class="h-6 w-6"
+                             fill="currentColor"
+                             viewbox="0 0 24 24">
+                          <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
+                          </path>
+                        </svg>
+                      </a>
+                      <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                        <svg aria-hidden="true"
+                             class="h-6 w-6"
+                             fill="currentColor"
+                             viewbox="0 0 24 24">
+                          <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                          </path>
+                        </svg>
+                      </a>
+                      <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                        <svg aria-hidden="true"
+                             class="h-6 w-6"
+                             fill="currentColor"
+                             viewbox="0 0 24 24">
+                          <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
+                          </path>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="border-t border-white/10 mt-8 pt-6 text-center text-sm text-[#888888]">
+                  <p>© 2025 CELEBOBO. Tous droits réservés.</p>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Bottom Tab Bar -->
+    <nav id="mobileTabbar"
+         class="mobile-tabbar md:hidden flex justify-around py-2 text-white">
+      <button class="flex flex-col items-center text-xs text-primary">
+        <span class="material-symbols-outlined text-2xl"
+              style="font-variation-settings: 'FILL' 1">storefront</span>
+        Shop
+      </button>
+      <button class="flex flex-col items-center text-xs">
+        <span class="material-symbols-outlined text-2xl">shopping_bag</span>
+        Panier
+      </button>
+      <button class="flex flex-col items-center text-xs ">
+        <span class="material-symbols-outlined text-2xl">assistant</span>
+        Assistant
+      </button>
+      <button class="relative flex flex-col items-center text-xs">
+        <span class="material-symbols-outlined text-2xl">forum</span>
+        Messages
+        <!-- BADGE -->
+        <span id="messagesCounter"
+              class="absolute -top-1 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white hidden">
+        </span>
+      </button>
+      <button class="flex flex-col items-center text-xs ">
+        <span class="material-symbols-outlined text-2xl">person</span>
+        Profil
+      </button>
+    </nav>
+    <!-- Scripts -->
+    <script>
+    /* === Particules === */
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let w, h;
+
+    function init() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      particles = Array.from({ length: 80 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.5 + 0.5,
+        dx: (Math.random() - 0.5) * 0.2,
+        dy: (Math.random() - 0.5) * 0.2,
+      }));
+    }
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > w) p.dx *= -1;
+        if (p.y < 0 || p.y > h) p.dy *= -1;
+      });
+      requestAnimationFrame(draw);
+    }
+    window.addEventListener("resize", init);
+    init();
+    draw();
+
+    /* === Tab bar hide on scroll === */
+    let lastScroll = 0;
+    const tabbar = document.getElementById("mobileTabbar");
+    window.addEventListener("scroll", () => {
+      const curr = window.scrollY;
+      if (curr > lastScroll && curr > 100) tabbar.classList.add("hide");
+      else tabbar.classList.remove("hide");
+      lastScroll = curr;
+    });
+
+    /* === Fade-in on scroll === */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) e.target.classList.add("visible");
+      });
+    });
+    document
+      .querySelectorAll(".fade-in")
+      .forEach((el) => observer.observe(el));
+    </script>
+    <!-- JS -->
+    <script>
+    // Mobile search open/close
+    const searchBtn = document.getElementById("mobileSearchBtn");
+    const searchContainer = document.getElementById("mobileSearchContainer");
+
+    searchBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      searchContainer.classList.toggle("active");
+      const input = searchContainer.querySelector("input");
+      if (searchContainer.classList.contains("active")) input.focus();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
+        searchContainer.classList.remove("active");
+      }
+    });
+
+    // ===== Messages counter  =====
+        document.addEventListener("DOMContentLoaded", () => {
+            const count = 0;  // Remplace par ta valeur Django : {{ unread_message_count }}
+            const badge = document.getElementById("messagesCounter");
+
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        });
+    </script>
+  </body>
+</html>

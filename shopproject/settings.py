@@ -13,12 +13,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import cloudinary
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / ".env") 
+load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -26,48 +26,46 @@ load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
 DEBUG = False
 
-#ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
-INSTALLED_APPS = [    
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    
-    'cloudinary_storage',  
+
+    'cloudinary_storage',
     'django.contrib.staticfiles',
-    
+
     'django.contrib.sites',
-   
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    
+
     'accounts',
     'shop',
     'gestion',
 
-    'cloudinary',  # APRÈS staticfiles
+    'cloudinary',
+    'widget_tweaks',
 ]
 
-# Configuration Cloudinary
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),                                                                             
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# Configuration de Cloudinary
 cloudinary.config(
     cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
     api_key=os.environ.get('CLOUDINARY_API_KEY'),
     api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
 )
 
-# Stockage des fichiers media sur Cloudinary (Django 5.2+)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -121,7 +119,7 @@ DATABASES = {
         'USER': 'avnadmin',
         'PASSWORD': 'AVNS_h-h3R0ygwjOsPqDausK',
         'HOST': 'mt-base-cikuruspaces.c.aivencloud.com',
-        'PORT': '17101',  
+        'PORT': '17101',
     }
 }
 
@@ -145,19 +143,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 LANGUAGE_CODE = 'fr'
-TIME_ZONE = 'Africa/Kigali' 
+TIME_ZONE = 'Africa/Kigali'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles'),)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build','staticfiles')
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles'),)
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build','staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 ROOT_URLCONF = 'shopproject.urls'
 
-# Authentication
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -170,16 +168,13 @@ ACCOUNT_EMAIL_VERIFICATION = 'optional'
 # Email backend en dev
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Templates (assure-toi que context processors contiennent request)
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
     'django.template.context_processors.request',
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL = '/'  
+LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_ADAPTER = 'gestion.adapters.CustomAccountAdapter'
 
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
-
-

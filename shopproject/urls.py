@@ -18,21 +18,47 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.shortcuts import render
 
 urlpatterns = [
-    
+
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')), 
+    path('accounts/', include('allauth.urls')),
     path('', include('shop.urls')),
     path('cele-admin/', include('gestion.urls')),
 
-    
+
 ]
+
+# ---- ERROR HANDLERS ----
+
+
+def error_403(request, exception=None):
+    return render(request, 'error/403.html', status=403)
+
+
+def error_404(request, exception=None):
+    return render(request, 'error/404.html', status=404)
+
+
+def error_500(request):
+    return render(request, 'error/500.html', status=500)
+
+
+def error_502(request, exception=None):
+    return render(request, 'error/502.html', status=502)
+
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
-admin.site.site_header="CELEBOBO"
-admin.site.site_title="celestin"
-admin.site.index_title="L'administrateur General de CELEBOBO Business"
+admin.site.site_header = "CELEBOBO"
+admin.site.site_title = "celestin"
+admin.site.index_title = "L'administrateur General de CELEBOBO Business"
+
+# ---- REGISTER HANDLERS ----
+handler403 = 'shopproject.urls.error_403'
+handler404 = 'shopproject.urls.error_404'
+handler500 = 'shopproject.urls.error_500'
+handler502 = 'shopproject.urls.error_502'

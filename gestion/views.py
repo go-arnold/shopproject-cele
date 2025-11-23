@@ -25,19 +25,15 @@ def dashboard(request):
 
     ventes = Vente.objects.select_related('produit', 'produit__category_fk')
 
-    # --- Mois courant & précédent ---
     ventes_mois_courant = ventes.filter(
         date_achat__month=current_month,
         date_achat__year=current_year
     )
-
     ventes_mois_precedent = ventes.filter(
         date_achat__month=(current_month - 1 if current_month > 1 else 12),
         date_achat__year=(current_year if current_month > 1 else current_year - 1)
     )
-
-    # --- a. Croissance potentielle (profit) ---
-    # CORRECTION: Ajouter output_field pour éviter le mélange de types
+    
     profit_actuel = ventes_mois_courant.aggregate(
         total_profit=Sum(
             F('price_final') - F('produit__price_primary'),
@@ -100,8 +96,7 @@ def dashboard(request):
         .annotate(total=Coalesce(Sum('price_final'), 0, output_field=DecimalField()))
         .order_by('method')
     )
-
-    # On convertit en un format JSON utilisable dans JS
+    
     methods_labels = [item['method'] for item in methodes_stats]
     methods_data = [float(item['total']) for item in methodes_stats]
 
@@ -128,37 +123,32 @@ def dashboard(request):
     return render(request, 'gestion/dashboard1.html', context)
 
     
-# 🟢 Liste des produits
 @admin_required
 def admin_products(request):
     """Liste tous les produits avec pagination"""
     products_list = Product.objects.select_related('category_fk').order_by('-date_added')
-
-    # Recherche
+    
     search_query = request.GET.get('search', '')
     if search_query:
         products_list = products_list.filter(name__icontains=search_query)
-
-    # Filtre par catégorie
+    
     category_filter = request.GET.get('category', '')
     if category_filter:
         products_list = products_list.filter(category_fk__id=category_filter)
-
-    # Pagination
+    
     paginator = Paginator(products_list, 12)
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
     context = {
         'products': products,
-        'categories': Category.objects.all(),  # 🔄 récupérées depuis le modèle
+        'categories': Category.objects.all(),  
         'search_query': search_query,
         'category_filter': category_filter,
     }
     return render(request, 'gestion/admin_products.html', context)
 
 
-# 🟢 Ajouter un produit
 @admin_required
 def add_product(request):
     """Ajouter un nouveau produit"""
@@ -172,7 +162,7 @@ def add_product(request):
                 description=request.POST.get('description'),
                 price=request.POST.get('price'),
                 price_primary=request.POST.get('price_primary') or None,
-                category_fk=category,  # 🔄 liaison via FK
+                category_fk=category,  
                 badge=request.POST.get('badge'),
                 rating=request.POST.get('rating', 0),
                 reviews=request.POST.get('reviews', 0),
@@ -184,8 +174,7 @@ def add_product(request):
 
             product.full_clean()
             product.save()
-
-            # Ajout des features
+            
             features = request.POST.getlist('features[]')
             for feature_name in features:
                 if feature_name.strip():
@@ -198,12 +187,10 @@ def add_product(request):
             messages.error(request, f'Erreur lors de l\'ajout du produit : {str(e)}')
 
     context = {
-        'categories': Category.objects.all(),  # 🔄 dans le template, ce sera un select dynamique
+        'categories': Category.objects.all(), 
     }
     return render(request, 'gestion/add_product.html', context)
 
-
-# 🟢 Modifier un produit
 @admin_required
 def edit_product(request, product_id):
     """Modifier un produit existant"""
@@ -229,7 +216,6 @@ def edit_product(request, product_id):
             product.full_clean()
             product.save()
 
-            # Supprime les anciennes features avant de recréer
             product.features.all().delete()
             features = request.POST.getlist('features[]')
             for feature_name in features:
@@ -244,12 +230,11 @@ def edit_product(request, product_id):
 
     context = {
         'product': product,
-        'categories': Category.objects.all(),  # 🔄 liste déroulante
+        'categories': Category.objects.all(),  
     }
     return render(request, 'gestion/edit_product.html', context)
 
 
-# 🟢 Supprimer un produit
 @admin_required
 def delete_product(request, product_id):
     """Supprimer un produit"""
@@ -269,13 +254,10 @@ def delete_product(request, product_id):
 
     return render(request, 'gestion/delete_product.html', {'product': product})
 
-
-# 🟢 Voir les détails d’un produit
 @admin_required
 def view_product(request, product_id):
     """Voir les détails d'un produit"""
     product = get_object_or_404(Product.objects.select_related('category_fk'), id=product_id)
-
     context = {
         'product': product,
     }
@@ -310,14 +292,11 @@ def ajouter_vente(request):
         except Exception as e:
             messages.error(request, f'Erreur : {str(e)}')
 
-    # Si GET → afficher le formulaire
     context = {
         'methods': Vente.METHODS_CHOICES,
         'produits': Product.objects.all(),  
     }
     return render(request, 'gestion/ajouter_vente.html', context)
-
-
 
 @admin_required
 def get_product_details(request, product_id):

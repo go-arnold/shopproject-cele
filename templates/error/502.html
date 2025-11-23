@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <link rel="icon" type="image/png" sizes="32x32" href="sicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="sicon-16.png">
+  <title>502 Bad Gateway</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#640c60",
+            "background-light": "#f8f6f8",
+            "background-dark": "#211120",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+  </style>
+</head>
+
+<body class="font-display">
+  <div
+    class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden text-gray-800 dark:text-gray-200">
+    <div class="layout-container flex h-full grow flex-col">
+      <div class="flex flex-1 justify-center py-5 px-4 sm:px-6 lg:px-8">
+        <div class="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
+          <!-- HEADER -->
+          <header class="flex-col px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
+              <a class="hover:text-white transition-colors" href="#">Aide</a>
+              <a class="hover:text-white transition-colors" href="#">À propos</a>
+              <a class="hover:text-white transition-colors" href="#">Articles</a>
+            </div>
+
+            <div class="flex items-center gap-6 lg:gap-8 py-4">
+              <!-- LOGO -->
+              <div class="flex items-center gap-2.5">
+                <a href="#">
+                  <img src="logo-white.png" alt="CELEBOBO" class="h-10 sm:h-12 lg:h-14 w-auto object-contain">
+                </a>
+              </div>
+
+              <!-- Desktop Search -->
+              <div class="flex-1 max-w-2xl mx-auto hidden md:block">
+                <div class="relative">
+                  <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                  <input
+                    class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                    placeholder="Rechercher un produit..." type="search" />
+                </div>
+              </div>
+
+              <!-- Icons -->
+              <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                <!-- Mobile Search Button -->
+                <button id="mobileSearchBtn"
+                  class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                  <span class="material-symbols-outlined text-xl">search</span>
+                </button>
+
+                <!-- Desktop: Button S'inscrire -->
+                <button
+                  class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
+                  S'inscrire / Se connecter
+                </button>
+
+                <!-- Favoris -->
+                <button
+                  class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                  <span class="material-symbols-outlined text-xl">favorite</span>
+                </button>
+
+                <!-- Messages -->
+                <button
+                  class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                  <span class="material-symbols-outlined text-xl">mail</span>
+                  <span
+                    class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
+                </button>
+
+                <!-- Panier -->
+                <button
+                  class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                  <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                </button>
+
+                <!-- Mobile: Icône de profil -->
+                <button
+                  class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 bg-primary text-white  hover:bg-primary/90 transition">
+                  <span class="material-symbols-outlined text-2xl">person</span>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <!-- MOBILE SEARCH -->
+          <div id="mobileSearchContainer">
+            <div class="relative">
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+              <input
+                class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="Rechercher un produit..." type="search" />
+            </div>
+          </div>
+          <main class="flex flex-1 flex-col items-center justify-center text-center p-4">
+            <div class="flex flex-col items-center gap-8 max-w-lg">
+              <span class="material-symbols-outlined text-7xl text-primary" data-icon="cloud_off">cloud_off</span>
+              <div class="flex flex-col gap-3">
+                <p class="text-white text-4xl sm:text-5xl font-black leading-tight tracking-[-0.033em]">502 - Bad
+                  Gateway</p>
+                <p class="text-[#b89db7] text-base font-normal leading-normal">Désolé, une erreur de serveur s'est
+                  produite. Veuillez réessayer plus tard.</p>
+              </div>
+              <div class="flex w-full flex-col sm:flex-row gap-3 px-4 py-3 max-w-md">
+                <button
+                  class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-100">
+                  <span class="truncate">Actualiser la page</span>
+                </button>
+                <button
+                  class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-primary/20 text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-100">
+                  <span class="truncate">Retour à l'accueil</span>
+                </button>
+              </div>
+            </div>
+          </main>
+          <footer class="flex flex-col gap-6 px-5 py-10 text-center @container border-t border-solid border-white/10">
+            <div
+              class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-6 @[480px]:justify-around">
+              <a class="text-[#b89db7] text-base font-normal leading-normal min-w-40 hover:text-white transition-colors"
+                href="#">Homepage</a>
+              <a class="text-[#b89db7] text-base font-normal leading-normal min-w-40 hover:text-white transition-colors"
+                href="#">Contact Support</a>
+            </div>
+            <p class="text-[#b89db7] text-sm font-normal leading-normal">© 2025 E-commerce Brand. All rights reserved.
+            </p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,772 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>À Propos - Celebobo</title>
+        <link rel="icon"
+              type="image/x-icon"
+              sizes="32x32"
+              href="{% static 'static-img/favicon.ico' %}">
+        <link rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="{% static 'static-img/sicon-32.png' %}">
+        <link rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="{% static 'static-img/sicon-16.png' %}">
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+              rel="stylesheet" />
+        <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#640D5F",
+                        "background-light": "#F5F5F5",
+                        "background-dark": "#0A0A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+        </script>
+        <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        main {
+            position: relative;
+            z-index: 20;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 28, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .mobile-tabbar.hide {
+            transform: translateY(100%);
+        }
+        </style>
+        <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Barre mobile masquée par défaut */
+        #mobileSearchContainer {
+            display: none;
+            position: fixed;
+            top: 4rem;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding: 0.75rem 1rem;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 27, 0.95);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #mobileSearchContainer.active {
+            display: block;
+            transform: translateY(0);
+        }
+
+        /* Tab-bar */
+        .mobile-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 28, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .mobile-tabbar.hide {
+            transform: translateY(100%);
+        }
+        </style>
+    </head>
+    <body class="bg-background-light dark:bg-background-dark font-display text-white">
+        <!-- Canvas particules -->
+        <canvas id="particles"></canvas>
+        <div class="relative flex flex-col min-h-screen w-full">
+            <!-- HEADER -->
+            <header class="flex-col px-4 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+                <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
+                    <a class="hover:text-white transition-colors" href="#">Aide</a>
+                    <a class="hover:text-white transition-colors text-primary"
+                       href="{% url 'about_us' %}">À propos</a>
+                    <a class="hover:text-white transition-colors" href="#">Articles</a>
+                </div>
+                <div class="flex items-center gap-6 lg:gap-8 py-4">
+                    <!-- LOGO -->
+                    <div class="flex items-center gap-2.5">
+                        <a href="{% url 'home' %}">
+                            <img src="{% static 'static-img/logo-white.png' %}"
+                                 alt="CELEBOBO"
+                                 class="h-10 sm:h-12 lg:h-14 w-auto object-contain">
+                        </a>
+                    </div>
+                    <!-- Desktop Search -->
+                    <form method="GET"
+                          action="{% url 'results' %}"
+                          class="flex-1 max-w-2xl mx-auto hidden md:block">
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                            <input name="q"
+                                   class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                   placeholder="Rechercher un produit..."
+                                   type="search" />
+                        </div>
+                    </form>
+                    <!-- Icons -->
+                    <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                        <!-- Mobile Search Button -->
+                        <button id="mobileSearchBtn"
+                                class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <span class="material-symbols-outlined text-xl">search</span>
+                        </button>
+                        {% if not user.is_authenticated %}
+                            <!-- Desktop: Button S'inscrire -->
+                            <a href="{% url 'account_login' %}">
+                                <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
+                                    S'inscrire / Se connecter
+                                </button>
+                            </a>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                            <!-- Favoris -->
+                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="{% url 'favorites_list' %}"><span class="material-symbols-outlined text-xl">favorite</span></a>
+                            </button>
+                            <!-- Messages -->
+                            <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
+                                <span class="material-symbols-outlined text-xl">mail</span>
+                                <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
+                            </button>
+                        {% endif %}
+                        <!-- Panier -->
+                        <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                        </button>
+                        {% if user.is_authenticated %}
+                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
+                                <a href="#"><span class="material-symbols-outlined text-2xl">person</span></a>
+                            </button>
+                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href= "{% url 'account_logout' %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke-width="1.5"
+                                         stroke="currentColor"
+                                         class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                    </svg>
+                                </a>
+                            </button>
+                        {% endif %}
+                        <!-- Mobile: Icône de profil -->
+                        {% if not user.is_authenticated %}
+                            <button class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 bg-primary text-white  hover:bg-primary/90 transition">
+                                <a href="{% url 'account_login' %}"><span class="material-symbols-outlined text-2xl">person</span></a>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </header>
+            <!-- MOBILE SEARCH -->
+            <form method="GET"
+                  action="{% url 'results' %}"
+                  id="mobileSearchContainer"
+                  class="hidden px-4 py-3 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                    <input name="q"
+                           class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                           placeholder="Rechercher un produit..."
+                           type="search" />
+                </div>
+            </form>
+            <!-- MAIN -->
+            <main class="flex flex-col gap-4 sm:gap-8 lg:gap-20 py-10 sm:py-12 lg:py-16 aaaa flex-grow px-4 sm:px-10 lg:px-20 py-10  md:space-y-16">
+                <!-- HeroSection -->
+                <div class="@container">
+                    <div class="@[480px]:p-3">
+                        <div class="flex min-h-[32vh] md:min-h-[50vh] flex-col gap-3 @[480px]:gap-4 md:gap-7 @[480px]:rounded-lg items-center justify-center p-3 md:p-4 text-center bg-cover bg-center bg-no-repeat"
+                             data-alt="Abstract dark background with magenta geometric patterns"
+                             style='background-image: linear-gradient(rgba(10, 10, 26, 0.6) 0%, rgba(10, 10, 26, 0.9) 100%), url("{% static 'static-img/bannerTwo.png' %}")'>
+                            <div class="flex flex-col gap-2 md:gap-3 max-w-md md:max-w-2xl">
+                                <h1 class="text-white text-lg sm:text-xl md:text-5xl font-extrabold leading-snug md:leading-[1.15] tracking-tight">
+                                    À Propos de CELEBOBO Business
+                                </h1>
+                                <h2 class="text-white/80 text-xs sm:text-sm md:text-base font-normal leading-relaxed md:leading-normal">
+                                    Découvrez l'histoire, la mission et les personnes extraordinaires derrière nos produits.
+                                    Nous
+                                    sommes plus qu'une marque ; nous sommes un mouvement.
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mission/Vision/Values Section -->
+                <section>
+                    <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-6 pt-5 text-center">
+                        Notre Objectif
+                    </h2>
+                    <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+                        <div class="flex flex-1 gap-4 rounded-xl border border-white/10 bg-white/5 p-6 flex-col items-center text-center">
+                            <div class="text-primary text-4xl p-3 bg-primary/20 rounded-full">
+                                <span class="material-symbols-outlined !text-4xl">rocket_launch</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <h3 class="text-white text-lg md:text-xl font-bold leading-tight">Notre Mission</h3>
+                                <p class="text-[#F5F5F5]/70 text-xs sm:text-sm md:text-base font-normal leading-normal">
+                                    Fournir des produits
+                                    innovants de
+                                    haute qualité qui inspirent et enchantent nos clients chaque jour, en repoussant les
+                                    limites du
+                                    style et de la durabilité.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-1 gap-4 rounded-xl border border-white/10 bg-white/5 p-6 flex-col items-center text-center">
+                            <div class="text-primary text-4xl p-3 bg-primary/20 rounded-full">
+                                <span class="material-symbols-outlined !text-4xl">visibility</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <h3 class="text-white text-lg md:text-xl font-bold leading-tight">Notre Vision</h3>
+                                <p class="text-[#F5F5F5]/70 text-xs sm:text-sm md:text-basefont-normal leading-normal">
+                                    Être la marque la plus
+                                    fiable et la
+                                    plus appréciée de notre industrie, reconnue pour notre engagement envers l'excellence,
+                                    la
+                                    créativité et l'impact positif.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-1 gap-4 rounded-xl border border-white/10 bg-white/5 p-6 flex-col items-center text-center">
+                            <div class="text-primary text-4xl p-3 bg-primary/20 rounded-full">
+                                <span class="material-symbols-outlined !text-4xl">favorite</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <h3 class="text-white text-lg md:text-xl font-bold leading-tight">Nos Valeurs</h3>
+                                <p class="text-[#F5F5F5]/70 text-xs sm:text-sm md:text-base font-normal leading-normal">
+                                    Nous croyons en la
+                                    créativité,
+                                    l'intégrité et plaçons nos clients au cœur de tout ce que nous faisons, en favorisant
+                                    une
+                                    communauté passionnée.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Company History/Timeline -->
+                <section>
+                    <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
+                        Notre Parcours
+                    </h2>
+                    <div class="relative px-4">
+                        <div class="absolute left-1/2 top-0 h-full w-0.5 bg-white/10 transform -translate-x-1/2"></div>
+                        <div class="space-y-12">
+                            <div class="relative flex items-center w-full">
+                                <div class="w-1/2 pr-8 text-right">
+                                    <p class="text-primary font-bold">2018</p>
+                                    <h3 class="text-white text-sm sm:text-sm md:text-lg font-semibold mt-1">L'Étincelle</h3>
+                                    <p class="text-white/70 text-xs sm:text-sm md:text-base mt-1">
+                                        CELEBOBO Business est né d'une simple idée dans un
+                                        petit
+                                        garage.
+                                    </p>
+                                </div>
+                                <div class="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 size-4 rounded-full bg-primary border-4 border-background-dark">
+                                </div>
+                            </div>
+                            <div class="relative flex items-center w-full">
+                                <div class="w-1/2"></div>
+                                <div class="w-1/2 pl-8 text-left">
+                                    <p class="text-primary font-bold">2020</p>
+                                    <h3 class="text-white text-sm sm:text-sm md:text-lg font-semibold mt-1">Lancement de la Première Collection</h3>
+                                    <p class="text-white/70 text-xs sm:text-sm md:text-base mt-1">
+                                        Notre première collection officielle s'est vendue
+                                        en 24
+                                        heures.
+                                    </p>
+                                </div>
+                                <div class="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 size-4 rounded-full bg-primary border-4 border-background-dark">
+                                </div>
+                            </div>
+                            <div class="relative flex items-center w-full">
+                                <div class="w-1/2 pr-8 text-right">
+                                    <p class="text-primary font-bold">2022</p>
+                                    <h3 class="text-white text-sm sm:text-sm md:text-lg font-semibold mt-1">Expansion Nationale</h3>
+                                    <p class="text-white/70 text-xs sm:text-sm md:text-base mt-1">
+                                        Expédition étendue à plus de 50 pays dans le
+                                        monde.
+                                    </p>
+                                </div>
+                                <div class="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 size-4 rounded-full bg-primary border-4 border-background-dark">
+                                </div>
+                            </div>
+                            <div class="relative flex items-center w-full">
+                                <div class="w-1/2"></div>
+                                <div class="w-1/2 pl-8 text-left">
+                                    <p class="text-primary font-bold">2025</p>
+                                    <h3 class="text-white text-sm sm:text-sm md:text-lg font-semibold mt-1">Avenir Durable</h3>
+                                    <p class="text-white/70 text-xs sm:text-sm md:text-base mt-1">
+                                        Lancement de notre première gamme de produits 100%
+                                        recyclés.
+                                    </p>
+                                </div>
+                                <div class="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 size-4 rounded-full bg-primary border-4 border-background-dark">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Team Member Cards -->
+                <section>
+                    <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
+                        Notre Grande Équipe
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <!-- Carte membre 1 -->
+                        <div class="flex flex-col items-center text-center p-4 sm:p-6 bg-white/5 rounded-xl border border-white/10">
+                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full mb-4 border-2 border-primary w-24 h-24 sm:w-32 sm:h-32"
+                                 data-alt="Portrait of Celestin"
+                                 style='background-image: url("{% static 'static-img/patrickk.jpg' %}")'></div>
+                            <h3 class="text-white text-base sm:text-lg font-bold">Celestin C</h3>
+                            <p class="text-primary text-xs sm:text-sm font-medium">Founder &amp; CEO</p>
+                            <p class="text-white/70 text-xs sm:text-sm mt-2">
+                                Visionnaire derrière notre marque, Jane dirige avec passion et volonté d'innovation.
+                            </p>
+                        </div>
+                        <!-- Carte membre 2 -->
+                        <div class="flex flex-col items-center text-center p-4 sm:p-6 bg-white/5 rounded-xl border border-white/10">
+                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full mb-4 border-2 border-primary w-24 h-24 sm:w-32 sm:h-32"
+                                 data-alt="Portrait de John Smith"
+                                 style='background-image: url("{% static 'static-img/patrickk.jpg' %}")'></div>
+                            <h3 class="text-white text-base sm:text-lg font-bold">CPatrick P</h3>
+                            <p class="text-primary text-xs sm:text-sm font-medium">Directeur du Design</p>
+                            <p class="text-white/70 text-xs sm:text-sm mt-2">Patrick est le génie créatif qui donne vie à nos styles uniques.</p>
+                        </div>
+                        <!-- Carte membre 3 -->
+                        <div class="flex flex-col items-center text-center p-4 sm:p-6 bg-white/5 rounded-xl border border-white/10">
+                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full mb-4 border-2 border-primary w-24 h-24 sm:w-32 sm:h-32"
+                                 data-alt="Portrait d'Emily White"
+                                 style='background-image: url("{% static 'static-img/patrickk.jpg' %}")'></div>
+                            <h3 class="text-white text-base sm:text-lg font-bold">Celestin C</h3>
+                            <p class="text-primary text-xs sm:text-sm font-medium">Directrice Marketing</p>
+                            <p class="text-white/70 text-xs sm:text-sm mt-2">
+                                Celestin connecte notre histoire avec le monde, construisant notre incroyable communauté.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                <!-- Press & Partnerships -->
+                <section>
+                    <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
+                        Comme Vu Dans
+                    </h2>
+                    <div class="flex flex-wrap items-center justify-center gap-x-12 sm:gap-x-16 gap-y-8">
+                        <img alt="Vogue logo"
+                             class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                             src="https://upload.wikimedia.org/wikipedia/commons/5/54/Wiki,_wiki,_wiki,_wiki_logo.jpg">
+                        <img alt="GQ logo"
+                             class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                             src="https://upload.wikimedia.org/wikipedia/commons/5/54/Wiki,_wiki,_wiki,_wiki_logo.jpg">
+                        <img alt="Forbes logo"
+                             class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                             src="https://upload.wikimedia.org/wikipedia/commons/5/54/Wiki,_wiki,_wiki,_wiki_logo.jpg">
+                        <img alt="TechCrunch logo"
+                             class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                             src="https://upload.wikimedia.org/wikipedia/commons/5/54/Wiki,_wiki,_wiki,_wiki_logo.jpg">
+                        <img alt="Hypebeast logo"
+                             class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                             src="https://upload.wikimedia.org/wikipedia/commons/5/54/Wiki,_wiki,_wiki,_wiki_logo.jpg">
+                    </section>
+                    <!-- Contact Section -->
+                    <section>
+                        <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
+                            Contactez-Nous
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 bg-white/5 border border-white/10 rounded-xl p-6 sm:p-8 lg:p-12">
+                            <!-- Partie Contact -->
+                            <div class="flex flex-col justify-start gap-6 text-left md:text-left">
+                                <div class="flex items-center justify-start gap-4">
+                                    <span class="material-symbols-outlined text-primary text-2xl mt-1">location_on</span>
+                                    <div>
+                                        <h3 class="text-white text-sm sm:text-sm md:text-lg  font-semibold">Adresse</h3>
+                                        <p class="text-white/70 text-xs sm:text-xs md:text-sm">123 bk Ava aaa, Ibanda, Bukavu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-start gap-4">
+                                    <span class="material-symbols-outlined text-primary text-2xl mt-1">mail</span>
+                                    <div>
+                                        <h3 class="text-white text-sm sm:text-sm md:text-lg font-semibold">Courriel</h3>
+                                        <a class="text-white/70 hover:text-primary transition-colors text-xs sm:text-xs md:text-sm"
+                                           href="mailto:vente@celebobo.com">vente@celebobo.com</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-start gap-4">
+                                    <span class="material-symbols-outlined text-primary text-2xl mt-1">call</span>
+                                    <div>
+                                        <h3 class="text-white  text-sm sm:text-sm md:text-lgfont-semibold">Téléphone</h3>
+                                        <a class="text-white/70 hover:text-primary transition-colors text-xs sm:text-xs md:text-sm"
+                                           href="tel:+243970000000000">+243 970 000 000</a>
+                                    </div>
+                                </div>
+                                <div class="pt-4 mt-4 border-t border-white/10 ">
+                                    <h3 class="text-white  justify-start md:justify-start font-semibold mb-3">Suivez-Nous</h3>
+                                    <div class="flex justify-start md:justify-start gap-4">
+                                        <!-- Icônes réseaux -->
+                                        <a class="text-white/70 hover:text-primary transition-colors text-2xl"
+                                           href="#">
+                                            <!-- Facebook -->
+                                            <svg aria-hidden="true"
+                                                 class="w-6 h-6"
+                                                 fill="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                        <a class="text-white/70 hover:text-primary transition-colors text-2xl"
+                                           href="#">
+                                            <!-- Twitter -->
+                                            <svg aria-hidden="true"
+                                                 class="w-6 h-6"
+                                                 fill="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                        <a class="text-white/70 hover:text-primary transition-colors text-2xl"
+                                           href="#">
+                                            <!-- Instagram -->
+                                            <svg aria-hidden="true"
+                                                 class="w-6 h-6"
+                                                 fill="currentColor"
+                                                 viewBox="0 0 24 24">
+                                                <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.012-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zM12 7a5 5 0 100 10 5 5 0 000-10zm0-2a7 7 0 110 14 7 7 0 010-14zm6.406-1.185a1.285 1.285 0 100 2.57 1.285 1.285 0 000-2.57z" fill-rule="evenodd">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Partie Carte / Map -->
+                            <div class="w-full h-64 md:h-full rounded-lg overflow-hidden">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20712.988302704845!2d28.831891284928464!3d-2.5102360818534457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19c291ff3770a9ad%3A0xd46fd99ed32820cc!2sNyawera%20%2FBukavu%2F%20sud%20Kivu%2F%20rdc!5e0!3m2!1sfr!2srw!4v1763122882390!5m2!1sfr!2srw"
+                                        width="100%"
+                                        height="100%"
+                                        class="border-0"
+                                        allowfullscreen=""
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+                <!-- FOOTER -->
+                <footer class="bg-black/20 mt-8 lg:mt-12">
+                    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+                        <!-- Mobile: Newsletter en haut -->
+                        <div class="md:hidden mb-4">
+                            <h3 class="text-white font-bold text-sm">Restez informé</h3>
+                            <p class="text-[#888888] mt-1 text-xs">
+                                Abonnez-vous à notre newsletter pour recevoir les dernières
+                                nouveautés, Articles et plus encore.
+                            </p>
+                            <form class="flex mt-2 gap-2">
+                                <input class="form-input flex-grow w-full rounded-md text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-xs h-9"
+                                       placeholder="Entrez votre e-mail"
+                                       type="email" />
+                                <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md h-9 px-3 bg-primary text-white text-xs font-bold hover:bg-primary/80 transition-colors"
+                                        type="submit">S'abonner</button>
+                            </form>
+                        </div>
+                        <!-- Mobile: 2 colonnes Info + Service / Desktop: grille complète -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
+                            <!-- Desktop: Newsletter (caché sur mobile) -->
+                            <div class="hidden md:block col-span-1 lg:col-span-2">
+                                <h3 class="text-white font-bold text-base">Restez informé</h3>
+                                <p class="text-[#888888] mt-2 text-sm">
+                                    Abonnez-vous à notre newsletter pour recevoir les dernières
+                                    nouveautés, Articles et plus encore.
+                                </p>
+                                <form class="flex mt-3 gap-2">
+                                    <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm h-10"
+                                           placeholder="Entrez votre e-mail"
+                                           type="email" />
+                                    <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/80 transition-colors"
+                                            type="submit">S'abonner</button>
+                                </form>
+                            </div>
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-white text-sm lg:text-base">Information</h4>
+                                <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">À propos de
+                                        nous</a>
+                                    </li>
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Contact</a>
+                                    </li>
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Carrières</a>
+                                    </li>
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Blog</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-white text-sm lg:text-base">Service client</h4>
+                                <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">FAQ</a>
+                                    </li>
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Livraison &amp;
+                                        Retours</a>
+                                    </li>
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Guide des
+                                        tailles</a>
+                                    </li>
+                                    <li>
+                                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Politique de
+                                        confidentialité</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Desktop: Suivez-nous dans la grille / Mobile: caché -->
+                            <div class="hidden md:block col-span-1">
+                                <h4 class="font-bold text-white text-base">Suivez-nous</h4>
+                                <div class="flex space-x-4 mt-3">
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                        <svg aria-hidden="true"
+                                             class="h-6 w-6"
+                                             fill="currentColor"
+                                             viewbox="0 0 24 24">
+                                            <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                        <svg aria-hidden="true"
+                                             class="h-6 w-6"
+                                             fill="currentColor"
+                                             viewbox="0 0 24 24">
+                                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                        <svg aria-hidden="true"
+                                             class="h-6 w-6"
+                                             fill="currentColor"
+                                             viewbox="0 0 24 24">
+                                            <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Mobile: Suivez-nous en bas -->
+                        <div class="md:hidden mt-4">
+                            <h4 class="font-bold text-white text-sm">Suivez-nous</h4>
+                            <div class="flex space-x-3 mt-2">
+                                <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                    <svg aria-hidden="true"
+                                         class="h-5 w-5"
+                                         fill="currentColor"
+                                         viewbox="0 0 24 24">
+                                        <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
+                                        </path>
+                                    </svg>
+                                </a>
+                                <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                    <svg aria-hidden="true"
+                                         class="h-5 w-5"
+                                         fill="currentColor"
+                                         viewbox="0 0 24 24">
+                                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                        </path>
+                                    </svg>
+                                </a>
+                                <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                    <svg aria-hidden="true"
+                                         class="h-5 w-5"
+                                         fill="currentColor"
+                                         viewbox="0 0 24 24">
+                                        <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
+                                        </path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/10 mt-4 lg:mt-6 pt-3 lg:pt-5 text-center text-xs lg:text-sm text-[#888888]">
+                            <p>© 2025 CELEBOBO. Tous droits réservés.</p>
+                        </div>
+                    </div>
+                </footer>
+                <!-- TAB-BAR MOBILE -->
+                <nav id="mobileTabbar"
+                     class="mobile-tabbar md:hidden flex justify-around py-2 text-white">
+                    <button class="flex flex-col items-center text-xs text-primary">
+                        <span class="material-symbols-outlined text-2xl"
+                              style="font-variation-settings: 'FILL' 1">storefront</span>
+                        Shop
+                    </button>
+                    <button class="flex flex-col items-center text-xs">
+                        <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+                        Panier
+                    </button>
+                    <button class="flex flex-col items-center text-xs ">
+                        <span class="material-symbols-outlined text-2xl">assistant</span>
+                        Assistant
+                    </button>
+                    <button class="flex flex-col items-center text-xs">
+                        <span class="material-symbols-outlined text-2xl">forum</span>
+                        Messages
+                    </button>
+                    <button class="flex flex-col items-center text-xs">
+                        <span class="material-symbols-outlined text-2xl">person</span>
+                        Profil
+                    </button>
+                </nav>
+            </div>
+            <!-- JS -->
+            <script>
+        /* === Particules === */
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+        function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+        function initParticles() {
+            particles = [];
+            const count = Math.round((W * H) / 90000);
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    r: Math.random() * 1.4 + 0.4,
+                    dx: (Math.random() - 0.5) * 0.15,
+                    dy: (Math.random() - 0.5) * 0.15,
+                    a: 0.08 + Math.random() * 0.18
+                });
+            }
+        }
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0 || p.x > W) p.dx *= -1;
+                if (p.y < 0 || p.y > H) p.dy *= -1;
+            });
+            requestAnimationFrame(draw);
+        }
+        resize(); initParticles(); draw();
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+
+        /* === Tab-bar hide on scroll === */
+        let lastScroll = 0; const tab = document.getElementById('mobileTabbar');
+        window.addEventListener('scroll', () => {
+            const y = scrollY;
+            if (y > lastScroll && y > 100) tab.classList.add('hide');
+            else tab.classList.remove('hide');
+            lastScroll = y;
+        });
+
+        /* === Fade-in on scroll === */
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        });
+        document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+            </script>
+            <!-- JS -->
+            <script>
+        // Mobile search open/close
+        const searchBtn = document.getElementById("mobileSearchBtn");
+        const searchContainer = document.getElementById("mobileSearchContainer");
+
+        searchBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            searchContainer.classList.toggle("active");
+            const input = searchContainer.querySelector("input");
+            if (searchContainer.classList.contains("active")) input.focus();
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
+                searchContainer.classList.remove("active");
+            }
+        });
+
+
+            </script>
+        </body>
+    </html>

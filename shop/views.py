@@ -23,8 +23,28 @@ def homeVue(request):
     - `categories`: QuerySet de `Category.objects.all()`
     """
     categories = Category.objects.all()
+    new_products = Product.objects.order_by('-date_added')[:9]
+    single_product_test = Product.objects.first()
+    best_sold_products = (
+        Product.objects
+        .annotate(sales_count=Count('ventes'))
+        .order_by('-sales_count')[:4]
+    )
+
+    if request.user.is_authenticated:
+        for p in best_sold_products:
+            p.is_favorite = FavoriteProduct.objects.filter(
+                utilisateur=request.user,
+                produit=p
+            ).exists()
+    else:
+        for p in best_sold_products:
+            p.is_favorite = False
     context = {
         'categories': categories,
+        'new_products': new_products,
+        'producte': single_product_test,
+        'best_sold_products': best_sold_products,
     }
     return render(request, 'shop/homepage.html', context)
 
@@ -232,16 +252,16 @@ def productVue(request, pk):
     similar_pks = list(similar_qs.values_list('pk', flat=True))
     sampled_pks = []
     if similar_pks:
-        sample_count = min(4, len(similar_pks))
+        sample_count = min(6, len(similar_pks))
         sampled_pks = random.sample(similar_pks, sample_count)
         similar_products = list(Product.objects.filter(pk__in=sampled_pks))
 
     # If we don't have 4 similar products from the same category, fill the rest
     # with random products from the rest of the catalogue (excluding current and
     # already selected products). This ensures `similar_products` contains up to
-    # 4 items whenever possible.
-    if len(similar_products) < 4:
-        needed = 4 - len(similar_products)
+    # 6 items whenever possible.
+    if len(similar_products) < 6:
+        needed = 6 - len(similar_products)
         other_qs = Product.objects.exclude(pk=product.pk)
         if sampled_pks:
             other_qs = other_qs.exclude(pk__in=sampled_pks)
@@ -434,6 +454,16 @@ def favorites_list(request):
     }
 
     return render(request, "shop/favorite.html", context)
+
+
+def aboutUs(request):
+    """Rend la page 'À propos'."""
+    return render(request, 'shop/about.html')
+
+
+def cart(request):
+    """Rend la page du panier."""
+    return render(request, 'shop/cart.html')
 
 
 """

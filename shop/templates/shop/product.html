@@ -200,7 +200,8 @@
             <header class="site-header flex-col px-4 sm:px-6 lg:px-8 fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-background-light dark:bg-background-dark">
                 <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
                     <a class="hover:text-white transition-colors" href="#">Aide</a>
-                    <a class="hover:text-white transition-colors" href="#">À propos</a>
+                    <a class="hover:text-white transition-colors"
+                       href="{% url 'about_us' %}">À propos</a>
                     <a class="hover:text-white transition-colors" href="#">Articles</a>
                 </div>
                 <div class="flex items-center gap-6 lg:gap-8 py-4">
@@ -293,7 +294,7 @@
                            type="search" />
                 </div>
             </form>
-            <!-- MAIN (particles are under this because canvas z-index is 0 and main z-index > 0) -->
+            <!-- MAIN (-->
             <main class="px-4 sm:px-10 lg:px-20 py-8 relative z-20 mt-8">
                 <div class="max-w-7xl mx-auto">
                     <!-- Fil d'Ariane -->
@@ -304,12 +305,11 @@
                         <span class="text-white/60">/</span>
                         <span class="text-white">{{ product.name }}</span>
                     </div>
-                    <!-- Product Section -->
-                    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+                    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mt-4">
                         <!-- Left: gallery -->
-                        <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-2 lg:gap-3">
                             <!-- Main image (large chosen) -->
-                            <div class="w-full bg-secondary-dark rounded-xl overflow-hidden aspect-[16/9] flex items-center justify-center">
+                            <div class="w-full bg-secondary-dark rounded-lg overflow-hidden aspect-[16/9] flex items-center justify-center">
                                 <img id="mainImage"
                                      src="{{ product.image.url }}"
                                      alt="Product main"
@@ -317,41 +317,41 @@
                             </div>
                             <!-- Thumbnails (one chosen large by CSS) -->
                             {% if product.image_one and product.image_two and product.image_three %}
-                                <div class="grid grid-cols-4 gap-4">
+                                <div class="grid grid-cols-4 gap-2 lg:gap-3">
                                     <!-- markup: data-src to swap main image; the first thumb is marked active -->
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square border-2 border-primary thumb-active"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square border-2 border-primary thumb-active"
                                             data-src="{{ product.image.url }}"
                                             style="background-image: url('{{ product.image.url }}')"
                                             aria-label="View image 1"></button>
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square opacity-60 hover:opacity-100 transition-opacity"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square opacity-60 hover:opacity-100 transition-opacity"
                                             data-src="{{ product.image_one.url }}"
                                             style="background-image: url('{{ product.image_one.url }}')"
                                             aria-label="View image 2"></button>
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square opacity-60 hover:opacity-100 transition-opacity"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square opacity-60 hover:opacity-100 transition-opacity"
                                             data-src="{{ product.image_two.url }}"
                                             style="background-image: url('{{ product.image_two.url }}')"
                                             aria-label="View image 3"></button>
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square opacity-60 hover:opacity-100 transition-opacity"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square opacity-60 hover:opacity-100 transition-opacity"
                                             data-src="{{ product.image_three.url }}"
                                             style="background-image: url('{{ product.image_three.url }}')"
                                             aria-label="View image 4"></button>
                                 </div>
                             {% else %}
-                                <div class="grid grid-cols-4 gap-4">
+                                <div class="grid grid-cols-4 gap-2 lg:gap-3">
                                     <!-- markup: data-src to swap main image; the first thumb is marked active -->
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square border-2 border-primary thumb-active"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square border-2 border-primary thumb-active"
                                             data-src="{{ product.image.url }}"
                                             style="background-image: url('{{ product.image.url }}')"
                                             aria-label="View image 1"></button>
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square opacity-60 hover:opacity-100 transition-opacity"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square opacity-60 hover:opacity-100 transition-opacity"
                                             data-src="{{ product.image.url }}"
                                             style="background-image: url('{{ product.image.url }}')"
                                             aria-label="View image 2"></button>
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square opacity-60 hover:opacity-100 transition-opacity"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square opacity-60 hover:opacity-100 transition-opacity"
                                             data-src="{{ product.image.url }}"
                                             style="background-image: url('{{ product.image.url }}')"
                                             aria-label="View image 3"></button>
-                                    <button class="thumb bg-center bg-cover rounded-lg aspect-square opacity-60 hover:opacity-100 transition-opacity"
+                                    <button class="thumb bg-center bg-cover rounded-md aspect-square opacity-60 hover:opacity-100 transition-opacity"
                                             data-src="{{ product.image.url }}"
                                             style="background-image: url('{{ product.image.url }}')"
                                             aria-label="View image 4"></button>
@@ -359,61 +359,65 @@
                             {% endif %}
                         </div>
                         <!-- Right: product info & actions -->
-                        <div class="flex flex-col gap-6 py-4">
+                        <div class="flex flex-col gap-3 lg:gap-4 py-2 lg:py-3">
                             <div>
-                                <p class="text-primary text-sm font-bold uppercase tracking-wider">Celebobo Original</p>
-                                <h1 class="text-white text-4xl lg:text-5xl font-black leading-tight">{{ product.name }}</h1>
-                                <p class="text-white/70 mt-2">{{ product.description }}</p>
+                                <p class="text-primary text-[10px] lg:text-xs font-bold uppercase tracking-wider">Celebobo Original</p>
+                                <h1 class="text-white text-2xl lg:text-3xl font-black leading-tight">{{ product.name }}</h1>
+                                <p class="text-white/70 text-xs lg:text-sm mt-1">{{ product.description }}</p>
                             </div>
-                            <div class="flex items-center gap-4">
-                                <p class="text-white text-3xl font-bold">{{ product.price }} $</p>
-                                <p class="text-white/50 text-xl line-through">{{ product.price }} $</p>
+                            <div class="flex items-center gap-2 lg:gap-3">
+                                <p class="text-white text-xl lg:text-2xl font-bold">{{ product.price }} $</p>
+                                <p class="text-white/50 text-sm lg:text-base line-through">{{ product.price }} $</p>
                             </div>
-                            <div class="w-full h-px bg-white/10 my-2"></div>
+                            <div class="w-full h-px bg-white/10 my-1"></div>
                             <!-- Size selector -->
                             <div>
-                                <p class="text-white text-sm font-semibold mb-2">Taille</p>
-                                <div id="sizes" class="flex flex-wrap gap-3">
+                                <p class="text-white text-xs lg:text-sm font-semibold mb-1.5">Variétés</p>
+                                <div id="sizes" class="flex flex-wrap gap-2">
                                     {% for ft in product_data.features %}
-                                        <button class="size-btn flex items-center justify-center rounded-lg h-10 min-w-[56px] px-4 bg-secondary-dark text-white text-sm">
+                                        <button class="size-btn flex items-center justify-center rounded-md h-8 lg:h-9 min-w-[48px] px-3 bg-secondary-dark text-white text-xs lg:text-sm">
                                             {{ ft }}
                                         </button>
                                     {% endfor %}
-                                    <button class="size-btn flex items-center justify-center rounded-lg h-10 min-w-[56px] px-4 bg-primary text-white text-sm"
+                                    <button class="size-btn flex items-center justify-center rounded-md h-8 lg:h-9 min-w-[48px] px-3 bg-primary text-white text-xs lg:text-sm"
                                             data-active>M</button>
                                 </div>
                             </div>
                             <!-- Quantity -->
                             <div>
-                                <p class="text-white text-sm font-semibold mb-2">Quantité</p>
-                                <div class="inline-flex items-center rounded-lg bg-secondary-dark">
+                                <p class="text-white text-xs lg:text-sm font-semibold mb-1.5">Quantité</p>
+                                <div class="inline-flex items-center rounded-md bg-secondary-dark">
                                     <button id="qtyMinus"
-                                            class="px-3 py-2 text-white/60 hover:text-white transition">-</button>
+                                            class="px-2.5 py-1.5 text-white/60 hover:text-white transition text-sm lg:text-base">
+                                        -
+                                    </button>
                                     <input id="qtyInput"
-                                           class="w-14 h-10 bg-transparent border-0 text-white text-center"
+                                           class="w-12 h-8 lg:h-9 bg-transparent border-0 text-white text-center text-sm lg:text-base"
                                            type="text"
                                            inputmode="numeric"
                                            value="1"
                                            aria-label="Quantity" />
                                     <button id="qtyPlus"
-                                            class="px-3 py-2 text-white/60 hover:text-white transition">+</button>
+                                            class="px-2.5 py-1.5 text-white/60 hover:text-white transition text-sm lg:text-base">
+                                        +
+                                    </button>
                                 </div>
                             </div>
                             <!-- Actions -->
-                            <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                            <div class="flex flex-col sm:flex-row gap-2 lg:gap-3 mt-2">
                                 <button id="addToCart"
-                                        class="flex-1 flex items-center justify-center gap-2 rounded-lg h-12 px-6 bg-primary text-white text-base font-bold hover:bg-primary/80 transition">
-                                    <span class="material-symbols-outlined">shopping_cart</span>
+                                        class="flex items-center justify-center gap-1 rounded-md h-9 lg:h-11 px-3 lg:px-4 bg-primary text-white text-xs lg:text-base font-bold hover:bg-primary/80 transition">
+                                    <span class="material-symbols-outlined text-base lg:text-xl">shopping_cart</span>
                                     Ajouter au panier
                                 </button>
                                 {% if user.is_authenticated %}
-                                    <button class="favorite-btn flex items-center justify-center rounded-lg h-12 w-full sm:w-12 bg-secondary-dark text-primary hover:bg-primary/30 transition"
+                                    <button class="favorite-btn flex items-center justify-center rounded-md h-10 lg:h-11 w-full sm:w-10 lg:sm:w-11 bg-secondary-dark text-primary hover:bg-primary/30 transition"
                                             data-product="{{ product.id }}">
                                         {% if product.is_favorite %}
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  viewBox="0 0 24 24"
                                                  fill="currentColor"
-                                                 class="size-6">
+                                                 class="size-5 lg:size-5">
                                                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                                             </svg>
                                         {% else %}
@@ -422,7 +426,7 @@
                                                  viewBox="0 0 24 24"
                                                  stroke-width="1.5"
                                                  stroke="currentColor"
-                                                 class="size-6">
+                                                 class="size-5 lg:size-5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                             </svg>
                                         {% endif %}
@@ -431,183 +435,183 @@
                             </div>
                         </div>
                     </section>
-                    <!-- Details accordion (unchanged, left for brevity) -->
-                    <section class="mt-16 lg:mt-24">
+                    <!-- Details accordion  -->
+                    <section class="mt-8 lg:mt-12">
                         <div class="w-full border-t border-white/10">
-                            <details class="group border-b border-white/10 py-5" open>
-                                <summary class="flex cursor-pointer items-center justify-between text-lg font-semibold text-white">
+                            <details class="group border-b border-white/10 py-3" open>
+                                <summary class="flex cursor-pointer items-center justify-between text-sm lg:text-base font-semibold text-white">
                                     Description
-                                    <span class="transition group-open:rotate-180"><span class="material-symbols-outlined">expand_more</span></span>
+                                    <span class="transition group-open:rotate-180"><span class="material-symbols-outlined text-xl">expand_more</span></span>
                                 </summary>
-                                <p class="group-open:animate-fadeIn mt-4 text-white/70">{{ product.long_description }}</p>
+                                <p class="group-open:animate-fadeIn mt-2 text-sm lg:text-base text-white/70">{{ product.long_description }}</p>
                             </details>
-                            <details class="group border-b border-white/10 py-5">
-                                <summary class="flex cursor-pointer items-center justify-between text-lg font-semibold text-white">
+                            <details class="group border-b border-white/10 py-3">
+                                <summary class="flex cursor-pointer items-center justify-between text-sm lg:text-base font-semibold text-white">
                                     Caractéristiques &amp; Entretien
-                                    <span class="transition group-open:rotate-180"><span class="material-symbols-outlined">expand_more</span></span>
+                                    <span class="transition group-open:rotate-180"><span class="material-symbols-outlined text-xl">expand_more</span></span>
                                 </summary>
-                                <ul class="group-open:animate-fadeIn mt-4 text-white/70 list-disc pl-5 space-y-2">
+                                <ul class="group-open:animate-fadeIn mt-2 text-sm lg:text-base text-white/70 list-disc pl-4 space-y-1">
                                     {% for chara in product.chara_entretien_list %}<li>{{ chara }}</li>{% endfor %}
                                 </ul>
                             </details>
-                            <details class="group border-b border-white/10 py-5">
-                                <summary class="flex cursor-pointer items-center justify-between text-lg font-semibold text-white">
+                            <details class="group border-b border-white/10 py-3">
+                                <summary class="flex cursor-pointer items-center justify-between text-sm lg:text-base font-semibold text-white">
                                     Livraison &amp; Retours
-                                    <span class="transition group-open:rotate-180"><span class="material-symbols-outlined">expand_more</span></span>
+                                    <span class="transition group-open:rotate-180"><span class="material-symbols-outlined text-xl">expand_more</span></span>
                                 </summary>
-                                <p class="group-open:animate-fadeIn mt-4 text-white/70">{{ product.delivery_policy_phase1 }}</p>
-                                <p class="group-open:animate-fadeIn mt-4 text-white/70">{{ product.delivery_policy_phase2 }}</p>
+                                <p class="group-open:animate-fadeIn mt-2 text-sm lg:text-base text-white/70">{{ product.delivery_policy_phase1 }}</p>
+                                <p class="group-open:animate-fadeIn mt-2 text-sm lg:text-base text-white/70">{{ product.delivery_policy_phase2 }}</p>
                             </details>
                         </div>
                     </section>
                     <!-- Customer Reviews -->
-                    <section class="mt-16 lg:mt-24" id="customerReviews">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <h2 class="text-3xl font-bold text-white">Avis clients</h2>
-                            <div class="flex items-center gap-2">
+                    <section class="mt-8 lg:mt-12" id="customerReviews">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+                            <h2 class="text-xl lg:text-2xl font-bold text-white">Avis clients</h2>
+                            <div class="flex items-center gap-1.5">
                                 <div class="flex text-primary">
                                     {% for _ in product_data.stars.full %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="text-primary-500 w-5 h-auto fill-current"
+                                             class="text-primary-500 w-3.5 lg:w-4 h-auto fill-current"
                                              viewBox="0 0 16 16">
                                             <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
                                         </svg>
                                     {% endfor %}
                                     {% for _ in product_data.stars.half %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="text-primary-500 w-5 h-auto fill-current "
+                                             class="text-primary-500 w-3.5 lg:w-4 h-auto fill-current "
                                              viewBox="0 0 16 16">
                                             <path d="M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z" />
                                         </svg>
                                     {% endfor %}
                                     {% for _ in product_data.stars.empty %}
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                             class="text-primary-500 w-5 h-auto fill-current"
+                                             class="text-primary-500 w-3.5 lg:w-4 h-auto fill-current"
                                              viewBox="0 0 16 16">
                                             <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
                                         </svg>
                                     {% endfor %}
                                 </div>
-                                <p class="text-white/80">
+                                <p class="text-xs lg:text-sm text-white/80">
                                     {{ product_data.rating }} sur 5
                                     <span class="text-white/60">({{ product_data.reviews }} avis)</span>
                                 </p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mt-4">
                             {% for testimonial in testimonies %}
-                                <div class="flex flex-col gap-4 p-6 bg-secondary-dark rounded-xl">
+                                <div class="flex flex-col gap-2 lg:gap-3 p-3 lg:p-4 bg-secondary-dark rounded-lg">
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <div class="size-10 rounded-full bg-cover bg-center"
+                                        <div class="flex items-center gap-2">
+                                            <div class="size-8 lg:size-9 rounded-full bg-cover bg-center"
                                                  style="background-image: url('{{ testimonial.utilisateur.profile.image.url }}')">
                                             </div>
                                             <div>
-                                                <p class="font-semibold text-white">{{ testimonial.utilisateur.get_full_name }}</p>
-                                                <p class="text-xs text-white/60">{{ testimonial.date_created|date:"d M Y" }}</p>
+                                                <p class="font-semibold text-sm lg:text-base text-white">{{ testimonial.utilisateur.get_full_name }}</p>
+                                                <p class="text-[10px] lg:text-xs text-white/60">{{ testimonial.date_created|date:"d M Y" }}</p>
                                             </div>
                                         </div>
                                         <div class="flex text-primary">
                                             {% for _ in testimonial.stars.full %}
                                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                                     class="text-primary-500 w-4 h-auto fill-current"
+                                                     class="text-primary-500 w-3 lg:w-3.5 h-auto fill-current"
                                                      viewBox="0 0 16 16">
                                                     <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
                                                 </svg>
                                             {% endfor %}
                                             {% for _ in testimonial.stars.half %}
                                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                                     class="text-primary-500 w-4 h-auto fill-current "
+                                                     class="text-primary-500 w-3 lg:w-3.5 h-auto fill-current "
                                                      viewBox="0 0 16 16">
                                                     <path d="M5.354 5.119 7.538.792A.516.516 0 0 1 8 .5c.183 0 .366.097.465.292l2.184 4.327 4.898.696A.537.537 0 0 1 16 6.32a.548.548 0 0 1-.17.445l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256a.52.52 0 0 1-.146.05c-.342.06-.668-.254-.6-.642l.83-4.73L.173 6.765a.55.55 0 0 1-.172-.403.58.58 0 0 1 .085-.302.513.513 0 0 1 .37-.245l4.898-.696zM8 12.027a.5.5 0 0 1 .232.056l3.686 1.894-.694-3.957a.565.565 0 0 1 .162-.505l2.907-2.77-4.052-.576a.525.525 0 0 1-.393-.288L8.001 2.223 8 2.226v9.8z" />
                                                 </svg>
                                             {% endfor %}
                                             {% for _ in testimonial.stars.empty %}
                                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                                     class="text-primary-500 w-4 h-auto fill-current"
+                                                     class="text-primary-500 w-3 lg:w-3.5 h-auto fill-current"
                                                      viewBox="0 0 16 16">
                                                     <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
                                                 </svg>
                                             {% endfor %}
                                         </div>
                                     </div>
-                                    <p class="text-white/70">« {{ testimonial.message }} »</p>
+                                    <p class="text-xs lg:text-sm text-white/70">« {{ testimonial.message }} »</p>
                                 </div>
                             {% endfor %}
                         </div>
                     </section>
                     <!-- ADD: Testimonial form (after Customer Reviews) -->
-                    <section id="addTestimonial" class="mt-12 lg:mt-16">
-                        <div class="bg-white/5 rounded-xl p-6 md:p-8">
-                            <h3 class="text-xl font-bold text-white mb-2">Ajouter un témoignage</h3>
-                            <p class="text-white/70 mb-4">
-                                Partage ton expérience avec ce produit — ton avis aide les
+                    <section id="addTestimonial" class="mt-8 lg:mt-10">
+                        <div class="bg-white/5 rounded-lg p-4 lg:p-5">
+                            <h3 class="text-base lg:text-lg font-bold text-white mb-1">Ajouter un témoignage</h3>
+                            <p class="text-xs lg:text-sm text-white/70 mb-3">
+                                Partage ton expérience avec ce produit car ton avis aide les
                                 autres clients.
                             </p>
                             <form id="testimonialForm"
                                   method="post"
                                   action="{% url 'add_testimony' product.id %}"
-                                  class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {% csrf_token %}
                                 {% if user.is_authenticated %}
                                     <div class="col-span-1 md:col-span-2">
-                                        <p class="text-white/80">
+                                        <p class="text-xs lg:text-sm text-white/80">
                                             Connecté en tant que <strong class="text-white">{{ user.get_full_name|default:user.username }}</strong>
                                         </p>
                                     </div>
                                 {% else %}
                                     <div class="col-span-1 md:col-span-2">
-                                        <p class="text-white/80">
+                                        <p class="text-xs lg:text-sm text-white/80">
                                             Vous devez <a href="{% url 'account_login' %}?next={{ request.path }}"
-    class="text-primary underline">vous connecter</a> pour laisser un témoignage.
+    class="text-white underline">vous connecter</a> pour laisser un témoignage.
                                         </p>
                                     </div>
                                 {% endif %}
                                 <input type="hidden" name="rating" id="ratingInput" value="5" />
                                 <div class="flex items-center gap-2">
-                                    <label class="text-white/80 mr-2">Note :</label>
+                                    <label class="text-xs lg:text-sm text-white/80 mr-1">Note :</label>
                                     <div id="rating"
-                                         class="flex gap-1 items-center"
+                                         class="flex gap-0.5 items-center"
                                          role="radiogroup"
                                          aria-label="Note du produit">
                                         <button type="button"
                                                 data-value="1"
                                                 class="rating-btn text-white/60 hover:text-primary">
-                                            <span class="material-symbols-outlined">star</span>
+                                            <span class="material-symbols-outlined text-lg lg:text-xl">star</span>
                                         </button>
                                         <button type="button"
                                                 data-value="2"
                                                 class="rating-btn text-white/60 hover:text-primary">
-                                            <span class="material-symbols-outlined">star</span>
+                                            <span class="material-symbols-outlined text-lg lg:text-xl">star</span>
                                         </button>
                                         <button type="button"
                                                 data-value="3"
                                                 class="rating-btn text-white/60 hover:text-primary">
-                                            <span class="material-symbols-outlined">star</span>
+                                            <span class="material-symbols-outlined text-lg lg:text-xl">star</span>
                                         </button>
                                         <button type="button"
                                                 data-value="4"
                                                 class="rating-btn text-white/60 hover:text-primary">
-                                            <span class="material-symbols-outlined">star</span>
+                                            <span class="material-symbols-outlined text-lg lg:text-xl">star</span>
                                         </button>
                                         <button type="button"
                                                 data-value="5"
                                                 class="rating-btn text-white/60 hover:text-primary">
-                                            <span class="material-symbols-outlined">star</span>
+                                            <span class="material-symbols-outlined text-lg lg:text-xl">star</span>
                                         </button>
                                     </div>
                                     <div id="ratingDisplay"
-                                         class="text-white/80 text-sm ml-3"
+                                         class="text-xs lg:text-sm text-white/80 ml-2"
                                          aria-live="polite">5 étoiles</div>
                                 </div>
                                 <textarea name="message"
                                           required
                                           placeholder="Ton message"
-                                          rows="4"
-                                          class="col-span-1 md:col-span-2 bg-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
+                                          rows="3"
+                                          class="col-span-1 md:col-span-2 bg-white/10 rounded-lg px-3 py-2 text-sm lg:text-base text-white placeholder-white/50 focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
                                 <div class="md:col-span-2 text-right">
                                     <button type="submit"
-                                            class="bg-primary rounded-lg px-5 py-3 font-bold hover:bg-primary/80 transition">
+                                            class="bg-primary rounded-lg px-4 py-2 text-sm lg:text-base font-bold hover:bg-primary/80 transition">
                                         Envoyer
                                     </button>
                                 </div>
@@ -615,22 +619,22 @@
                         </div>
                     </section>
                     <!-- Produits similaires -->
-                    <section class="mt-16 lg:mt-24">
-                        <h2 class="text-3xl font-bold text-white">Vous aimerez aussi</h2>
-                        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+                    <section class="mt-8 lg:mt-12">
+                        <h2 class="text-xl lg:text-2xl font-bold text-white">Vous aimerez aussi</h2>
+                        <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4 mt-4">
                             {% for product in similar_products %}
-                                <div class="flex flex-col gap-3 group">
-                                    <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-xl overflow-hidden bg-secondary-dark"
+                                <div class="flex flex-col gap-1.5 lg:gap-2 group">
+                                    <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark"
                                          data-alt="{{ product.name }}"
                                          style='background-image: url("{{ product.image.url }}")'>
-                                        <button class="absolute bottom-3 right-3 flex items-center justify-center size-10 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                        <button class="absolute bottom-2 right-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                                             <a href="{% url 'product_detail' product.pk %}">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                      fill="none"
                                                      viewBox="0 0 24 24"
                                                      stroke-width="1.5"
                                                      stroke="currentColor"
-                                                     class="size-6">
+                                                     class="size-4 lg:size-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 </svg>
@@ -638,8 +642,8 @@
                                         </button>
                                     </div>
                                     <div class="flex flex-col">
-                                        <p class="text-white font-semibold">{{ product.name }}</p>
-                                        <p class="text-white/70">{{ product.price }} $</p>
+                                        <p class="text-white font-semibold text-xs lg:text-sm">{{ product.name }}</p>
+                                        <p class="text-white/70 text-xs lg:text-sm">{{ product.price }} $</p>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -648,17 +652,34 @@
                 </div>
             </main>
             <!-- Footer -->
-            <footer class="bg-black/20 mt-16">
-                <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                        <div class="col-span-1 lg:col-span-2">
-                            <h3 class="text-white font-bold text-lg">Restez informé</h3>
+            <footer class="bg-black/20 mt-8 lg:mt-12">
+                <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+                    <!-- Mobile: Newsletter en haut -->
+                    <div class="md:hidden mb-4">
+                        <h3 class="text-white font-bold text-sm">Restez informé</h3>
+                        <p class="text-[#888888] mt-1 text-xs">
+                            Abonnez-vous à notre newsletter pour recevoir les dernières
+                            nouveautés, Articles et plus encore.
+                        </p>
+                        <form class="flex mt-2 gap-2">
+                            <input class="form-input flex-grow w-full rounded-md text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-xs h-9"
+                                   placeholder="Entrez votre e-mail"
+                                   type="email" />
+                            <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md h-9 px-3 bg-primary text-white text-xs font-bold hover:bg-primary/80 transition-colors"
+                                    type="submit">S'abonner</button>
+                        </form>
+                    </div>
+                    <!-- Mobile: 2 colonnes Info + Service / Desktop: grille complète -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
+                        <!-- Desktop: Newsletter (caché sur mobile) -->
+                        <div class="hidden md:block col-span-1 lg:col-span-2">
+                            <h3 class="text-white font-bold text-base">Restez informé</h3>
                             <p class="text-[#888888] mt-2 text-sm">
                                 Abonnez-vous à notre newsletter pour recevoir les dernières
                                 nouveautés, Articles et plus encore.
                             </p>
-                            <form class="flex mt-4 gap-2">
-                                <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm"
+                            <form class="flex mt-3 gap-2">
+                                <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm h-10"
                                        placeholder="Entrez votre e-mail"
                                        type="email" />
                                 <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/80 transition-colors"
@@ -666,8 +687,8 @@
                             </form>
                         </div>
                         <div class="col-span-1">
-                            <h4 class="font-bold text-white">Information</h4>
-                            <ul class="space-y-2 mt-4 text-sm">
+                            <h4 class="font-bold text-white text-sm lg:text-base">Information</h4>
+                            <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
                                 <li>
                                     <a class="text-[#888888] hover:text-primary transition-colors" href="#">À propos de
                                     nous</a>
@@ -684,8 +705,8 @@
                             </ul>
                         </div>
                         <div class="col-span-1">
-                            <h4 class="font-bold text-white">Service client</h4>
-                            <ul class="space-y-2 mt-4 text-sm">
+                            <h4 class="font-bold text-white text-sm lg:text-base">Service client</h4>
+                            <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
                                 <li>
                                     <a class="text-[#888888] hover:text-primary transition-colors" href="#">FAQ</a>
                                 </li>
@@ -703,9 +724,10 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="col-span-1">
-                            <h4 class="font-bold text-white">Suivez-nous</h4>
-                            <div class="flex space-x-4 mt-4">
+                        <!-- Desktop: Suivez-nous dans la grille / Mobile: caché -->
+                        <div class="hidden md:block col-span-1">
+                            <h4 class="font-bold text-white text-base">Suivez-nous</h4>
+                            <div class="flex space-x-4 mt-3">
                                 <a class="text-[#888888] hover:text-primary transition-colors" href="#">
                                     <svg aria-hidden="true"
                                          class="h-6 w-6"
@@ -736,7 +758,40 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border-t border-white/10 mt-8 pt-6 text-center text-sm text-[#888888]">
+                    <!-- Mobile: Suivez-nous en bas -->
+                    <div class="md:hidden mt-4">
+                        <h4 class="font-bold text-white text-sm">Suivez-nous</h4>
+                        <div class="flex space-x-3 mt-2">
+                            <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                <svg aria-hidden="true"
+                                     class="h-5 w-5"
+                                     fill="currentColor"
+                                     viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                <svg aria-hidden="true"
+                                     class="h-5 w-5"
+                                     fill="currentColor"
+                                     viewbox="0 0 24 24">
+                                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                <svg aria-hidden="true"
+                                     class="h-5 w-5"
+                                     fill="currentColor"
+                                     viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
+                                    </path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="border-t border-white/10 mt-4 lg:mt-6 pt-3 lg:pt-5 text-center text-xs lg:text-sm text-[#888888]">
                         <p>© 2025 CELEBOBO. Tous droits réservés.</p>
                     </div>
                 </div>
@@ -745,7 +800,8 @@
             <nav id="mobileTabbar"
                  class="mobile-tabbar md:hidden flex justify-around py-2 text-white">
                 <button class="flex flex-col items-center text-xs text-primary">
-                    <span class="material-symbols-outlined text-2xl">storefront</span>Shop
+                    <span class="material-symbols-outlined text-2xl"
+                          style="font-variation-settings: 'FILL' 1">storefront</span>Shop
                 </button>
                 <button class="flex flex-col items-center text-xs">
                     <span class="material-symbols-outlined text-2xl">shopping_bag</span>Panier

@@ -18,6 +18,8 @@ urlpatterns = [
     path('favori/<int:product_id>/toggle/',
          views.toggle_favorite, name='toggle_favorite'),
     path("favoris/", views.favorites_list, name="favorites_list"),
+    path('about/', views.aboutUs, name='about_us'),
+    path('cart/', views.cart, name='cart'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,7 +5,6 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{{ category.name }} - Articles</title>
         <link rel="icon"
               type="image/x-icon"
               sizes="32x32"
@@ -18,6 +17,7 @@
               type="image/png"
               sizes="16x16"
               href="{% static 'static-img/sicon-16.png' %}">
+        <title>{{ category.name }} - Articles</title>
         <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
               rel="stylesheet" />
@@ -250,7 +250,8 @@
             <header class="flex-col px-4 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
                 <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
                     <a class="hover:text-white transition-colors" href="#">Aide</a>
-                    <a class="hover:text-white transition-colors" href="#">À propos</a>
+                    <a class="hover:text-white transition-colors"
+                       href="{% url 'about_us' %}">À propos</a>
                     <a class="hover:text-white transition-colors" href="#">Articles</a>
                 </div>
                 <div class="flex items-center gap-6 lg:gap-8 py-4">
@@ -345,40 +346,43 @@
             <main class="flex-1">
                 <div class="container mx-auto px-4 py-8">
                     <!-- Hero / Breadcrumb -->
-                    <section class="relative h-80 w-full overflow-hidden rounded-xl fade-in">
+                    <section class="relative h-48 lg:h-80 w-full overflow-hidden rounded-lg fade-in">
                         <div class="absolute inset-0 bg-cover bg-center"
                              style="background-image: url('{{ category.image.url }}')"></div>
                         <div class="absolute inset-0 bg-background-dark/70"></div>
-                        <div class="relative z-10 flex h-full flex-col items-start justify-center p-8 md:p-12 text-left">
-                            <div class="flex flex-wrap gap-2 text-sm text-text-light-secondary">
+                        <div class="relative z-10 flex h-full flex-col items-start justify-center p-4 lg:p-8 text-left">
+                            <div class="flex flex-wrap gap-1 lg:gap-2 text-[10px] lg:text-sm text-text-light-secondary">
                                 <a class="hover:text-primary" href="{% url 'home' %}">Accueil</a>
                                 <span>/</span>
                                 <span>Articles de</span>
                                 <span>/</span>
                                 <span class="font-medium text-text-light-primary">{{ category.name }}</span>
                             </div>
-                            <h1 class="mt-4 text-4xl md:text-5xl font-black tracking-tighter text-text-light-primary">{{ category.name }}</h1>
-                            <p class="mt-2 max-w-2xl text-base text-text-light-secondary">{{ category.description }}</p>
+                            <h1 class="mt-2 lg:mt-4 text-2xl lg:text-4xl font-black tracking-tighter text-text-light-primary">
+                                {{ category.name }}
+                            </h1>
+                            <p class="mt-1 lg:mt-2 max-w-2xl text-xs lg:text-base text-text-light-secondary">{{ category.description }}</p>
                         </div>
                     </section>
                     <div class="mt-8 grid grid-cols-1 gap-x-8 gap-y-12 lg:grid-cols-4">
                         <!-- Filters -->
+                        <!-- Filters -->
                         <aside class="lg:col-span-1">
-                            <div class="sticky top-24 rounded-xl bg-surface-light dark:bg-surface-dark p-3 sm:p-4 shadow-lg">
+                            <div class="sticky top-24 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-lg">
                                 <!-- HEADER -->
-                                <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-1">
-                                    <h3 class="text-lg font-bold text-text-dark-primary dark:text-text-light-primary">Filtres</h3>
+                                <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
+                                    <h3 class="text-sm lg:text-base font-bold text-text-dark-primary dark:text-text-light-primary">Filtres</h3>
                                     <a id="clearFilters"
-                                       class="text-xs sm:text-sm font-medium text-gray-500 hover:underline cursor-pointer">
+                                       class="text-[10px] lg:text-xs font-medium text-gray-500 hover:underline cursor-pointer">
                                         Tout effacer
                                     </a>
                                 </div>
-                                <div class="mt-2 flex flex-col">
+                                <div class="mt-3 flex flex-col">
                                     <!-- Price Filter -->
                                     <details class="py-1 group" open>
                                         <summary class="flex cursor-pointer list-none items-center justify-between py-1">
-                                            <p class="font-semibold text-sm text-text-dark-primary dark:text-text-light-primary">Prix maximum</p>
-                                            <span class="material-symbols-outlined text-text-dark-secondary dark:text-text-light-secondary group-open:rotate-180 transition-transform text-base">
+                                            <p class="font-semibold text-xs lg:text-sm text-text-dark-primary dark:text-text-light-primary">Prix maximum</p>
+                                            <span class="material-symbols-outlined text-text-dark-secondary dark:text-text-light-secondary group-open:rotate-180 transition-transform text-lg">
                                                 expand_more
                                             </span>
                                         </summary>
@@ -392,16 +396,16 @@
                                                        value="10000"
                                                        class="w-full range-slider h-1" />
                                             </div>
-                                            <div class="flex justify-between text-xs sm:text-sm text-text-dark-secondary dark:text-text-light-secondary mt-2">
+                                            <div class="flex justify-between text-[10px] lg:text-xs text-text-dark-secondary dark:text-text-light-secondary mt-1.5">
                                                 <span>$0</span>
                                                 <span id="priceRangeValue" class="font-semibold">$10000</span>
                                             </div>
                                         </div>
                                     </details>
                                     <!-- BUTTON -->
-                                    <div class="mt-4 text-center">
+                                    <div class="mt-3 text-center">
                                         <button id="applyFilters"
-                                                class="w-full bg-primary text-white rounded-full text-sm px-3 py-1.5 sm:px-4 sm:py-2 font-semibold hover:bg-primary/90">
+                                                class="w-full bg-primary text-white rounded-full text-xs lg:text-sm px-3 py-1.5 font-semibold hover:bg-primary/90">
                                             Appliquer
                                         </button>
                                     </div>
@@ -532,66 +536,68 @@
                     </div>
                 </div>
                 <!-- Explore more -->
-                <section class="mt-16 py-16 bg-surface-light dark:bg-surface-dark">
+                <section class="mt-8 lg:mt-12 py-8 lg:py-12 bg-surface-light dark:bg-surface-dark">
                     <div class="container mx-auto px-4">
                         <div class="text-center">
-                            <h2 class="text-3xl font-black tracking-tighter text-text-dark-primary dark:text-text-light-primary">Explorez plus</h2>
-                            <p class="mt-2 max-w-2xl mx-auto text-base text-text-dark-secondary dark:text-text-light-secondary">
+                            <h2 class="text-xl lg:text-2xl font-black tracking-tighter text-text-dark-primary dark:text-text-light-primary">
+                                Explorez plus
+                            </h2>
+                            <p class="mt-1 lg:mt-2 max-w-2xl mx-auto text-xs lg:text-sm text-text-dark-secondary dark:text-text-light-secondary">
                                 Découvrez des catégories associées, des guides d'achat et des articles tendance pour parfaire votre installation.
                             </p>
                         </div>
-                        <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                            <a class="group relative block overflow-hidden rounded-xl"
+                        <div class="mt-4 lg:mt-8 grid grid-cols-1 gap-3 lg:gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                            <a class="group relative block overflow-hidden rounded-lg"
                                href="{% url 'category_detail' similar_category_one.pk %}">
-                                <div class="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                                <div class="h-32 lg:h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                                      style="background-image: url('{{ similar_category_one.image.url }}')"></div>
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                <div class="absolute bottom-0 left-0 p-6">
-                                    <span class="text-xs font-semibold uppercase tracking-wider text-primary">Categorie</span>
-                                    <h3 class="mt-1 text-xl font-bold text-white">{{ similar_category_one.name }}</h3>
-                                    <p class="mt-1 text-sm text-text-light-secondary flex items-center gap-1">
-                                        Acheter Maintenant<span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                <div class="absolute bottom-0 left-0 p-3 lg:p-4">
+                                    <span class="text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary">Categorie</span>
+                                    <h3 class="mt-0.5 lg:mt-1 text-sm lg:text-base font-bold text-white">{{ similar_category_one.name }}</h3>
+                                    <p class="mt-0.5 lg:mt-1 text-[10px] lg:text-xs text-text-light-secondary flex items-center gap-1">
+                                        Acheter Maintenant<span class="material-symbols-outlined text-sm lg:text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
                                     </p>
                                 </div>
                             </a>
-                            <a class="group relative block overflow-hidden rounded-xl"
+                            <a class="group relative block overflow-hidden rounded-lg"
                                href="{% static "new/guide.html" %}">
-                                <div class="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                                <div class="h-32 lg:h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                                      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXr30BWIuqwKlsfHSgciA7SiUSFyBotf__zZAvJ8dXNeg6Zc_mTkYVt01CIFOXz2VyyrTgeWUgmNFB4gWgvQpFIgUmZgJBEQnJw__C_xB7L5OH0uNe-7UF38Ohow5tl3ROrP9l-vJuIvccpjROeiwPHfnJTGv_5bjcUg6bJ-Jr-yrNDjMddp2jrU87BCXl7AYsCOJ3E_9QqJmaFoGrmWHPI3ha3Px5KxD8pVl0hJ0_SYnIK5D8LVaRsk96xMZPT98DXV6K7O5Cl6I')">
                                 </div>
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                <div class="absolute bottom-0 left-0 p-6">
-                                    <span class="text-xs font-semibold uppercase tracking-wider text-primary">Guide d'achat</span>
-                                    <h3 class="mt-1 text-xl font-bold text-white">Choisir un clavier mécanique</h3>
-                                    <p class="mt-1 text-sm text-text-light-secondary flex items-center gap-1">
-                                        Lire le guide <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                <div class="absolute bottom-0 left-0 p-3 lg:p-4">
+                                    <span class="text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary">Guide d'achat</span>
+                                    <h3 class="mt-0.5 lg:mt-1 text-sm lg:text-base font-bold text-white">Choisir un clavier mécanique</h3>
+                                    <p class="mt-0.5 lg:mt-1 text-[10px] lg:text-xs text-text-light-secondary flex items-center gap-1">
+                                        Lire le guide <span class="material-symbols-outlined text-sm lg:text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
                                     </p>
                                 </div>
                             </a>
-                            <a class="group relative block overflow-hidden rounded-xl"
+                            <a class="group relative block overflow-hidden rounded-lg"
                                href="{% static "new/guide.html" %}">
-                                <div class="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                                <div class="h-32 lg:h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                                      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkBz0BG80RxBqwW47BZhs4HTApNjrO7J2z-j4pSwgnKWjw5XvbsDDdRsSBwliAsrvokLYc-Mcb7a_zpVuq2eFIlf7Y4Uch66Oh5dbCIlWk64g8Fq1xUZllCH6DwDo0u285r6iitgOPXlBt8j_ydure15_WaZulDfYO7NCugdRrFEykS7dBKjxGWM1MDnXI8nkz67RwnOWfYAhpQcR49m_1WeKIS-cEJ6eIAaAxZMXgqlZqfdJeiQNPNQtM3xXYLunepKzxKMxCScc')">
                                 </div>
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                <div class="absolute bottom-0 left-0 p-6">
-                                    <span class="text-xs font-semibold uppercase tracking-wider text-primary">Article</span>
-                                    <h3 class="mt-1 text-xl font-bold text-white">L'essor des souris esports</h3>
-                                    <p class="mt-1 text-sm text-text-light-secondary flex items-center gap-1">
-                                        En savoir plus <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                <div class="absolute bottom-0 left-0 p-3 lg:p-4">
+                                    <span class="text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary">Article</span>
+                                    <h3 class="mt-0.5 lg:mt-1 text-sm lg:text-base font-bold text-white">L'essor des souris esports</h3>
+                                    <p class="mt-0.5 lg:mt-1 text-[10px] lg:text-xs text-text-light-secondary flex items-center gap-1">
+                                        En savoir plus <span class="material-symbols-outlined text-sm lg:text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
                                     </p>
                                 </div>
                             </a>
-                            <a class="group relative block overflow-hidden rounded-xl"
+                            <a class="group relative block overflow-hidden rounded-lg"
                                href="{% url 'category_detail' similar_category_two.pk %}">
-                                <div class="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                                <div class="h-32 lg:h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                                      style="background-image: url('{{ similar_category_two.image.url }}')"></div>
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                <div class="absolute bottom-0 left-0 p-6">
-                                    <span class="text-xs font-semibold uppercase tracking-wider text-primary">Categorie</span>
-                                    <h3 class="mt-1 text-xl font-bold text-white">{{ similar_category_two.name }}</h3>
-                                    <p class="mt-1 text-sm text-text-light-secondary flex items-center gap-1">
-                                        Acheter Maintenant <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                <div class="absolute bottom-0 left-0 p-3 lg:p-4">
+                                    <span class="text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary">Categorie</span>
+                                    <h3 class="mt-0.5 lg:mt-1 text-sm lg:text-base font-bold text-white">{{ similar_category_two.name }}</h3>
+                                    <p class="mt-0.5 lg:mt-1 text-[10px] lg:text-xs text-text-light-secondary flex items-center gap-1">
+                                        Acheter Maintenant <span class="material-symbols-outlined text-sm lg:text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
                                     </p>
                                 </div>
                             </a>
@@ -600,16 +606,34 @@
                 </section>
             </main>
             <!-- Footer -->
-            <footer class="bg-black/20 mt-16">
-                <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                        <div class="col-span-1 lg:col-span-2">
-                            <h3 class="text-white font-bold text-lg">Restez informé</h3>
+            <footer class="bg-black/20 mt-8 lg:mt-12">
+                <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+                    <!-- Mobile: Newsletter en haut -->
+                    <div class="md:hidden mb-4">
+                        <h3 class="text-white font-bold text-sm">Restez informé</h3>
+                        <p class="text-[#888888] mt-1 text-xs">
+                            Abonnez-vous à notre newsletter pour recevoir les dernières
+                            nouveautés, Articles et plus encore.
+                        </p>
+                        <form class="flex mt-2 gap-2">
+                            <input class="form-input flex-grow w-full rounded-md text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-xs h-9"
+                                   placeholder="Entrez votre e-mail"
+                                   type="email" />
+                            <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md h-9 px-3 bg-primary text-white text-xs font-bold hover:bg-primary/80 transition-colors"
+                                    type="submit">S'abonner</button>
+                        </form>
+                    </div>
+                    <!-- Mobile: 2 colonnes Info + Service / Desktop: grille complète -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
+                        <!-- Desktop: Newsletter (caché sur mobile) -->
+                        <div class="hidden md:block col-span-1 lg:col-span-2">
+                            <h3 class="text-white font-bold text-base">Restez informé</h3>
                             <p class="text-[#888888] mt-2 text-sm">
-                                Abonnez-vous à notre newsletter pour recevoir les dernières nouveautés sur les arrivages, les soldes et plus encore.
+                                Abonnez-vous à notre newsletter pour recevoir les dernières
+                                nouveautés, Articles et plus encore.
                             </p>
-                            <form class="flex mt-4 gap-2">
-                                <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm"
+                            <form class="flex mt-3 gap-2">
+                                <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm h-10"
                                        placeholder="Entrez votre e-mail"
                                        type="email" />
                                 <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/80 transition-colors"
@@ -617,10 +641,11 @@
                             </form>
                         </div>
                         <div class="col-span-1">
-                            <h4 class="font-bold text-white">Informations</h4>
-                            <ul class="space-y-2 mt-4 text-sm">
+                            <h4 class="font-bold text-white text-sm lg:text-base">Information</h4>
+                            <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
                                 <li>
-                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">À propos</a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">À propos de
+                                    nous</a>
                                 </li>
                                 <li>
                                     <a class="text-[#888888] hover:text-primary transition-colors" href="#">Contact</a>
@@ -634,25 +659,29 @@
                             </ul>
                         </div>
                         <div class="col-span-1">
-                            <h4 class="font-bold text-white">Service Client</h4>
-                            <ul class="space-y-2 mt-4 text-sm">
+                            <h4 class="font-bold text-white text-sm lg:text-base">Service client</h4>
+                            <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
                                 <li>
                                     <a class="text-[#888888] hover:text-primary transition-colors" href="#">FAQ</a>
                                 </li>
                                 <li>
-                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Livraison &amp; Retours</a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Livraison &amp;
+                                    Retours</a>
                                 </li>
                                 <li>
-                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Guide des tailles</a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Guide des
+                                    tailles</a>
                                 </li>
                                 <li>
-                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Politique de confidentialité</a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Politique de
+                                    confidentialité</a>
                                 </li>
                             </ul>
                         </div>
-                        <div class="col-span-1">
-                            <h4 class="font-bold text-white">Suivez-nous</h4>
-                            <div class="flex space-x-4 mt-4">
+                        <!-- Desktop: Suivez-nous dans la grille / Mobile: caché -->
+                        <div class="hidden md:block col-span-1">
+                            <h4 class="font-bold text-white text-base">Suivez-nous</h4>
+                            <div class="flex space-x-4 mt-3">
                                 <a class="text-[#888888] hover:text-primary transition-colors" href="#">
                                     <svg aria-hidden="true"
                                          class="h-6 w-6"
@@ -683,7 +712,40 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border-t border-white/10 mt-8 pt-6 text-center text-sm text-[#888888]">
+                    <!-- Mobile: Suivez-nous en bas -->
+                    <div class="md:hidden mt-4">
+                        <h4 class="font-bold text-white text-sm">Suivez-nous</h4>
+                        <div class="flex space-x-3 mt-2">
+                            <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                <svg aria-hidden="true"
+                                     class="h-5 w-5"
+                                     fill="currentColor"
+                                     viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                <svg aria-hidden="true"
+                                     class="h-5 w-5"
+                                     fill="currentColor"
+                                     viewbox="0 0 24 24">
+                                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="text-[#888888] hover:text-primary transition-colors" href="#">
+                                <svg aria-hidden="true"
+                                     class="h-5 w-5"
+                                     fill="currentColor"
+                                     viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
+                                    </path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="border-t border-white/10 mt-4 lg:mt-6 pt-3 lg:pt-5 text-center text-xs lg:text-sm text-[#888888]">
                         <p>© 2025 CELEBOBO. Tous droits réservés.</p>
                     </div>
                 </div>

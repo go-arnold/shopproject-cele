@@ -265,7 +265,8 @@ class Vente(models.Model):
     ]
 
     utilisateur = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    produit = models.ForeignKey(Product, on_delete=models.CASCADE)
+    produit = models.ForeignKey(
+        Product, related_name="ventes", on_delete=models.CASCADE)
     date_achat = models.DateTimeField(auto_now_add=True)
     price_final = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)

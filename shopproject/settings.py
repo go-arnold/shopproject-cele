@@ -103,6 +103,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "shop.context_processors.cart_counter",
             ],
         },
     },
@@ -178,3 +179,5 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_ADAPTER = 'gestion.adapters.CustomAccountAdapter'
 
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+
+CART_SESSION_ID = "cart"

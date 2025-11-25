@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 import random
 from django.db.models import Q
+from .cart import Cart
 
 
 from django.shortcuts import render
@@ -63,16 +64,19 @@ def categoryVue(request, pk):
     """
     category = get_object_or_404(Category, pk=pk)
     products_qs = category.products.select_related(
-        'category_fk').prefetch_related('features').all()
+        'category_fk').prefetch_related('features').all().order_by('-id')
 
     if request.user.is_authenticated:
-        for p in products_qs:
-            p.is_favorite = FavoriteProduct.objects.filter(
-                utilisateur=request.user,
-                produit=p
-            ).exists()
-    else:
+        user_favs = set(
+            FavoriteProduct.objects
+            .filter(utilisateur=request.user, produit__in=products_qs)
+            .values_list('produit_id', flat=True)
+        )
 
+        for p in products_qs:
+            p.is_favorite = p.id in user_favs
+
+    else:
         for p in products_qs:
             p.is_favorite = False
 
@@ -461,9 +465,15 @@ def aboutUs(request):
     return render(request, 'shop/about.html')
 
 
+"""
 def cart(request):
-    """Rend la page du panier."""
-    return render(request, 'shop/cart.html')
+    Rend la page du panier.
+    return render(request, 'shop/cart.html')"""
+
+
+def cart_view(request):
+    cart = Cart(request)
+    return render(request, "shop/cart.html", {"cart": cart})
 
 
 """

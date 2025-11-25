@@ -252,9 +252,12 @@
                             </button>
                         {% endif %}
                         <!-- Panier -->
-                        <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                            <span class="material-symbols-outlined text-xl">shopping_cart</span>
-                        </button>
+                        <a href="{% url 'cart' %}">
+                            <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                                <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
+                            </button>
+                        </a>
                         {% if user.is_authenticated %}
                             <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
                                 <a href="#"><span class="material-symbols-outlined text-2xl">person</span></a>
@@ -405,8 +408,9 @@
                             </div>
                             <!-- Actions -->
                             <div class="flex flex-col sm:flex-row gap-2 lg:gap-3 mt-2">
-                                <button id="addToCart"
-                                        class="flex items-center justify-center gap-1 rounded-md h-9 lg:h-11 px-3 lg:px-4 bg-primary text-white text-xs lg:text-base font-bold hover:bg-primary/80 transition">
+                                <button id="addToCartj"
+                                        data-product-id="{{ product.id }}"
+                                        class="add-to-cart-btn flex items-center justify-center gap-1 rounded-md h-9 lg:h-11 px-3 lg:px-4 bg-primary text-white text-xs lg:text-base font-bold hover:bg-primary/80 transition">
                                     <span class="material-symbols-outlined text-base lg:text-xl">shopping_cart</span>
                                     Ajouter au panier
                                 </button>
@@ -803,9 +807,15 @@
                     <span class="material-symbols-outlined text-2xl"
                           style="font-variation-settings: 'FILL' 1">storefront</span>Shop
                 </button>
-                <button class="flex flex-col items-center text-xs">
-                    <span class="material-symbols-outlined text-2xl">shopping_bag</span>Panier
-                </button>
+                <a href="{% url 'cart' %}">
+                    <button class="relative flex flex-col items-center text-xs">
+                        <span class="material-symbols-outlined text-2xl">shopping_cart</span>Panier
+                        <!-- BADGE -->
+                        <span id="aaa"
+                              class="cart-count absolute -top-1 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">{{ cart_count }}
+                        </span>
+                    </button>
+                </a>
                 <button class="flex flex-col items-center text-xs">
                     <span class="material-symbols-outlined text-2xl">assistant</span>Assistant
                 </button>
@@ -956,42 +966,7 @@
         });
         qtyInput.addEventListener("blur", sanitizeQty);
 
-        /* ==========================
-     Add to Cart (demo behaviour)
-     ========================== */
-        const addToCartBtn = document.getElementById("addToCart");
-        addToCartBtn.addEventListener("click", () => {
-            const size = document.querySelector("#sizes").dataset.selected || "M";
-            const qty = parseInt(qtyInput.value || "1", 10);
-            // simple feedback (no backend)
-            addToCartBtn.animate(
-                [
-                    { transform: "translateY(0)" },
-                    { transform: "translateY(-3px)" },
-                    { transform: "translateY(0)" },
-                ],
-                { duration: 220 }
-            );
-            const msg = `${qty} × Veste en cuir premium (taille ${size}) ajouté au panier`;
-            // friendly toast (simple)
-            const t = document.createElement("div");
-            t.innerText = msg;
-            Object.assign(t.style, {
-                position: "fixed",
-                right: "16px",
-                bottom: "80px",
-                background: "#111",
-                color: "#fff",
-                padding: "10px 14px",
-                borderRadius: "10px",
-                zIndex: 200,
-                boxShadow: "0 6px 22px rgba(0,0,0,.5)",
-            });
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 2600);
-        });
-
-        /* ==========================
+             /* ==========================
      Rating buttons + testimonial submit
      - ensure hidden input `ratingInput` is updated when user clicks stars
      - on submit, set the hidden input value and allow normal POST to server
@@ -1141,5 +1116,6 @@
                 }
             });
         </script>
+        <script src="{% static 'script/cart.js' %}"></script>
     </body>
 </html>

@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
-
+from . import views_cart
+from .views import cart_view
 urlpatterns = [
     path('', views.homeVue, name='home'),
     path('category/<int:pk>/', views.categoryVue, name='category_detail'),
@@ -19,7 +20,11 @@ urlpatterns = [
          views.toggle_favorite, name='toggle_favorite'),
     path("favoris/", views.favorites_list, name="favorites_list"),
     path('about/', views.aboutUs, name='about_us'),
-    path('cart/', views.cart, name='cart'),
+    # path('cart/', views.cart, name='cart'),
+    path("add-to-cart/", views_cart.add_to_cart, name="add_to_cart"),
+    path("update-cart/", views_cart.update_cart, name="update_cart"),
+    path("remove-from-cart/", views_cart.remove_from_cart, name="remove_from_cart"),
+    path("cart/", cart_view, name="cart"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

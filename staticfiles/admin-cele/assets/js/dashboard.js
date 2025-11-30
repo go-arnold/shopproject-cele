@@ -1,10 +1,10 @@
-(function($) {
+(function ($) {
   'use strict';
-  $.fn.andSelf = function() {
+  $.fn.andSelf = function () {
     return this.addBack.apply(this, arguments);
   }
 
-  $(function() {
+  $(function () {
 
     // === Cercle du solde actuel ===
     if ($("#currentBalanceCircle").length) {
@@ -18,7 +18,7 @@
         text: { autoStyleContainer: false },
         from: { color: '#d53f3a', width: 12 },
         to: { color: '#d53f3a', width: 12 },
-        step: function(state, circle) {
+        step: function (state, circle) {
           circle.path.setAttribute('stroke', state.color);
           circle.path.setAttribute('stroke-width', state.width);
           var value = Math.round(circle.value() * 100);
@@ -29,33 +29,10 @@
       bar.animate(0.4);
     }
 
-    // === Carte du monde ===
-    if($('#audience-map').length) {
-      $('#audience-map').vectorMap({
-        map: 'world_mill_en',
-        backgroundColor: 'transparent',
-        panOnDrag: true,
-        focusOn: { x: 0.5, y: 0.5, scale: 1, animate: true },
-        series: {
-          regions: [{
-            scale: ['#3d3c3c', '#f2f2f2'],
-            normalizeFunction: 'polynomial',
-            values: {
-              "BZ": 75.00,
-              "US": 56.25,
-              "AU": 15.45,
-              "GB": 25.00,
-              "RO": 10.25,
-              "GE": 33.25
-            }
-          }]
-        }
-      });
-    }
 
     // === GRAPHE : Historique des transactions ===
     if ($("#transaction-history").length) {
-      // 🔥 Récupération des données injectées par Django
+
       const chartLabels = window.transactionData?.labels || [];
       const chartData = window.transactionData?.data || [];
 
@@ -67,10 +44,10 @@
         datasets: [{
           data: chartData,
           backgroundColor: [
-            "#111111",  // Couleur 1
-            "#00d25b",  // Couleur 2
-            "#ffab00",  // Couleur 3
-            "#0090e7"   // Couleur 4
+            "#111111",
+            "#00d25b",
+            "#ffab00",
+            "#0090e7"
           ]
         }]
       };
@@ -91,10 +68,10 @@
         data: areaData,
         options: areaOptions,
         plugins: [{
-          beforeDraw: function(chart) {
+          beforeDraw: function (chart) {
             var width = chart.chart.width,
-                height = chart.chart.height,
-                ctx = chart.chart.ctx;
+              height = chart.chart.height,
+              ctx = chart.chart.ctx;
 
             ctx.restore();
 

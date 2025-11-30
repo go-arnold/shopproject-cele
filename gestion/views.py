@@ -1,7 +1,14 @@
+import tempfile
+from weasyprint import HTML
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+import openpyxl
+from django.utils import timezone
+from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from shop.models import Product, Feature, Category, Vente
+from shop.models import Product, Feature, Category, Vente, Notification
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from gestion.decorators import admin_required
@@ -16,12 +23,16 @@ def is_admin_user(user):
     """Vérifie si l'utilisateur est dans le groupe 'mukubwa' ou 'revendeur'"""
     return user.groups.filter(name__in=['mukubwa', 'revendeur']).exists()
 
+
 @admin_required
 def dashboard(request):
     """Dashboard basé sur les ventes réelles"""
     today = now().date()
     current_month = today.month
     current_year = today.year
+    notifications = Notification.objects.filter(
+        user=request.user).order_by("-created_at")
+    notif_count = int(notifications.count())
 
     ventes = Vente.objects.select_related('produit', 'produit__category_fk')
 
@@ -31,9 +42,10 @@ def dashboard(request):
     )
     ventes_mois_precedent = ventes.filter(
         date_achat__month=(current_month - 1 if current_month > 1 else 12),
-        date_achat__year=(current_year if current_month > 1 else current_year - 1)
+        date_achat__year=(current_year if current_month >
+                          1 else current_year - 1)
     )
-    
+
     profit_actuel = ventes_mois_courant.aggregate(
         total_profit=Sum(
             F('price_final') - F('produit__price_primary'),
@@ -50,41 +62,52 @@ def dashboard(request):
 
     croissance_pourcentage = 0
     if profit_precedent > 0:
-        croissance_pourcentage = ((profit_actuel - profit_precedent) / profit_precedent) * 100
+        croissance_pourcentage = (
+            (profit_actuel - profit_precedent) / profit_precedent) * 100
 
     # --- b. Revenu mensuel (ventes du mois courant) ---
-    revenu_courant = ventes_mois_courant.aggregate(total=Sum('price_final'))['total'] or 0
-    revenu_precedent = ventes_mois_precedent.aggregate(total=Sum('price_final'))['total'] or 0
+    revenu_courant = ventes_mois_courant.aggregate(
+        total=Sum('price_final'))['total'] or 0
+    revenu_precedent = ventes_mois_precedent.aggregate(
+        total=Sum('price_final'))['total'] or 0
 
     revenu_pourcentage = 0
     if revenu_precedent > 0:
-        revenu_pourcentage = ((revenu_courant - revenu_precedent) / revenu_precedent) * 100
+        revenu_pourcentage = (
+            (revenu_courant - revenu_precedent) / revenu_precedent) * 100
 
     # --- c. Revenu quotidien ---
     ventes_aujourdhui = ventes.filter(date_achat__date=today)
     ventes_hier = ventes.filter(date_achat__date=today - timedelta(days=1))
 
-    revenu_jour = ventes_aujourdhui.aggregate(total=Sum('price_final'))['total'] or 0
+    revenu_jour = ventes_aujourdhui.aggregate(
+        total=Sum('price_final'))['total'] or 0
     revenu_hier = ventes_hier.aggregate(total=Sum('price_final'))['total'] or 0
 
     revenu_journalier_pourcentage = 0
     if revenu_hier > 0:
-        revenu_journalier_pourcentage = ((revenu_jour - revenu_hier) / revenu_hier) * 100
+        revenu_journalier_pourcentage = (
+            (revenu_jour - revenu_hier) / revenu_hier) * 100
 
     # --- d. Revenu mensuel (catégorie Habits) ---
     habits_categories = [
         'Habits/Homme', 'Habits/Femme', 'Habits/Enfants', 'Habits/Souliers', 'Habits/Neutre'
     ]
 
-    habits_mois_courant = ventes_mois_courant.filter(produit__category_fk__name__in=habits_categories)
-    habits_mois_precedent = ventes_mois_precedent.filter(produit__category_fk__name__in=habits_categories)
+    habits_mois_courant = ventes_mois_courant.filter(
+        produit__category_fk__name__in=habits_categories)
+    habits_mois_precedent = ventes_mois_precedent.filter(
+        produit__category_fk__name__in=habits_categories)
 
-    revenu_habits_courant = habits_mois_courant.aggregate(total=Sum('price_final'))['total'] or 0
-    revenu_habits_precedent = habits_mois_precedent.aggregate(total=Sum('price_final'))['total'] or 0
+    revenu_habits_courant = habits_mois_courant.aggregate(
+        total=Sum('price_final'))['total'] or 0
+    revenu_habits_precedent = habits_mois_precedent.aggregate(
+        total=Sum('price_final'))['total'] or 0
 
     habits_pourcentage = 0
     if revenu_habits_precedent > 0:
-        habits_pourcentage = ((revenu_habits_courant - revenu_habits_precedent) / revenu_habits_precedent) * 100
+        habits_pourcentage = (
+            (revenu_habits_courant - revenu_habits_precedent) / revenu_habits_precedent) * 100
 
     # --- Autres infos du tableau de bord ---
     total_ventes = ventes.count()
@@ -96,7 +119,7 @@ def dashboard(request):
         .annotate(total=Coalesce(Sum('price_final'), 0, output_field=DecimalField()))
         .order_by('method')
     )
-    
+
     methods_labels = [item['method'] for item in methodes_stats]
     methods_data = [float(item['total']) for item in methodes_stats]
 
@@ -118,31 +141,34 @@ def dashboard(request):
 
         'methods_labels': methods_labels,
         'methods_data': methods_data,
+        'notif_count': notif_count,
+
     }
 
     return render(request, 'gestion/dashboard1.html', context)
 
-    
+
 @admin_required
 def admin_products(request):
     """Liste tous les produits avec pagination"""
-    products_list = Product.objects.select_related('category_fk').order_by('-date_added')
-    
+    products_list = Product.objects.select_related(
+        'category_fk').order_by('-date_added')
+
     search_query = request.GET.get('search', '')
     if search_query:
         products_list = products_list.filter(name__icontains=search_query)
-    
+
     category_filter = request.GET.get('category', '')
     if category_filter:
         products_list = products_list.filter(category_fk__id=category_filter)
-    
+
     paginator = Paginator(products_list, 12)
     page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
     context = {
         'products': products,
-        'categories': Category.objects.all(),  
+        'categories': Category.objects.all(),
         'search_query': search_query,
         'category_filter': category_filter,
     }
@@ -162,7 +188,7 @@ def add_product(request):
                 description=request.POST.get('description'),
                 price=request.POST.get('price'),
                 price_primary=request.POST.get('price_primary') or None,
-                category_fk=category,  
+                category_fk=category,
                 badge=request.POST.get('badge'),
                 rating=request.POST.get('rating', 0),
                 reviews=request.POST.get('reviews', 0),
@@ -174,22 +200,26 @@ def add_product(request):
 
             product.full_clean()
             product.save()
-            
+
             features = request.POST.getlist('features[]')
             for feature_name in features:
                 if feature_name.strip():
-                    Feature.objects.create(product=product, name=feature_name.strip())
+                    Feature.objects.create(
+                        product=product, name=feature_name.strip())
 
-            messages.success(request, f'Le produit "{product.name}" a été ajouté avec succès.')
+            messages.success(
+                request, f'Le produit "{product.name}" a été ajouté avec succès.')
             return redirect('gestion:admin_products')
 
         except Exception as e:
-            messages.error(request, f'Erreur lors de l\'ajout du produit : {str(e)}')
+            messages.error(
+                request, f'Erreur lors de l\'ajout du produit : {str(e)}')
 
     context = {
-        'categories': Category.objects.all(), 
+        'categories': Category.objects.all(),
     }
     return render(request, 'gestion/add_product.html', context)
+
 
 @admin_required
 def edit_product(request, product_id):
@@ -220,17 +250,20 @@ def edit_product(request, product_id):
             features = request.POST.getlist('features[]')
             for feature_name in features:
                 if feature_name.strip():
-                    Feature.objects.create(product=product, name=feature_name.strip())
+                    Feature.objects.create(
+                        product=product, name=feature_name.strip())
 
-            messages.success(request, f'Le produit "{product.name}" a été modifié avec succès.')
+            messages.success(
+                request, f'Le produit "{product.name}" a été modifié avec succès.')
             return redirect('gestion:admin_products')
 
         except Exception as e:
-            messages.error(request, f'Erreur lors de la modification : {str(e)}')
+            messages.error(
+                request, f'Erreur lors de la modification : {str(e)}')
 
     context = {
         'product': product,
-        'categories': Category.objects.all(),  
+        'categories': Category.objects.all(),
     }
     return render(request, 'gestion/edit_product.html', context)
 
@@ -242,7 +275,8 @@ def delete_product(request, product_id):
     if request.method == 'POST':
         product_name = product.name
         product.delete()
-        messages.success(request, f'Le produit "{product_name}" a été supprimé avec succès.')
+        messages.success(
+            request, f'Le produit "{product_name}" a été supprimé avec succès.')
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'success': True})
@@ -254,10 +288,12 @@ def delete_product(request, product_id):
 
     return render(request, 'gestion/delete_product.html', {'product': product})
 
+
 @admin_required
 def view_product(request, product_id):
     """Voir les détails d'un produit"""
-    product = get_object_or_404(Product.objects.select_related('category_fk'), id=product_id)
+    product = get_object_or_404(
+        Product.objects.select_related('category_fk'), id=product_id)
     context = {
         'product': product,
     }
@@ -284,7 +320,8 @@ def ajouter_vente(request):
                 method=method
             )
 
-            messages.success(request, f'Vente du produit "{produit.name}" enregistrée avec succès.')
+            messages.success(
+                request, f'Vente du produit "{produit.name}" enregistrée avec succès.')
             return redirect('gestion:dashboard')
 
         except Product.DoesNotExist:
@@ -294,9 +331,10 @@ def ajouter_vente(request):
 
     context = {
         'methods': Vente.METHODS_CHOICES,
-        'produits': Product.objects.all(),  
+        'produits': Product.objects.all(),
     }
     return render(request, 'gestion/ajouter_vente.html', context)
+
 
 @admin_required
 def get_product_details(request, product_id):
@@ -317,14 +355,22 @@ def get_product_details(request, product_id):
 
 @admin_required
 def liste_ventes(request):
-    ventes_list = Vente.objects.select_related('produit', 'utilisateur').order_by('-date_achat')
-    paginator = Paginator(ventes_list, 15) 
+    utilisateur = request.user
+    if utilisateur.groups.filter(name="mukubwa").exists():
+        ventes_list = Vente.objects.select_related(
+            'produit', 'utilisateur').order_by('-date_achat')
+    else:
+        ventes_list = Vente.objects.filter(utilisateur=utilisateur).select_related(
+            'produit', 'utilisateur').order_by('-date_achat')
+
+    paginator = Paginator(ventes_list, 15)
     page_number = request.GET.get('page')
     ventes = paginator.get_page(page_number)
 
     return render(request, 'gestion/liste_ventes.html', {
         'ventes': ventes,
     })
+
 
 @admin_required
 def supprimer_vente(request, vente_id):
@@ -336,6 +382,7 @@ def supprimer_vente(request, vente_id):
         return redirect('liste_ventes')
 
     return render(request, 'gestion/supprimer_vente.html', {'vente': vente})
+
 
 @admin_required
 def modifier_vente(request, vente_id):
@@ -363,3 +410,107 @@ def modifier_vente(request, vente_id):
         'produits': produits,
         'methods': Vente.METHODS_CHOICES,
     })
+
+
+@admin_required
+def liste_ventes_rev(request):
+    utilisateur = request.user
+
+    if utilisateur.groups.filter(name="mukubwa").exists():
+        ventes_list = Vente.objects.select_related(
+            'produit', 'utilisateur').order_by('-date_achat')
+    else:
+        ventes_list = Vente.objects.filter(utilisateur=utilisateur)\
+                                   .select_related('produit', 'utilisateur')\
+                                   .order_by('-date_achat')
+
+    filtre = request.GET.get('filtre')
+    maintenant = timezone.now()
+
+    if filtre == "2":
+        ventes_list = ventes_list.filter(
+            date_achat__gte=maintenant - timedelta(days=2))
+    elif filtre == "7":
+        ventes_list = ventes_list.filter(
+            date_achat__gte=maintenant - timedelta(days=7))
+    elif filtre == "30":
+        ventes_list = ventes_list.filter(
+            date_achat__gte=maintenant - timedelta(days=30))
+    elif filtre == "90":
+        ventes_list = ventes_list.filter(
+            date_achat__gte=maintenant - timedelta(days=90))
+
+    # ---- Pagination ----
+    paginator = Paginator(ventes_list, 4)
+    page_number = request.GET.get('page')
+    ventes = paginator.get_page(page_number)
+
+    return render(request, 'gestion/liste_ventes_rev.html', {
+        'ventes': ventes,
+        'filtre': filtre,
+    })
+
+
+@admin_required
+def export_ventes_excel(request):
+    utilisateur = request.user
+
+    if utilisateur.groups.filter(name="mukubwa").exists():
+        ventes = Vente.objects.select_related('produit', 'utilisateur')
+    else:
+        ventes = Vente.objects.filter(utilisateur=utilisateur)\
+                              .select_related('produit', 'utilisateur')
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Ventes"
+
+    # En-têtes
+    ws.append(["Produit", "Utilisateur", "Prix", "Méthode", "Date"])
+
+    # Lignes
+    for v in ventes:
+        ws.append([
+            v.produit_nom,
+            v.utilisateur.username,
+            float(v.price_final or v.produit_prix),
+            v.method,
+            v.date_achat.strftime("%Y-%m-%d %H:%M")
+        ])
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="ventes.xlsx"'
+    wb.save(response)
+
+    return response
+
+
+@admin_required
+def export_ventes_pdf(request):
+    utilisateur = request.user
+
+    if utilisateur.groups.filter(name="mukubwa").exists():
+        ventes = Vente.objects.select_related('produit', 'utilisateur')
+    else:
+        ventes = Vente.objects.filter(utilisateur=utilisateur)\
+                              .select_related('produit', 'utilisateur')
+
+    # Génération du HTML
+    html_string = render_to_string('gestion/pdf_ventes.html', {
+        'ventes': ventes
+    })
+
+    # Génération PDF avec WeasyPrint
+    html = HTML(string=html_string)
+
+    # Fichier temporaire
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        html.write_pdf(target=output.name)
+
+        pdf_data = output.read()
+
+    response = HttpResponse(pdf_data, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="ventes.pdf"'
+    return response

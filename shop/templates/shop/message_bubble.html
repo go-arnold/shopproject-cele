@@ -1,0 +1,43 @@
+{% if msg.sender == request.user %}
+    <!-- Message envoyé -->
+    <div class="flex items-start gap-2 sm:gap-3 self-end max-w-[90%] sm:max-w-2xl"
+         data-id="{{ msg.id }}">
+        <div class="order-1 flex flex-col items-end">
+            <div class="flex items-baseline gap-1.5 sm:gap-2">
+                <p class="text-slate-900 dark:text-white text-xs sm:text-sm font-bold">Vous</p>
+                <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400">{{ msg.timestamp|date:"H:i" }}</span>
+            </div>
+            {% if msg.image %}
+                <img src="{{ msg.image.url }}"
+                     class="mt-1 max-w-[200px] rounded-lg shadow-md">
+            {% endif %}
+            {% if msg.content %}
+                <div class="mt-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg rounded-br-none bg-primary/20 dark:bg-primary/20">
+                    <p class="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed">{{ msg.content|linebreaks }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    <!-- Message reçu -->
+    <div class="flex items-start gap-2 sm:gap-3 self-start max-w-[90%] sm:max-w-2xl"
+         data-id="{{ msg.id }}">
+        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-7 sm:size-8 flex-shrink-0"
+             style='background-image: url("{{ msg.sender.profile.image.url }}")'></div>
+        <div class="order-2 flex flex-col items-start">
+            <div class="flex items-baseline gap-1.5 sm:gap-2">
+                <p class="text-slate-900 dark:text-white text-xs sm:text-sm font-bold">{{ msg.sender.username }}</p>
+                <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400">{{ msg.timestamp|date:"H:i" }}</span>
+            </div>
+            {% if msg.image %}
+                <img src="{{ msg.image.url }}"
+                     class="mt-1 max-w-[200px] rounded-lg shadow-md">
+            {% endif %}
+            {% if msg.content %}
+                <div class="mt-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg rounded-bl-none bg-slate-200 dark:bg-background-dark">
+                    <p class="text-xs sm:text-sm leading-relaxed">{{ msg.content|linebreaks }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

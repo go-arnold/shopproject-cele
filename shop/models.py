@@ -7,6 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from django.db.models import Avg
+from django.db.models import JSONField
 
 
 def validate_description_length(value):
@@ -212,32 +213,6 @@ class Testimony(models.Model):
         return f"{self.utilisateur} — {self.product.name} ({self.rating}) : {short}"
 
 
-class Panier(models.Model):
-    utilisateur = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    date_creation = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Panier de {self.utilisateur}"
-
-    @property
-    def total(self):
-        return sum(item.sous_total for item in self.items.all())
-
-
-class PanierItem(models.Model):
-    panier = models.ForeignKey(
-        Panier, related_name="items", on_delete=models.CASCADE)
-    produit = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantite = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-        return f"{self.quantite} x {self.produit.name}"
-
-    @property
-    def sous_total(self):
-        return self.produit.price * self.quantite
-
-
 class FavoriteProduct(models.Model):
     utilisateur = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, related_name="favoris"
@@ -273,6 +248,7 @@ class Vente(models.Model):
     method = models.CharField(
         max_length=50, choices=METHODS_CHOICES, default='Cash')
     date_enregistrement = models.DateTimeField(auto_now_add=True)
+    vendu_a = models.TextField(null=True, blank=True, max_length=50)
 
     def __str__(self):
         return f"Vente de {self.produit.name} par {self.utilisateur}"
@@ -292,3 +268,122 @@ class Vente(models.Model):
     @property
     def produit_categorie(self):
         return self.produit.category
+
+
+User = get_user_model()
+
+
+class Conversation(models.Model):
+    """
+    Une conversation entre 2 ou plusieurs utilisateurs :
+    - un client
+    - un revendeur
+    - un 'mukubwa'
+    """
+
+    participants = models.ManyToManyField(User, related_name="conversations")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # Pour savoir si elle a été créée via le panier
+    is_from_cart = models.BooleanField(default=False)
+
+    # Optionnel : lien direct vers la commande — utile pour la suite
+    related_order = models.ForeignKey(
+        'Order', on_delete=models.SET_NULL, null=True, blank=True, related_name="conversations"
+    )
+
+    @property
+    def display_name(self):
+        if self.is_from_cart and self.related_order:
+            return f"Concernant la commande #{self.related_order.id}"
+        return f"Discussion #{self.id} avec agent"
+
+    def __str__(self):
+        return f"Conversation {self.id} — {self.created_at.strftime('%Y-%m-%d')}"
+
+
+class Message(models.Model):
+    conversation = models.ForeignKey(
+        Conversation, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    content = models.TextField(blank=True, null=True)
+    metadata = JSONField(null=True, blank=True)
+    image = models.ImageField(upload_to="messages/",
+                              blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        if self.content:
+            return f"{self.sender}: {self.content[:30]}"
+        return f"{self.sender}: [Image]"
+
+
+class Notification(models.Model):
+    TYPE_CHOICES = [
+        ("order", "Commande"),
+        ("chat", "Discussion"),
+    ]
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notifications")
+    conversation = models.ForeignKey("Conversation", on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    body = models.TextField(blank=True)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES, null=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_order_assigned = models.BooleanField(default=False)
+
+    def mark_as_read(self):
+        self.is_read = True
+        self.save()
+
+    def __str__(self):
+        return f"Notif to {self.user} — {self.title}"
+
+
+# =========================
+#   ORDER / ORDER ITEMS
+# =========================
+
+class Order(models.Model):
+    """
+    Représente le contenu du panier à l'instant où le client clique sur
+    'Passer à la discussion'. Geler le panier est ESSENTIEL.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    STATUS_CHOICES = [
+        ('pending', 'En attente'),
+        ('processing', 'Traitement'),
+        ('done', 'Terminé')
+    ]
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='pending'
+    )
+
+    def __str__(self):
+        return f"Order {self.id} by {self.user}"
+
+
+class OrderItem(models.Model):
+    """
+    Produit appartenant à une commande.
+    """
+
+    order = models.ForeignKey(
+        Order, related_name="items", on_delete=models.CASCADE
+    )
+
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.PositiveIntegerField(default=1)
+
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product}"

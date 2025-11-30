@@ -1,3 +1,14 @@
+from datetime import datetime
+from django.utils import timezone
+from django.utils.timesince import timesince
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render
+from .models import Conversation, Message
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Order, OrderItem, Conversation, Message, Notification, Product
+from django.http import Http404, HttpResponseForbidden
+from django.contrib.auth.models import Group
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Product, FavoriteProduct
 from django.shortcuts import get_object_or_404
@@ -12,9 +23,8 @@ from django.shortcuts import redirect
 import random
 from django.db.models import Q
 from .cart import Cart
-
-
-from django.shortcuts import render
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 def homeVue(request):
@@ -465,6 +475,44 @@ def aboutUs(request):
     return render(request, 'shop/about.html')
 
 
+def assistant(request):
+    now = timezone.now()
+
+    target = timezone.make_aware(datetime(now.year, 1, 18))
+    if now > target:
+
+        target = timezone.make_aware(datetime(now.year + 1, 1, 18))
+
+    remaining = target - now
+
+    days = remaining.days
+    seconds = remaining.seconds
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    secs = seconds % 60
+
+    return render(request, "shop/assistant.html", {
+        "days": days,
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": secs,
+    })
+
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return render(request, 'shop/login_required.html')
+    return render(request, 'shop/profile.html')
+
+
+def messages(request):
+    html_to_render2 = "shop/login_required.html"
+
+    if not request.user.is_authenticated:
+        return render(request, html_to_render2)
+    return render(request, 'shop/conversations.html')
+
+
 """
 def cart(request):
     Rend la page du panier.
@@ -503,3 +551,416 @@ def product_list(request):
     })
 
 """
+
+
+@login_required
+def start_conversation_from_cart(request):
+    """
+    Convertit le panier en Order, crée une Conversation,
+    envoie un message automatique + notification à tous les 'mukubwa'.
+    """
+
+    cart = Cart(request)
+
+    if len(cart) == 0:
+        raise Http404("Votre panier est vide.")
+
+    # 1. CRÉER LA COMMANDE
+    order = Order.objects.create(
+        user=request.user,
+        total_price=cart.get_total_price(),
+    )
+
+    # 2. CRÉER LES ORDER ITEMS
+    for item in cart:
+        OrderItem.objects.create(
+            order=order,
+            product=item["product"],
+            quantity=item["quantity"],
+            unit_price=item["price"],
+        )
+
+    # 3. CRÉER LA CONVERSATION
+    conversation = Conversation.objects.create(
+        is_from_cart=True,
+        related_order=order
+    )
+    conversation.participants.add(request.user)
+
+    # 4. MESSAGE AUTOMATIQUE FORMATÉ
+    lines = []
+    lines.append("Bonjour, je voudrais passer cette commande :\n")
+    total = 0
+
+    for item in cart:
+        qty = item["quantity"]
+        price = item["price"]
+        name = item["product"].name
+        subtotal = qty * price
+        total += subtotal
+        lines.append(f"- {name} × {qty} = {subtotal} $")
+
+    lines.append(f"\nTotal : {total} $")
+
+    auto_message = "\n".join(lines)
+
+    Message.objects.create(
+        conversation=conversation,
+        sender=request.user,
+        content=auto_message,
+        metadata={"generated_from_cart": True},
+    )
+
+    # 5. NOTIFICATION AUX MUKUBWA
+    try:
+        mukubwa_group = Group.objects.get(name="mukubwa")
+        mukubwa_users = mukubwa_group.user_set.all()
+    except Group.DoesNotExist:
+        mukubwa_users = []
+
+    for admin in mukubwa_users:
+        Notification.objects.create(
+            user=admin,
+            title="Nouvelle commande",
+            type="order",
+            body=f"{request.user} a envoyé une demande d'achat.",
+            conversation=conversation
+        )
+
+    # 6. VIDER PANIER APRÈS ENVOI
+    cart.clear()
+
+    # 7. REDIRIGER VERS LA CONVERSATION
+    return redirect("conversation_detail", conversation_id=conversation.id)
+
+
+@login_required
+def conversation_detail(request, conversation_id):
+    """
+    Affiche une conversation existante + liste des messages.
+    """
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+
+    # Vérifier que l'utilisateur fait partie de la conversation
+    if request.user not in conversation.participants.all():
+        conversation.participants.add(request.user)
+
+    messages = Message.objects.filter(
+        conversation=conversation).order_by("timestamp")
+
+    return render(request, "shop/discussions.html", {
+        "conversation": conversation,
+        "messages": messages,
+        "conversation_name": conversation.display_name,
+    })
+
+
+@login_required
+def conversation_messages_json(request, conversation_id):
+    """
+    Retourne les messages sous forme JSON (pour AJAX polling).
+    """
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+
+    if request.user not in conversation.participants.all():
+        return JsonResponse({"error": "Access denied"}, status=403)
+
+    messages = Message.objects.filter(
+        conversation=conversation).order_by("timestamp")
+
+    data = []
+    for m in messages:
+        data.append({
+            "id": m.id,
+            "sender_id": m.sender.id,
+            "sender_name": m.sender.username,
+            "content": m.content,
+            "timestamp": m.timestamp.strftime("%H:%M"),
+            "is_me": (m.sender == request.user),
+        })
+
+    return JsonResponse({"messages": data})
+
+
+@login_required
+def send_message_ajax(request, conversation_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=400)
+
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+
+    # Vérif participant
+    if request.user not in conversation.participants.all():
+        return JsonResponse({"error": "Access denied"}, status=403)
+
+    content = request.POST.get("content", "").strip()
+    image = request.FILES.get("image")
+
+    if not content and not image:
+        return JsonResponse({"error": "Message vide"}, status=400)
+
+    msg = Message.objects.create(
+        conversation=conversation,
+        sender=request.user,
+        content=content if content else None,
+        image=image if image else None,
+    )
+    if not conversation.is_from_cart:
+        # savoir le premier message de la conversation
+        is_first = Message.objects.filter(
+            conversation=conversation).count() == 1
+        # is_first = conversation.message_set.count() == 1
+        if is_first:
+            try:
+                mukubwa_group = Group.objects.get(name="mukubwa")
+                mukubwa_users = mukubwa_group.user_set.all()
+            except Group.DoesNotExist:
+                mukubwa_users = []
+
+            for admin in mukubwa_users:
+                Notification.objects.create(
+                    user=admin,
+                    title=f"Nouvelle discussion par {request.user}",
+                    body=f"{request.user} a démarré une nouvelle discussion.",
+                    conversation=conversation,
+                    type="chat"
+                )
+
+    return JsonResponse({
+        "id": msg.id,
+        "sender_id": msg.sender.id,
+        "content": msg.content,
+        "image_url": msg.image.url if msg.image else None,
+        "timestamp": msg.timestamp.strftime("%H:%M"),
+        "is_me": True,
+    })
+
+
+@login_required
+def fetch_new_messages_ajax(request, conversation_id):
+    last_id = int(request.GET.get("last_id", 0))
+
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+
+    if request.user not in conversation.participants.all():
+        return JsonResponse({"error": "Access denied"}, status=403)
+
+    new_messages = Message.objects.filter(
+        conversation=conversation,
+        id__gt=last_id
+    ).order_by("timestamp")
+
+    data = []
+    for m in new_messages:
+        data.append({
+            "id": m.id,
+            "sender_id": m.sender.id,
+            "sender_name": m.sender.username,
+            "content": m.content,
+            "image_url": m.image.url if m.image else None,
+            "timestamp": m.timestamp.strftime("%H:%M"),
+            "is_me": (m.sender == request.user),
+        })
+
+    return JsonResponse({"messages": data})
+
+
+@login_required
+def notifications_view(request):
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user not in rev and user not in muk:
+        raise PermissionDenied()
+    else:
+        # Récupérer les notifs du user
+        notifications = Notification.objects.filter(
+            user=user).order_by("-created_at")
+        notif_count = int(notifications.count())
+
+        try:
+            revendeur_group = Group.objects.get(name="revendeur")
+            revendeurs = revendeur_group.user_set.all()
+            mukubwa_group = Group.objects.get(name="mukubwa")
+            mukubwas = mukubwa_group.user_set.all()
+            # superusers
+            s_users = User.objects.filter(is_superuser=True)
+        except Group.DoesNotExist:
+            revendeurs = []
+            mukubwas = []
+
+        return render(request, "shop/mukubwa_revendeur.html", {
+            "notifications": notifications,
+            "revendeurs": revendeurs,
+            "mukubwas": mukubwas,
+            "s_users": s_users,
+        })
+
+
+@login_required
+def assign_revendeur(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+
+    if not request.user.groups.filter(name="mukubwa").exists():
+        return HttpResponseForbidden("Accès refusé")
+
+    revendeur_id = request.POST.get("revendeur_id")
+
+    if not revendeur_id:
+        messages.error(request, "Veuillez sélectionner un revendeur.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    revendeur = get_object_or_404(User, id=revendeur_id)
+
+    # Ajouter revendeur dans participants
+    conversation = notification.conversation
+    conversation.participants.add(revendeur)
+
+    notification.is_order_assigned = True
+    notification.save()
+
+    # Envoyer notif au revendeur choisi
+    Notification.objects.create(
+        user=revendeur,
+        conversation=conversation,
+        type="order",
+        title="Assignation de commande",
+        body=f"Vous avez été assigné à la commande #{conversation.related_order.id}",
+    )
+
+    return redirect("notifications")
+
+
+@login_required
+def mukubwa_reply(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+
+    if not request.user.groups.filter(name="mukubwa").exists():
+        return HttpResponseForbidden("Accès refusé")
+
+    conversation = notification.conversation
+    conversation.participants.add(request.user)
+
+    notification.mark_as_read()
+
+    return redirect("conversation_detail", conversation_id=conversation.id)
+
+
+@login_required
+def revendeur_reply(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+
+    if not request.user.groups.filter(name="revendeur").exists():
+        return HttpResponseForbidden("Accès refusé")
+
+    conversation = notification.conversation
+    conversation.participants.add(request.user)
+
+    notification.mark_as_read()
+
+    return redirect("conversation_detail", conversation_id=conversation.id)
+
+
+# Assure-toi d'avoir ces imports adaptés à tes models
+# from .models import Conversation, Message
+
+
+@login_required
+def list_conversations(request):
+    """
+    Liste simple des conversations de l'utilisateur.
+    Recherche server-side sur:
+      - contenu du dernier message
+      - nom des autres participants
+      - id de la commande (related_order.id) si présent
+    Aucun JS : tout via paramètre GET 'q'.
+    """
+    q = request.GET.get("q", "").strip()
+
+    # Conversations dont l'utilisateur est participant
+    qs = Conversation.objects.filter(
+        participants=request.user).order_by("-created_at")
+
+    # Construire une liste simple d'objets dict pour le template.
+    conversations_info = []
+    for conv in qs:
+        # dernier message
+        # last_msg = conv.message_set.order_by("-timestamp").first()
+        last_msg = Message.objects.filter(
+            conversation=conv).order_by("-timestamp").first()
+        last_content = last_msg.content if last_msg else ""
+        last_sender = last_msg.sender if last_msg else None
+        last_timestamp = last_msg.timestamp if last_msg else None
+
+        # autre participant (pour affichage)
+        others = conv.participants.exclude(id=request.user.id)
+        other = others.first() if others.exists() else None
+
+        conversations_info.append({
+            "conversation": conv,
+            "other": other,
+            "last_content": last_content,
+            "last_sender": last_sender,
+            "last_timestamp": last_timestamp,
+        })
+
+    # Filtrage server-side si q fourni
+    if q:
+        q_lower = q.lower()
+        filtered = []
+        for item in conversations_info:
+            matches = False
+
+            # 1) chercher dans dernier message
+            if item["last_content"] and q_lower in item["last_content"].lower():
+                matches = True
+
+            # 2) chercher dans nom de l'autre participant
+            other = item["other"]
+            if other:
+                fullname = (other.get_full_name() or other.username).lower()
+                if q_lower in fullname or q_lower in other.username.lower():
+                    matches = True
+
+            # 3) chercher par id de commande si present
+            conv = item["conversation"]
+            if q.isdigit() and conv.related_order and str(conv.related_order.id) == q:
+                matches = True
+
+            if matches:
+                filtered.append(item)
+
+        conversations_info = filtered
+
+    context = {
+        "conversations_info": conversations_info,
+        "query": q,
+        "now": timezone.now(),
+    }
+    return render(request, "shop/list_discussions.html", context)
+
+
+@login_required
+def conversation_new(request):
+
+    existing_convs = Conversation.objects.filter(
+        participants=request.user
+    ).annotate(
+        msg_count=Count('messages')
+    ).filter(
+        msg_count=0
+    )
+    if existing_convs.exists():
+        return redirect('conversation_detail', conversation_id=existing_convs.first().id)
+
+    conv = Conversation.objects.create(
+        is_from_cart=False,
+        related_order=None
+    )
+    conv.participants.add(request.user)
+
+    return redirect('conversation_detail', conversation_id=conv.id)
+
+
+def disc(request):
+    return render(request, 'shop/list_discussions.html')

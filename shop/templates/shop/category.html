@@ -7,8 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon"
               type="image/x-icon"
-              sizes="32x32"
-              href="{% static 'static-img/favicon.ico' %}">
+              sizes="16x16"
+              href="{% static 'favicon.ico' %}">
         <link rel="icon"
               type="image/png"
               sizes="32x32"
@@ -247,19 +247,22 @@
         <canvas id="particles" aria-hidden="true"></canvas>
         <div class="relative flex min-h-screen flex-col">
             <!-- HEADER -->
-            <header class="flex-col px-4 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
-                <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
+            <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+                <!-- Top bar - Caché sur mobile -->
+                <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
                     <a class="hover:text-white transition-colors" href="#">Aide</a>
                     <a class="hover:text-white transition-colors"
                        href="{% url 'about_us' %}">À propos</a>
                     <a class="hover:text-white transition-colors" href="#">Articles</a>
                 </div>
-                <div class="flex items-center gap-6 lg:gap-8 py-4">
+                <!-- Main header -->
+                <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
+                    <!-- Logo -->
                     <div class="flex items-center gap-2.5">
                         <a href="{% url 'home' %}">
                             <img src="{% static 'static-img/logo-white.png' %}"
                                  alt="CELEBOBO"
-                                 class="h-10 sm:h-12 lg:h-14 w-auto object-contain">
+                                 class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
                         </a>
                     </div>
                     <!-- Desktop Search -->
@@ -274,11 +277,12 @@
                                    type="search" />
                         </div>
                     </form>
-                    <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                    <!-- Icons -->
+                    <div class="flex items-center gap-1 sm:gap-4 ml-auto">
                         <!-- Mobile Search Button -->
                         <button id="mobileSearchBtn"
-                                class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
-                            <span class="material-symbols-outlined text-xl">search</span>
+                                class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <span class="material-symbols-outlined text-lg sm:text-xl">search</span>
                         </button>
                         {% if not user.is_authenticated %}
                             <!-- Desktop: Button S'inscrire -->
@@ -290,34 +294,40 @@
                         {% endif %}
                         {% if user.is_authenticated %}
                             <!-- Favoris -->
-                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <a href="{% url 'favorites_list' %}"><span class="material-symbols-outlined text-xl">favorite</span></a>
+                            <button class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="{% url 'favorites_list' %}">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">favorite</span>
+                                </a>
                             </button>
-                            <!-- Messages -->
-                            <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
+                            <!-- Messages - Desktop only -->
+                            <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <span class="material-symbols-outlined text-xl">mail</span>
                                 <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
                             </button>
                         {% endif %}
                         <!-- Panier -->
                         <a href="{% url 'cart' %}">
-                            <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <span class="material-symbols-outlined text-xl">shopping_cart</span>
-                                <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
+                            <button class="relative flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">shopping_cart</span>
+                                <span class="cart-count absolute -top-0.5 -right-0.5 sm:top-1 sm:right-0.5 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-primary text-[0.6rem] sm:text-xs font-bold text-white">{{ cart_count }}</span>
                             </button>
                         </a>
                         {% if user.is_authenticated %}
-                            <button class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 bg-primary text-white  hover:bg-primary/90 transition">
-                                <a href="#"><span class="material-symbols-outlined text-2xl">person</span></a>
+                            <!-- Profile - Desktop only -->
+                            <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="#">
+                                    <span class="material-symbols-outlined text-2xl">person</span>
+                                </a>
                             </button>
-                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <a href= "{% url 'account_logout' %}">
+                            <!-- Logout -->
+                            <button class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="{% url 'account_logout' %}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          fill="none"
                                          viewBox="0 0 24 24"
                                          stroke-width="1.5"
                                          stroke="currentColor"
-                                         class="size-6">
+                                         class="w-5 h-5 sm:w-6 sm:h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                                     </svg>
                                 </a>
@@ -325,22 +335,24 @@
                         {% endif %}
                         <!-- Mobile: Icône de profil -->
                         {% if not user.is_authenticated %}
-                            <button class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 bg-primary text-white  hover:bg-primary/90 transition">
-                                <a href="{% url 'account_login' %}"><span class="material-symbols-outlined text-2xl">person</span></a>
+                            <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
+                                <a href="{% url 'account_login' %}">
+                                    <span class="material-symbols-outlined text-xl">person</span>
+                                </a>
                             </button>
                         {% endif %}
                     </div>
                 </div>
             </header>
-            <!-- MOBILE SEARCH -->
+            <!-- MOBILE SEARCH CONTAINER OPTIMISÉ -->
             <form method="GET"
                   action="{% url 'results' %}"
                   id="mobileSearchContainer"
-                  class="hidden px-4 py-3 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
+                  class="hidden px-3 py-2 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50 text-lg">search</span>
                     <input name="q"
-                           class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                           class="w-full h-9 text-sm bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                            placeholder="Rechercher un produit..."
                            type="search" />
                 </div>
@@ -754,37 +766,43 @@
                 </div>
             </footer>
         </div>
-        <!-- Mobile Tab Bar -->
+        <!-- Mobile Bottom Tab Bar -->
         <nav id="mobileTabbar"
-             class="mobile-tabbar md:hidden flex justify-around py-2 text-white">
-            <button class="flex flex-col items-center text-xs text-primary"
-                    aria-label="Accueil">
-                <span class="material-symbols-outlined text-2xl"
-                      style="font-variation-settings: 'FILL' 1">storefront</span>Shop
-            </button>
+             class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
+            <a href="{% url 'home' %}">
+                <button class="flex flex-col items-center text-[0.65rem] gap-0.5 text-primary"
+                        aria-label="Accueil">
+                    <span class="material-symbols-outlined text-xl"
+                          style="font-variation-settings: 'FILL' 1">storefront</span>Shop
+                </button>
+            </a>
             <a href="{% url 'cart' %}">
-                <button class="relative flex flex-col items-center text-xs">
-                    <span class="material-symbols-outlined text-2xl">shopping_cart</span>Panier
-                    <!-- BADGE -->
-                    <span id="aaa"
-                          class="cart-count absolute -top-1 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">{{ cart_count }}
+                <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5">
+                    <span class="material-symbols-outlined text-xl">shopping_cart</span>Panier
+                    <span class="cart-count absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white">{{ cart_count }}</span>
+                </button>
+            </a>
+            <a href="{% url 'assistant' %}">
+                <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
+                    <span class="material-symbols-outlined text-xl">assistant</span>
+                    Assistant
+                </button>
+            </a>
+            <a href="{% url 'list_conversations' %}">
+                <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 ">
+                    <span class="material-symbols-outlined text-xl">forum</span>
+                    Messages
+                    <span id="messagesCounter"
+                          class="absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white hidden">
                     </span>
                 </button>
             </a>
-            <button class="flex flex-col items-center text-xs">
-                <span class="material-symbols-outlined text-2xl">assistant</span>Assistant
-            </button>
-            <button class="relative flex flex-col items-center text-xs">
-                <span class="material-symbols-outlined text-2xl">forum</span>
-                Messages
-                <!-- BADGE -->
-                <span id="messagesCounter"
-                      class="absolute -top-1 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white hidden">
-                </span>
-            </button>
-            <button class="flex flex-col items-center text-xs" aria-label="Profil">
-                <span class="material-symbols-outlined text-2xl">person</span>Profil
-            </button>
+            <a href="{% url 'profile' %}">
+                <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
+                    <span class="material-symbols-outlined text-xl">person</span>
+                    Profil
+                </button>
+            </a>
         </nav>
         <!-- SCRIPTS -->
         <script>

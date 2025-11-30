@@ -1,0 +1,117 @@
+{% extends 'gestion/base.html' %}
+{% load static %}
+{% block title %}Liste des ventes - Cele Admin{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Liste des ventes</h4>
+                    <p class="card-description">Historique des ventes récentes</p>
+                    <p class="card-description">Exportez en documents</p>
+                    <div class="">
+                        <a href="{% url 'gestion:export_ventes_excel' %}"
+                           type="button"
+                           class="btn btn-outline-warning btn-fw">Exportez en Excel</a>
+                        <a href="{% url 'gestion:export_ventes_pdf' %}"
+                           type="button"
+                           class="btn btn-outline-warning btn-fw">Exportez en PDF</a>
+                    </div>
+                    <p class="card-description pt-2">Filtrez les ventes selon :</p>
+                    <div>
+                        <a href="?filtre=2"
+                           type="button"
+                           class="btn btn-outline-info btn-fw mx-3">2 derniers jours</a>
+                        <a href="?filtre=7"
+                           type="button"
+                           class="btn btn-outline-secondary btn-fw mx-3">7 derniers jours</a>
+                        <a href="?filtre=30"
+                           type="button"
+                           class="btn btn-outline-info btn-fw mx-3">1 mois</a>
+                        <a href="?filtre=90"
+                           type="button"
+                           class="btn btn-outline-secondary btn-fw mx-3">Dernier Trimestre</a>
+                        <a href="?" type="button" class ="btn btn-outline-success btn-fw mx-3">Tout</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date d'achat</th>
+                                    <th>Produit</th>
+                                    <th>Ajouté par</th>
+                                    <th>Prix final</th>
+                                    <th>Méthode de paiement</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vente in ventes %}
+                                    <tr>
+                                        <td>{{ vente.date_achat|date:"d M Y, H:i" }}</td>
+                                        <td>{{ vente.produit.name }}</td>
+                                        <td>{{ vente.utilisateur.get_full_name|default:vente.utilisateur.username }}</td>
+                                        <td>
+                                            {% if vente.price_final %}
+                                                {{ vente.price_final }} <small class="text-muted">usd$</small>
+                                            {% else %}
+                                                {{ vente.produit.price }} <small class="text-muted">usd$</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ vente.method }}</td>
+                                        <td class="text-center">
+                                            <a href="{% url 'gestion:modifier_vente' vente.id %}"
+                                               class="text-secondary">
+                                                <i class="mdi mdi-settings" style="font-size: 20px;"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">Aucune vente enregistrée pour le moment.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    {% if ventes.has_other_pages %}
+                        <nav aria-label="Pagination des ventes" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                {% if ventes.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ ventes.previous_page_number }}">&laquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">&laquo;</span>
+                                    </li>
+                                {% endif %}
+                                {% for num in ventes.paginator.page_range %}
+                                    {% if ventes.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if ventes.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ ventes.next_page_number }}">&raquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">&raquo;</span>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

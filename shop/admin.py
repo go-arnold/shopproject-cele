@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import Product, Panier, PanierItem, Feature, Category, Vente, Testimony
+from .models import Product, Feature, Category, Vente, Testimony, FavoriteProduct, Conversation, Order, OrderItem, Message, Notification
 
 
-# --- Catégories ---
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -10,18 +9,11 @@ class CategoryAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
-# --- Panier et Items ---
-admin.site.register(Panier)
-admin.site.register(PanierItem)
-
-
-# --- Features en inline ---
 class FeatureInline(admin.TabularInline):
     model = Feature
     extra = 1
 
 
-# --- Produits ---
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
@@ -39,7 +31,6 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [FeatureInline]
     readonly_fields = ('solde_percent', 'display_badge', 'date_added')
 
-    # permet d'afficher la catégorie (FK ou legacy)
     def display_category(self, obj):
         return obj.category
     display_category.short_description = 'Catégorie'
@@ -48,7 +39,6 @@ class ProductAdmin(admin.ModelAdmin):
         return obj.current_badge
     display_badge.short_description = 'Badge actuel'
 
-    # Ordre et champs affichés dans le formulaire d'édition
     fields = (
         'name',
         'description',
@@ -75,7 +65,6 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
 
-# --- Ventes ---
 @admin.register(Vente)
 class VenteAdmin(admin.ModelAdmin):
     list_display = (
@@ -95,7 +84,8 @@ class VenteAdmin(admin.ModelAdmin):
 
 @admin.register(Testimony)
 class TestimonyAdmin(admin.ModelAdmin):
-    list_display = ('product', 'utilisateur', 'rating', 'short_message', 'date_created')
+    list_display = ('product', 'utilisateur', 'rating',
+                    'short_message', 'date_created')
     search_fields = ('utilisateur__username', 'product__name', 'message')
     list_filter = ('rating', 'date_created')
     raw_id_fields = ('product', 'utilisateur')
@@ -106,3 +96,54 @@ class TestimonyAdmin(admin.ModelAdmin):
             return ''
         return (obj.message[:80] + '...') if len(obj.message) > 80 else obj.message
     short_message.short_description = 'Message'
+
+
+@admin.register(FavoriteProduct)
+class FavoriteProductAdmin(admin.ModelAdmin):
+    list_display = ('produit', 'utilisateur', 'date_ajout')
+    search_fields = ('utilisateur__username', 'produit__name')
+    list_filter = ('date_ajout',)
+    raw_id_fields = ('produit', 'utilisateur')
+    readonly_fields = ('date_ajout',)
+
+
+@admin.register(Conversation)
+class ConversationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'is_from_cart', 'related_order',
+                    'created_at', 'display_name')
+    search_fields = ('id', 'related_order__id')
+    list_filter = ('is_from_cart', 'created_at')
+    readonly_fields = ('created_at',)
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'total_price', 'created_at', 'status')
+    search_fields = ('id', 'user__username')
+    list_filter = ('status', 'created_at')
+    readonly_fields = ('created_at',)
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ('order', 'product', 'quantity', 'unit_price')
+    search_fields = ('order__id', 'product__name')
+    readonly_fields = ()
+
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'conversation', 'sender', 'timestamp',
+                    'content', 'metadata', 'seen', 'image')
+    search_fields = ('conversation__id', 'sender__username', 'content')
+    list_filter = ('seen', 'timestamp')
+    readonly_fields = ('timestamp',)
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'body', 'created_at',
+                    'is_read', 'title', 'conversation')
+    search_fields = ('user__username', 'message')
+    list_filter = ('is_read', 'created_at')
+    readonly_fields = ('created_at',)

@@ -1,9 +1,8 @@
 {% extends 'gestion/base.html' %}
 {% load static %}
 {% block title %}Gérer les produits - Cele Admin{% endblock %}
-
 {% block extra_css %}
-<style>
+    <style>
     body {
         background: linear-gradient(135deg,  rgba(226,226,226,1) 0%,rgba(219,219,219,1) 50%,rgba(209,209,209,1) 50%,rgba(209,209,209,1) 50%,rgba(254,254,254,1) 100%) center/cover no-repeat;
         min-height:100vh
@@ -256,10 +255,11 @@
     .loading { opacity: 0.5; pointer-events: none; }
     </style>
 {% endblock %}
-
 {% block content %}
     <div class="header">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex;
+                    justify-content: space-between;
+                    align-items: center">
             <div>
                 <h1>Gérer les produits</h1>
                 <p style="color: #666; margin-top: 10px;">{{ products.paginator.count }} produit(s) au total</p>
@@ -267,56 +267,68 @@
             <a href="{% url 'gestion:add_product' %}" class="btn btn-primary">➕ Ajouter un produit</a>
         </div>
     </div>
-
     <div class="row">
         {% for product in products %}
             <!-- ajouter data-product-id ici pour pouvoir supprimer la carte sans reload -->
             <div class="card" data-product-id="{{ product.id }}">
                 <div class="badge">{{ product.badge }}</div>
                 <div class="tilt">
-                    <div class="img"><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>
+                    <div class="img">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </div>
                 </div>
                 <div class="info">
                     <div class="cat">{{ product.category.category }}</div>
                     <h2 class="title">{{ product.name }}</h2>
                     <p class="desc">{{ product.description }}</p>
-                    <p class="desc">Produit ajouté depuis le {{ product.date_added|date:"d/m/Y" }}, il devrait être vendu avant le {{ product.date_wish|date:"d/m/Y" }}. Il a été acheté a {{product.price_primary}}$.</p>
-
+                    <p class="desc">
+                        Produit ajouté depuis le {{ product.date_added|date:"d/m/Y" }}, il devrait être vendu avant le {{ product.date_wish|date:"d/m/Y" }}. Il a été acheté a {{ product.price_primary }}$.
+                    </p>
                     <div class="feats">
-                        {% for feat in product.features.all %}
-                            <span class="feat">{{ feat }}</span>
-                        {% endfor %}
+                        {% for feat in product.features.all %}<span class="feat">{{ feat }}</span>{% endfor %}
                     </div>
-
                     <div class="bottom">
                         <div class="price">
                             <span class="old"></span>
                             <span class="new">{{ product.price }}$</span>
                         </div>
-
                         <div style="display:flex; gap:8px; align-items:center;">
-                            <a href="{% url 'gestion:edit_product' product.id %}" class="btn" style="text-decoration:none;">Modifier produit</a>
-
+                            <a href="{% url 'gestion:edit_product' product.id %}"
+                               class="btn"
+                               style="text-decoration:none">Modifier produit</a>
                             <!-- bouton supprimer : garde un <a> avec data-url + data-product-id -->
                             <a href="{% url 'gestion:delete_product' product.id %}"
                                class="btn btn-delete open-delete-modal"
                                data-url="{% url 'gestion:delete_product' product.id %}"
                                data-product-id="{{ product.id }}"
-                               style="text-decoration:none;">
+                               style="text-decoration:none">
                                 <!-- ton svg -->
-                                <svg fill="#ffffff" width="20px" height="20px" viewBox="0 0 24.00 24.00" xmlns="http://www.w3.org/2000/svg" class="icon line-color">
-                                    <path d="M16,7V4a1,1,0,0,0-1-1H9A1,1,0,0,0,8,4V7m4,4v6" style="fill: none; stroke: #2ca9bc; stroke-linecap: round; stroke-linejoin: round; stroke-width:2.352;"></path>
-                                    <path d="M4,7H20M17.07,20.07,18,7H6l.93,13.07a1,1,0,0,0,1,.93h8.14A1,1,0,0,0,17.07,20.07Z" style="fill: none; stroke: #ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width:2.352;"></path>
+                                <svg fill="#ffffff"
+                                     width="20px"
+                                     height="20px"
+                                     viewBox="0 0 24.00 24.00"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="icon line-color">
+                                    <path d="M16,7V4a1,1,0,0,0-1-1H9A1,1,0,0,0,8,4V7m4,4v6" style="fill: none; stroke: #2ca9bc; stroke-linecap: round; stroke-linejoin: round; stroke-width:2.352;">
+                                    </path>
+                                    <path d="M4,7H20M17.07,20.07,18,7H6l.93,13.07a1,1,0,0,0,1,.93h8.14A1,1,0,0,0,17.07,20.07Z" style="fill: none; stroke: #ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width:2.352;">
+                                    </path>
                                 </svg>
                             </a>
                         </div>
                     </div>
-
                     <div class="meta">
                         <div class="rating">
                             {% for i in "12345" %}
                                 {% if forloop.counter <= product.rating %}
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="0.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <svg width="16"
+                                         height="16"
+                                         viewBox="0 0 24 24"
+                                         fill="#FFD700"
+                                         stroke="#FFD700"
+                                         stroke-width="0.5">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg>
                                 {% endif %}
                             {% endfor %}
                             <span class="rcount">{{ product.reviews }}</span>
@@ -329,49 +341,34 @@
             <p>Aucun produit disponible.</p>
         {% endfor %}
     </div>
-
     <div class="pagination">
         <span class="btn">
             {% if products.has_previous %}
                 <a class="btn" href="?page=1">&laquo; première</a>
                 <a class="btn" href="?page={{ products.previous_page_number }}">&lsaquo; précédente</a>
             {% endif %}
-            <span class="current-page" class="btn">
-                Page {{ products.number }} sur {{ products.paginator.num_pages }}.
-            </span>
+            <span class="current-page" class="btn">Page {{ products.number }} sur {{ products.paginator.num_pages }}.</span>
             {% if products.has_next %}
                 <a class="btn" href="?page={{ products.next_page_number }}">suivante &rsaquo;</a>
                 <a class="btn" href="?page={{ products.paginator.num_pages }}">dernière &raquo;</a>
             {% endif %}
         </span>
     </div>
-
     <!-- MODAL: placé ici pour être disponible au chargement DOM -->
-    <div id="deleteModal" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="modal-content" role="document" aria-labelledby="delete-modal-title">
+    <div id="deleteModal"
+         class="modal-overlay"
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true">
+        <div class="modal-content"
+             role="document"
+             aria-labelledby="delete-modal-title">
             <button class="close-modal" aria-label="Fermer la fenêtre">&times;</button>
             <div id="deleteModalBody"></div>
         </div>
     </div>
-
 {% endblock %}
-
 {% block extra_js %}
-    <!-- tes scripts vendor (inchangés) -->
-    <script src="{% static 'admin-cele/assets/vendors/js/vendor.bundle.base.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/vendors/chart.js/Chart.min.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/vendors/progressbar.js/progressbar.min.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/vendors/jvectormap/jquery-jvectormap.min.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/vendors/owl-carousel-2/owl.carousel.min.js' %}"></script>
-
-    <script src="{% static 'admin-cele/assets/js/off-canvas.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/js/hoverable-collapse.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/js/misc.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/js/settings.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/js/todolist.js' %}"></script>
-    <script src="{% static 'admin-cele/assets/js/dashboard.js' %}"></script>
-
     <!-- ====== SCRIPT MODALE (corrigé et robuste) ====== -->
     <script>
     (function(){

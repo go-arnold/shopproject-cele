@@ -7,8 +7,8 @@
         <title>Mon Panier</title>
         <link rel="icon"
               type="image/x-icon"
-              sizes="32x32"
-              href="{% static 'static-img/favicon.ico' %}">
+              sizes="16x16"
+              href="{% static 'favicon.ico' %}">
         <link rel="icon"
               type="image/png"
               sizes="32x32"
@@ -135,21 +135,23 @@
     </head>
     <body class="bg-background-light dark:bg-background-dark font-display text-gray-200">
         <div class="relative flex h-auto min-h-screen w-full flex-col">
-            <!-- TopNavBar -->
-            <header class="flex-col px-4 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
-                <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
+            <!-- HEADER -->
+            <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+                <!-- Top bar - Caché sur mobile -->
+                <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
                     <a class="hover:text-white transition-colors" href="#">Aide</a>
                     <a class="hover:text-white transition-colors"
                        href="{% url 'about_us' %}">À propos</a>
                     <a class="hover:text-white transition-colors" href="#">Articles</a>
                 </div>
-                <div class="flex items-center gap-6 lg:gap-8 py-4">
-                    <!-- LOGO -->
+                <!-- Main header -->
+                <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
+                    <!-- Logo -->
                     <div class="flex items-center gap-2.5">
                         <a href="{% url 'home' %}">
                             <img src="{% static 'static-img/logo-white.png' %}"
                                  alt="CELEBOBO"
-                                 class="h-10 sm:h-12 lg:h-14 w-auto object-contain">
+                                 class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
                         </a>
                     </div>
                     <!-- Desktop Search -->
@@ -165,11 +167,11 @@
                         </div>
                     </form>
                     <!-- Icons -->
-                    <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                    <div class="flex items-center gap-1 sm:gap-4 ml-auto">
                         <!-- Mobile Search Button -->
                         <button id="mobileSearchBtn"
-                                class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
-                            <span class="material-symbols-outlined text-xl">search</span>
+                                class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <span class="material-symbols-outlined text-lg sm:text-xl">search</span>
                         </button>
                         {% if not user.is_authenticated %}
                             <!-- Desktop: Button S'inscrire -->
@@ -181,32 +183,40 @@
                         {% endif %}
                         {% if user.is_authenticated %}
                             <!-- Favoris -->
-                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <a href="{% url 'favorites_list' %}"><span class="material-symbols-outlined text-xl">favorite</span></a>
+                            <button class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="{% url 'favorites_list' %}">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">favorite</span>
+                                </a>
                             </button>
-                            <!-- Messages -->
-                            <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
+                            <!-- Messages - Desktop only -->
+                            <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <span class="material-symbols-outlined text-xl">mail</span>
                                 <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
                             </button>
                         {% endif %}
                         <!-- Panier -->
-                        <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                            <span class="material-symbols-outlined text-xl">shopping_cart</span>
-                            <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
-                        </button>
-                        {% if user.is_authenticated %}
-                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition hidden md:block">
-                                <a href="#"><span class="material-symbols-outlined text-2xl">person</span></a>
+                        <a href="{% url 'cart' %}">
+                            <button class="relative flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">shopping_cart</span>
+                                <span class="cart-count absolute -top-0.5 -right-0.5 sm:top-1 sm:right-0.5 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-primary text-[0.6rem] sm:text-xs font-bold text-white">{{ cart_count }}</span>
                             </button>
-                            <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <a href= "{% url 'account_logout' %}">
+                        </a>
+                        {% if user.is_authenticated %}
+                            <!-- Profile - Desktop only -->
+                            <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="#">
+                                    <span class="material-symbols-outlined text-2xl">person</span>
+                                </a>
+                            </button>
+                            <!-- Logout -->
+                            <button class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <a href="{% url 'account_logout' %}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          fill="none"
                                          viewBox="0 0 24 24"
                                          stroke-width="1.5"
                                          stroke="currentColor"
-                                         class="size-6">
+                                         class="w-5 h-5 sm:w-6 sm:h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                                     </svg>
                                 </a>
@@ -214,48 +224,48 @@
                         {% endif %}
                         <!-- Mobile: Icône de profil -->
                         {% if not user.is_authenticated %}
-                            <button class="md:hidden flex items-center justify-center rounded-lg h-10 px-3 bg-primary text-white  hover:bg-primary/90 transition">
-                                <a href="{% url 'account_login' %}"><span class="material-symbols-outlined text-2xl">person</span></a>
+                            <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
+                                <a href="{% url 'account_login' %}">
+                                    <span class="material-symbols-outlined text-xl">person</span>
+                                </a>
                             </button>
                         {% endif %}
                     </div>
                 </div>
             </header>
+            <!-- MOBILE SEARCH CONTAINER OPTIMISÉ -->
             <form method="GET"
                   action="{% url 'results' %}"
                   id="mobileSearchContainer"
-                  class="hidden px-4 py-3 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
+                  class="hidden px-3 py-2 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50 text-lg">search</span>
                     <input name="q"
-                           class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                           class="w-full h-9 text-sm bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                            placeholder="Rechercher un produit..."
                            type="search" />
                 </div>
             </form>
             <main class="layout-container flex h-full grow flex-col">
-                <div class="container mx-auto px-4 py-8">
+                <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
                     <div class="layout-content-container flex flex-col w-full flex-1">
                         <!-- Breadcrumbs & Heading -->
-                        <div class="mb-8">
-                            <div class="flex flex-wrap gap-2 mb-2">
-                                <a class="text-gray-400 text-xs sm:text-sm md:text-base font-medium leading-normal hover:text-white transition-colors"
+                        <div class="mb-4 sm:mb-8">
+                            <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                                <a class="text-gray-400 text-xs sm:text-sm font-medium leading-normal hover:text-white transition-colors"
                                    href="{% url 'home' %}">Accueil</a>
-                                <span class="text-gray-400 text-xs sm:text-sm md:text-base font-medium leading-normal">/</span>
-                                <span class="text-white text-xs sm:text-sm md:text-base font-medium leading-normal">Panier</span>
+                                <span class="text-gray-400 text-xs sm:text-sm font-medium leading-normal">/</span>
+                                <span class="text-white text-xs sm:text-sm font-medium leading-normal">Panier</span>
                             </div>
                             <div class="flex flex-wrap justify-between gap-3">
-                                <h1 class="text-white text-lg sm:text-lg md:text-3xl font-black leading-tight tracking-[-0.033em] min-w-72">
-                                    Mon
-                                    panier
-                                </h1>
+                                <h1 class="text-white text-xl sm:text-2xl md:text-3xl font-black leading-tight tracking-[-0.033em]">Mon panier</h1>
                             </div>
                         </div>
                         <!-- Main Content Grid -->
-                        <div class="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-3">
+                        <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-8 lg:grid-cols-3">
                             <!-- Left Column: Cart Items -->
                             <div class="lg:col-span-2">
-                                <div class="flex flex-col gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10">
+                                <div class="flex flex-col gap-2 sm:gap-px overflow-hidden rounded-lg border border-white/10 bg-white/10">
                                     <!-- Header (Desktop Only) -->
                                     <div class="hidden md:grid grid-cols-6 gap-4 bg-[#1A1A2E] px-4 py-3 text-sm font-bold uppercase text-gray-400">
                                         <span class="col-span-3">Produit</span>
@@ -264,59 +274,63 @@
                                         <span class="text-right"></span>
                                     </div>
                                     {% for item in cart %}
-                                        <div class="cart-item grid grid-cols-1 md:grid-cols-6 items-center gap-2 md:gap-4 bg-[#1A1A2E] px-3 md:px-4 py-3 md:py-4"
+                                        <div class="cart-item relative grid grid-cols-1 md:grid-cols-6 items-center gap-2 md:gap-4 bg-[#1A1A2E] px-3 md:px-4 py-3 md:py-4 rounded-lg md:rounded-none"
                                              data-product-id="{{ item.product.id }}">
                                             <!-- Product -->
-                                            <div class="flex items-start gap-2 md:gap-4 col-span-3">
-                                                <div class="bg-center bg-no-repeat bg-cover rounded-lg size-[50px] md:size-[70px] aspect-square"
+                                            <div class="flex items-start gap-2 md:gap-4 col-span-1 md:col-span-3 pr-8 md:pr-0">
+                                                <div class="bg-center bg-no-repeat bg-cover rounded-lg size-14 sm:size-16 md:size-[70px] flex-shrink-0"
                                                      style="background-image: url('{{ item.product.image.url }}')">
                                                 </div>
-                                                <div class="flex flex-1 flex-col justify-center">
-                                                    <p class="text-white text-sm md:text-base font-medium leading-normal">{{ item.product.name }}</p>
-                                                    <p class="text-gray-400 text-xs md:text-sm">{{ item.product.category }}</p>
-                                                    <p class="text-gray-400 text-xs md:text-sm item-unit-price"
-                                                       data-unit-price="{{ item.price }}">
-                                                        Prix unitaire : {{ item.price }} $
-                                                    </p>
+                                                <div class="flex flex-1 flex-col justify-center min-w-0">
+                                                    <p class="text-white text-sm sm:text-base font-medium leading-snug truncate">{{ item.product.name }}</p>
+                                                    <p class="text-gray-400 text-xs sm:text-sm mt-0.5">{{ item.product.category }}</p>
+                                                    <p class="text-gray-400 text-xs sm:text-sm mt-0.5 item-unit-price"
+                                                       data-unit-price="{{ item.price }}">Prix : {{ item.price }} $</p>
                                                 </div>
                                             </div>
-                                            <!-- Quantity -->
-                                            <div class="flex items-center justify-center gap-1 md:gap-2 text-white">
-                                                <button class="qty-btn decrease text-sm md:text-base h-6 w-6 md:h-7 md:w-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
-                                                        data-product-id="{{ item.product.id }}">-</button>
-                                                <input class="item-qty  readonly text-base font-medium leading-normal w-10 p-0 text-center bg-transparent focus:outline-0 focus:ring-0 focus:border-primary border-transparent border-b appearance-none"
-                                                       type="number"
-                                                       value="{{ item.quantity }}"
-                                                       readonly />
-                                                <button class="qty-btn increase text-sm md:text-base h-6 w-6 md:h-7 md:w-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20"
-                                                        data-product-id="{{ item.product.id }}">+</button>
+                                            <!-- Quantity + Price wrapper pour mobile -->
+                                            <div class="flex items-center justify-between md:contents gap-2 pt-2 md:pt-0 border-t border-white/5 md:border-t-0">
+                                                <!-- Quantity -->
+                                                <div class="flex items-center justify-start md:justify-center gap-1.5 sm:gap-2 text-white">
+                                                    <button class="qty-btn decrease text-base sm:text-lg h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 active:scale-95 transition-all"
+                                                            data-product-id="{{ item.product.id }}">-</button>
+                                                    <input class="item-qty readonly text-sm sm:text-base font-medium leading-normal w-8 sm:w-10 p-0 text-center bg-transparent focus:outline-0 focus:ring-0 focus:border-primary border-transparent border-b appearance-none"
+                                                           type="number"
+                                                           value="{{ item.quantity }}"
+                                                           readonly />
+                                                    <button class="qty-btn increase text-base sm:text-lg h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 active:scale-95 transition-all"
+                                                            data-product-id="{{ item.product.id }}">+</button>
+                                                </div>
+                                                <!-- Price total -->
+                                                <div class="md:contents flex flex-col items-end">
+                                                    <span class="text-[0.6rem] sm:text-[0.65rem] text-gray-400 md:hidden">Total</span>
+                                                    <p class="item-total-price text-right text-sm sm:text-base font-bold text-white">{{ item.total_price }} $</p>
+                                                </div>
                                             </div>
-                                            <!-- Price total (quantity × price) -->
-                                            <p class="item-total-price text-right text-sm md:text-base font-medium text-white">{{ item.total_price }} $</p>
-                                            <!-- Delete -->
-                                            <div class="flex justify-end">
-                                                <button class="delete-item p-1 md:p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/10"
+                                            <!-- Delete - Position absolue mobile -->
+                                            <div class="absolute top-2 right-2 md:static md:flex md:justify-end">
+                                                <button class="delete-item p-1 sm:p-1.5 md:p-2 text-gray-400 hover:text-red-400 md:hover:text-white rounded-full hover:bg-white/10 transition-colors"
                                                         data-product-id="{{ item.product.id }}">
-                                                    <span class="material-symbols-outlined text-lg md:text-xl">delete</span>
+                                                    <span class="material-symbols-outlined text-base sm:text-lg md:text-xl">delete</span>
                                                 </button>
                                             </div>
                                         </div>
                                     {% endfor %}
                                 </div>
                                 <!-- Continue shopping -->
-                                <div class="mt-4 md:mt-6 flex justify-between">
-                                    <a class="flex items-center gap-1 md:gap-2 rounded-lg px-3 py-2 text-xs md:text-sm font-bold text-white hover:bg-white/10"
+                                <div class="mt-3 sm:mt-4 md:mt-6 flex justify-between">
+                                    <a class="flex items-center gap-1 sm:gap-2 rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white hover:bg-white/10 transition-colors"
                                        href="{% url 'all_products' %}">
-                                        <span class="material-symbols-outlined text-sm md:text-base">arrow_back</span>
+                                        <span class="material-symbols-outlined text-sm sm:text-base">arrow_back</span>
                                         Continuer mes achats
                                     </a>
                                 </div>
                             </div>
                             <!-- Right Column: Order Summary -->
                             <div class="lg:col-span-1">
-                                <div class="sticky top-24 rounded-lg border border-white/10 bg-[#1A1A2E] p-4 md:p-6">
-                                    <h2 class="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Résumé de la commande</h2>
-                                    <div class="space-y-3 md:space-y-4 text-xs md:text-sm">
+                                <div class="sticky top-20 sm:top-24 rounded-lg border border-white/10 bg-[#1A1A2E] p-3 sm:p-4 md:p-6">
+                                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-white mb-3 sm:mb-4 md:mb-6">Résumé de la commande</h2>
+                                    <div class="space-y-2 sm:space-y-3 md:space-y-4 text-xs sm:text-sm">
                                         <div class="flex justify-between">
                                             <span class="text-gray-400">Sous-total</span>
                                             <span class="font-medium text-white" id="summary-subtotal">{{ cart.get_total_price }} $</span>
@@ -327,31 +341,42 @@
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-400">Taxes</span>
-                                            <span class="font-medium text-white">Calculées lors du paiement</span>
+                                            <span class="font-medium text-white text-right text-xs sm:text-sm">Calculées lors du paiement</span>
                                         </div>
                                     </div>
-                                    <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
-                                        <label class="block text-xs md:text-sm font-medium text-gray-400 mb-1 md:mb-2"
+                                    <div class="mt-3 sm:mt-4 md:mt-6 pt-3 sm:pt-4 md:pt-6 border-t border-white/10">
+                                        <label class="block text-xs sm:text-sm font-medium text-gray-400 mb-1 sm:mb-2"
                                                for="promo-code">Code Revendeur</label>
-                                        <div class="flex gap-2">
-                                            <input class="flex-grow rounded-lg border-white/20 bg-white/5 px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm text-white placeholder-gray-500 focus:ring-0"
+                                        <div class="flex gap-1.5 sm:gap-2">
+                                            <input class="flex-grow rounded-lg border-white/20 bg-white/5 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                                                    id="promo-code"
-                                                   placeholder="Entrez le code invite"
+                                                   placeholder="Code invite"
                                                    type="text" />
-                                            <button class="h-9 md:h-10 px-3 md:px-4 bg-white/10 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-white/20">
-                                                Enregistrer
+                                            <button class="h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 md:px-4 bg-white/10 text-white text-xs sm:text-sm font-bold rounded-lg hover:bg-white/20 transition-colors flex-shrink-0">
+                                                OK
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
+                                    <div class="mt-3 sm:mt-4 md:mt-6 pt-3 sm:pt-4 md:pt-6 border-t border-white/10">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-base md:text-lg font-bold text-white">Total</span>
-                                            <span class="text-xl md:text-2xl font-black text-white" id="summary-total">{{ cart.get_total_price }} $</span>
+                                            <span class="text-base sm:text-lg font-bold text-white">Total</span>
+                                            <span class="text-lg sm:text-xl md:text-2xl font-black text-white"
+                                                  id="summary-total">{{ cart.get_total_price }} $</span>
                                         </div>
                                     </div>
-                                    <button class="mt-6 md:mt-8 w-full h-10 md:h-12 bg-primary text-white text-sm md:text-base font-bold rounded-lg hover:bg-primary/90">
-                                        Passer à la discussion
-                                    </button>
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'start_conversation_from_cart' %}">
+                                            <button class="mt-4 sm:mt-6 md:mt-8 w-full h-10 sm:h-11 md:h-12 bg-primary text-white text-sm sm:text-base font-bold rounded-lg hover:bg-primary/90 transition-colors active:scale-[0.98]">
+                                                Passer à la discussion
+                                            </button>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'account_login' %}">
+                                            <button class="mt-4 sm:mt-6 md:mt-8 w-full h-10 sm:h-11 md:h-12 bg-primary text-white text-sm sm:text-base font-bold rounded-lg hover:bg-primary/90 transition-colors active:scale-[0.98]">
+                                                Me connecter pour continuer
+                                            </button>
+                                        </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -503,31 +528,43 @@
                     </div>
                 </div>
             </footer>
+            <!-- Mobile Bottom Tab Bar -->
             <nav id="mobileTabbar"
-                 class="mobile-tabbar md:hidden flex justify-around py-2 text-white">
-                <button class="flex flex-col items-center text-xs">
-                    <span class="material-symbols-outlined text-2xl">storefront</span>Shop
-                </button>
+                 class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
+                <a href="{% url 'home' %}">
+                    <button class="flex flex-col items-center text-[0.65rem] gap-0.5 "
+                            aria-label="Accueil">
+                        <span class="material-symbols-outlined text-xl">storefront</span>Shop
+                    </button>
+                </a>
                 <a href="{% url 'cart' %}">
-                    <button class="relative flex flex-col items-center text-xs text-primary">
-                        <span class="material-symbols-outlined text-2xl"
+                    <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 text-primary">
+                        <span class="material-symbols-outlined text-xl"
                               style="font-variation-settings: 'FILL' 1">shopping_cart</span>Panier
-                        <!-- BADGE -->
-                        <span id="aaa"
-                              class="cart-count absolute -top-1 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">{{ cart_count }}
+                        <span class="cart-count absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white">{{ cart_count }}</span>
+                    </button>
+                </a>
+                <a href="{% url 'assistant' %}">
+                    <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
+                        <span class="material-symbols-outlined text-xl">assistant</span>
+                        Assistant
+                    </button>
+                </a>
+                <a href="{% url 'list_conversations' %}">
+                    <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 ">
+                        <span class="material-symbols-outlined text-xl">forum</span>
+                        Messages
+                        <span id="messagesCounter"
+                              class="absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white hidden">
                         </span>
                     </button>
                 </a>
-                <button class="flex flex-col items-center text-xs">
-                    <span class="material-symbols-outlined text-2xl">assistant</span>Assistant
-                </button>
-                <button class="flex flex-col items-center text-xs">
-                    <span class="material-symbols-outlined text-2xl">forum</span>
-                    Messages
-                </button>
-                <button class="flex flex-col items-center text-xs">
-                    <span class="material-symbols-outlined text-2xl">person</span>Profil
-                </button>
+                <a href="{% url 'profile' %}">
+                    <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
+                        <span class="material-symbols-outlined text-xl">person</span>
+                        Profil
+                    </button>
+                </a>
             </nav>
         </div>
         <script>

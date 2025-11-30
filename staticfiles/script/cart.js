@@ -269,5 +269,90 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial recompute (in case template server-rendered)
     recomputeSummary();
 
-});
+    // =====================  Tabbar overlay & loading  ==========================
+    // Créer l'overlay de loading
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loadingOverlay';
+    loadingOverlay.className = 'fixed inset-0 z-50 hidden';
+    loadingOverlay.innerHTML = `
+        <div class="fixed inset-0 flex items-center justify-center text-white overflow-hidden" style="background-color: rgba(10, 3, 20, 0.95);">
+            <div class="absolute inset-0 z-0">
+                <div class="absolute -top-1/4 -left-1/4 h-1/2 w-1/2 rounded-full bg-primary/20 blur-3xl opacity-50"></div>
+                <div class="absolute -bottom-1/4 -right-1/4 h-1/2 w-1/2 rounded-full bg-primary/30 blur-3xl opacity-50"></div>
+            </div>
+            <div class="relative z-10 animate-pulse-glow">
+                <img alt="CELEBOBO Logo"
+                     class="w-32 h-auto"
+                     src="/static/static-img/logo-white.png" />
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loadingOverlay);
 
+    // Ajouter l'animation pulse-glow au document
+    if (!document.getElementById('pulseGlowStyle')) {
+        const style = document.createElement('style');
+        style.id = 'pulseGlowStyle';
+        style.textContent = `
+            @keyframes pulse-glow {
+                0%, 100% {
+                    filter: drop-shadow(0 0 5px #640D5F) drop-shadow(0 0 10px #640D5F);
+                    opacity: 0.3;
+                }
+                50% {
+                    filter: drop-shadow(0 0 15px #640D5F) drop-shadow(0 0 30px #640D5F);
+                    opacity: 1;
+                }
+            }
+            .animate-pulse-glow {
+                animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Variable pour suivre l'état de navigation
+    let isNavigating = false;
+
+    // Fonction pour afficher le loading
+    function showLoading() {
+        isNavigating = true;
+        loadingOverlay.classList.remove('hidden');
+    }
+
+    // Fonction pour cacher le loading
+    function hideLoading() {
+        isNavigating = false;
+        loadingOverlay.classList.add('hidden');
+    }
+
+    // Attacher l'événement à tous les liens du tabbar
+    const tabbarLinks = document.querySelectorAll('#mobileTabbar a');
+    tabbarLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            showLoading();
+        });
+    });
+
+    // Cacher le loading quand la page est complètement chargée
+    window.addEventListener('pageshow', function (event) {
+        // Cacher le loading si on revient en arrière avec le bouton retour
+        hideLoading();
+    });
+
+    // Gérer le bouton retour du navigateur
+    window.addEventListener('popstate', function (event) {
+        hideLoading();
+    });
+
+    // Cacher le loading si la navigation est annulée
+    window.addEventListener('beforeunload', function () {
+        if (!isNavigating) {
+            hideLoading();
+        }
+    });
+
+    // S'assurer que le loading est caché au chargement initial de la page
+    hideLoading();
+
+});

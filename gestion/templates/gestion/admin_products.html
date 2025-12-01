@@ -269,7 +269,6 @@
     </div>
     <div class="row">
         {% for product in products %}
-            <!-- ajouter data-product-id ici pour pouvoir supprimer la carte sans reload -->
             <div class="card" data-product-id="{{ product.id }}">
                 <div class="badge">{{ product.badge }}</div>
                 <div class="tilt">
@@ -347,7 +346,7 @@
                 <a class="btn" href="?page=1">&laquo; première</a>
                 <a class="btn" href="?page={{ products.previous_page_number }}">&lsaquo; précédente</a>
             {% endif %}
-            <span class="current-page" class="btn">Page {{ products.number }} sur {{ products.paginator.num_pages }}.</span>
+            <span class="current-page btn">Page {{ products.number }} sur {{ products.paginator.num_pages }}.</span>
             {% if products.has_next %}
                 <a class="btn" href="?page={{ products.next_page_number }}">suivante &rsaquo;</a>
                 <a class="btn" href="?page={{ products.paginator.num_pages }}">dernière &raquo;</a>

@@ -319,10 +319,12 @@
                                 </a>
                             </button>
                             <!-- Messages - Desktop only -->
-                            <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <span class="material-symbols-outlined text-xl">mail</span>
-                                <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
-                            </button>
+                            <a href="{% url 'list_conversations' %}">
+                                <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                    <span class="material-symbols-outlined text-xl">mail</span>
+                                    <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ msg_count }}</span>
+                                </button>
+                            </a>
                         {% endif %}
                         <!-- Panier -->
                         <a href="{% url 'cart' %}">
@@ -388,7 +390,9 @@
                         <h1 class="text-slate-900 dark:text-white text-lg sm:text-2xl font-bold leading-tight tracking-[-0.015em] mt-1 sm:mt-2">
                             {{ conversation_name }}
                         </h1>
-                        <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-0.5 sm:mt-1">ID du ticket : TICKET-45678</p>
+                        <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-0.5 sm:mt-1">
+                            ID du ticket : TICKET-CELE{{ id_id }}
+                        </p>
                     </div>
                     <!-- Section messages -->
                     <section class="bg-slate-100 dark:bg-secondary-dark/30 rounded-lg flex flex-col flex-1"
@@ -397,7 +401,7 @@
                             <div id="messages-container" class="flex flex-col gap-3 sm:gap-6">
                                 <!-- Badge date -->
                                 <div class="text-center my-1 sm:my-2">
-                                    <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-background-dark px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">Le ticket a été créé le 26 octobre 2023</span>
+                                    <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-background-dark px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">La conversation a commencée le {{ conversation.created_at }}</span>
                                 </div>
                                 {% for msg in messages %}
                                     {% include "shop/message_bubble.html" with msg=msg %}
@@ -510,6 +514,18 @@
                 document.addEventListener("click", (e) => {
                     if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
                         searchContainer.classList.remove("active");
+                    }
+                });
+                // ===== Messages counter  =====
+                document.addEventListener("DOMContentLoaded", () => {
+                    const count = {{msg_count}} * 1; 
+                    const badge = document.getElementById("messagesCounter");
+
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove("hidden");
+                    } else {
+                        badge.classList.add("hidden");
                     }
                 });
         </script>

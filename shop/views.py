@@ -652,6 +652,7 @@ def conversation_detail(request, conversation_id):
         "conversation": conversation,
         "messages": messages,
         "conversation_name": conversation.display_name,
+        "id_id": conversation.id
     })
 
 

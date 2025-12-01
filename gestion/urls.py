@@ -27,6 +27,9 @@ urlpatterns = [
     path('ventes/export/excel/', views.export_ventes_excel,
          name='export_ventes_excel'),
     path('ventes/export/pdf/', views.export_ventes_pdf, name='export_ventes_pdf'),
+    path("graphs/", views.dashboard_ventes, name="dashboard_ventes"),
+    path("dashboard/pdf/", views.dashboard_pdf, name="dashboard_pdf"),
+
 
 
 

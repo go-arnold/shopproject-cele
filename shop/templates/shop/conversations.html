@@ -328,7 +328,7 @@
                     <!-- Messages -->
                     <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                         <span class="material-symbols-outlined text-xl">mail</span>
-                        <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">3</span>
+                        <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ msg_count }}</span>
                     </button>
                     <!-- Panier -->
                     <button class="hidden sm:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
@@ -1024,6 +1024,19 @@
                 }, 3000);
 
             });
+
+            // ===== Messages counter  =====
+        document.addEventListener("DOMContentLoaded", () => {
+            const count = {{msg_count}} * 1; 
+            const badge = document.getElementById("messagesCounter");
+
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        });
         </script>
     </body>
 </html>

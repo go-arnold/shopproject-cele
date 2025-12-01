@@ -1,3 +1,8 @@
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models.functions import TruncMonth, TruncDay
+import json
+from django.shortcuts import render
+from django.db.models import Count, Sum
 import tempfile
 from weasyprint import HTML
 from django.template.loader import render_to_string
@@ -17,6 +22,7 @@ from datetime import timedelta
 from django.db.models import Sum, F, DecimalField
 from django.utils.timezone import now
 from django.db.models.functions import Coalesce
+from django.templatetags.static import static
 
 
 def is_admin_user(user):
@@ -416,6 +422,9 @@ def modifier_vente(request, vente_id):
 def liste_ventes_rev(request):
     utilisateur = request.user
 
+    if utilisateur.groups.filter(name="revendeur").exists():
+        return redirect('gestion:dashboard')
+
     if utilisateur.groups.filter(name="mukubwa").exists():
         ventes_list = Vente.objects.select_related(
             'produit', 'utilisateur').order_by('-date_achat')
@@ -496,10 +505,11 @@ def export_ventes_pdf(request):
     else:
         ventes = Vente.objects.filter(utilisateur=utilisateur)\
                               .select_related('produit', 'utilisateur')
-
+    logo_url = request.build_absolute_uri(static('static-img/logo-white.png'))
     # Génération du HTML
     html_string = render_to_string('gestion/pdf_ventes.html', {
-        'ventes': ventes
+        'ventes': ventes,
+        'logo_url': logo_url
     })
 
     # Génération PDF avec WeasyPrint
@@ -514,3 +524,251 @@ def export_ventes_pdf(request):
     response = HttpResponse(pdf_data, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ventes.pdf"'
     return response
+
+# je souhaite que les graphes, si possible, se presentent avec les donnees sur X et Y
+
+
+@csrf_exempt
+def dashboard_pdf(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        images = data.get("images", [])
+        logo_url = request.build_absolute_uri(
+            static('static-img/logo-white.png'))
+
+        html_content = f"""
+        <html>
+        <head>
+            <style>
+                @page {{
+                    size: A4;
+                    margin: 20mm;
+                    background-color: #0a0f24; /* bleu nuit */
+                }}
+
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #0a0f24;
+                    color: white;
+                    text-align: center;
+                }}
+                .logo {{
+                    width: 130px;
+                    margin-bottom: 10px;
+                }}
+
+                h1 {{
+                    text-align: center;
+                    color: #4da6ff;
+                    margin-bottom: 40px;
+                    font-size: 26px;
+                }}
+
+                h2 {{
+                    color: #66c2ff;
+                    margin-top: 40px;
+                    margin-bottom: 10px;
+                    font-size: 20px;
+                }}
+
+                .chart-container {{
+                    margin-bottom: 40px;
+                    text-align: center;
+                }}
+
+                img.chart {{
+                    width: 100%;
+                    border: 1px solid #2e3a55;
+                    border-radius: 8px;
+                     /* background-color: white;pour éviter que le fond bleu nuit altere les images */
+                }}
+            </style>
+        </head>
+        <body>
+        
+            <img src="{logo_url}" class="logo" />
+            <h1>Dashboard des Ventes</h1>
+        """
+
+        titles = [
+            "Ventes des 7 derniers jours",
+            "Chiffre d'affaires — 12 derniers mois",
+            "Répartition des méthodes de paiement",
+            "Top 10 des produits vendus",
+            "Nombre de ventes par revendeur",
+            "Chiffre d'affaires par revendeur",
+            "Revenu habillement — 7 derniers jours"
+        ]
+
+        for index, img in enumerate(images):
+            html_content += f"""
+                <div class="chart-container">
+                    <h2>{titles[index]}</h2>
+                    <img class="chart" src="{img}" />
+                </div>
+            """
+
+        html_content += """
+        </body>
+        </html>
+        """
+
+        html = HTML(string=html_content)
+
+        with tempfile.NamedTemporaryFile(delete=True) as output_pdf:
+            html.write_pdf(output_pdf.name)
+            pdf_data = output_pdf.read()
+
+        return HttpResponse(pdf_data, content_type="application/pdf")
+
+    return HttpResponse(status=405)
+
+
+@admin_required
+def dashboard_ventes(request):
+    utilisateur = request.user
+    today = timezone.now()
+    if utilisateur.groups.filter(name="revendeur").exists():
+        return redirect('gestion:dashboard')
+
+    # --- FILTRES ---
+    if utilisateur.groups.filter(name="mukubwa").exists():
+        ventes = Vente.objects.all().select_related('produit', 'utilisateur')
+    else:
+        ventes = Vente.objects.filter(utilisateur=utilisateur)\
+                              .select_related('produit', 'utilisateur')
+
+    last_week = today - timedelta(days=7)
+    last_year = today - timedelta(days=365)
+
+    # ----------------------------------------------------
+    # 1. VARIATION DES VENTES - 7 DERNIERS JOURS
+    # ----------------------------------------------------
+    ventes_7j = (
+        ventes.filter(date_achat__gte=last_week)
+        .annotate(day=TruncDay("date_achat"))
+        .values("day")
+        .annotate(total=Count("id"))
+        .order_by("day")
+    )
+
+    ventes_7j = [
+        {"day": item["day"].strftime("%Y-%m-%d"), "total": item["total"]}
+        for item in ventes_7j
+    ]
+
+    # ----------------------------------------------------
+    # 2. VARIATION DES VENTES (CA) - 12 DERNIERS MOIS
+    # ----------------------------------------------------
+    ca_mensuel = (
+        ventes.filter(date_achat__gte=last_year)
+        .annotate(month=TruncMonth("date_achat"))
+        .values("month")
+        .annotate(total=Sum("price_final"))
+        .order_by("month")
+    )
+
+    ca_mensuel = [
+        {
+            "month": item["month"].strftime("%Y-%m"),
+            "total": float(item["total"]) if item["total"] else 0
+        }
+        for item in ca_mensuel
+    ]
+
+    # ----------------------------------------------------
+    # 3. RÉPARTITION PAR MÉTHODE DE PAIEMENT
+    # ----------------------------------------------------
+    methode_repartition = (
+        ventes.values("method")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+    )
+
+    methode_repartition = [
+        {"method": row["method"], "total": row["total"]}
+        for row in methode_repartition
+    ]
+
+    # ----------------------------------------------------
+    # 4. TOP 10 PRODUITS VENDUS
+    # ----------------------------------------------------
+    top_produits = (
+        ventes.values("produit__name")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:10]
+    )
+
+    top_produits = [
+        {"produit": row["produit__name"], "total": row["total"]}
+        for row in top_produits
+    ]
+
+    # ----------------------------------------------------
+    # 5. VARIATION DES VENTES PAR REVENDEUR (nombre de ventes)
+    # ----------------------------------------------------
+    ventes_par_revendeur = (
+        ventes.values("utilisateur__username")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+    )
+
+    ventes_par_revendeur = [
+        {"revendeur": row["utilisateur__username"], "total": row["total"]}
+        for row in ventes_par_revendeur
+    ]
+
+    # ----------------------------------------------------
+    # 6. CA PAR REVENDEUR
+    # ----------------------------------------------------
+    ca_par_revendeur = (
+        ventes.values("utilisateur__username")
+        .annotate(ca_total=Sum("price_final"))
+        .order_by("-ca_total")
+    )
+
+    ca_par_revendeur = [
+        {
+            "revendeur": row["utilisateur__username"],
+            "total": float(row["ca_total"]) if row["ca_total"] else 0.0
+        }
+        for row in ca_par_revendeur
+    ]
+
+    # ----------------------------------------------------
+    # 7. VENTES D’HABILLEMENT PAR JOUR
+    # ----------------------------------------------------
+    habits_categories = [
+        'Habits/Homme', 'Habits/Femme', 'Habits/Enfants',
+        'Habits/Souliers', 'Habits/Neutre'
+    ]
+
+    ventes_habillement = (
+        ventes.filter(produit__category_fk__name__in=habits_categories)
+        .filter(date_achat__gte=last_week)
+        .annotate(day=TruncDay("date_achat"))
+        .values("day")
+        .annotate(total=Sum("price_final"))
+        .order_by("day")
+    )
+
+    ventes_habillement = [
+        {"day": item["day"].strftime(
+            "%Y-%m-%d"), "total": float(item["total"])}
+        for item in ventes_habillement
+    ]
+
+    # ----------------------------------------------------
+    # ENVOI AU TEMPLATE
+    # ----------------------------------------------------
+    context = {
+        "ventes_7j": json.dumps(ventes_7j),
+        "ca_mensuel": json.dumps(ca_mensuel),
+        "methode_repartition": json.dumps(methode_repartition),
+        "top_produits": json.dumps(top_produits),
+        "ventes_par_revendeur": json.dumps(ventes_par_revendeur),
+        "ca_par_revendeur": json.dumps(ca_par_revendeur),
+        "ventes_habillement": json.dumps(ventes_habillement),
+    }
+
+    return render(request, "gestion/graphiques1.html", context)

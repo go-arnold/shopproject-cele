@@ -3,19 +3,74 @@
     <head>
         <meta charset="UTF-8">
         <style>
-        body { font-family: "DejaVu Sans"; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #555; padding: 8px; text-align: left; }
-        th { background: #eee; }
+        @page {
+            size: A4;
+            margin: 20mm;
+            background-color: #0a0f24;
+        }
+
+        body {
+            font-family: "DejaVu Sans", sans-serif;
+            background-color: #0a0f24;
+            color: white;
+            text-align: center;
+        }
+
+        .logo {
+            width: 130px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #4da6ff;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        h2 {
+            text-align: left;
+            margin-top: 20px;
+            color: #66c2ff;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #2e3a55;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #132046;
+            color: #b3d1ff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #0f1a33;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #0c1529;
+        }
         </style>
     </head>
     <body>
-        <h2>Liste des ventes</h2>
+        <!-- Logo centré -->
+        <img src="{{ logo_url }}" class="logo">
+        <!-- Titre principal -->
+        <h1>Liste des Ventes</h1>
         <table>
             <thead>
                 <tr>
                     <th>Produit</th>
-                    <th>Utilisateur</th>
+                    <th>Vendu Par</th>
                     <th>Prix</th>
                     <th>Méthode</th>
                     <th>Date</th>

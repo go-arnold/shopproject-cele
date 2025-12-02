@@ -128,153 +128,6 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-4 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Historique des transactions</h4>
-          <canvas id="transaction-history" class="transaction-chart"></canvas>
-          <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-            <div class="text-md-center text-xl-left">
-              <h6 class="mb-1">Ventes avec AirtelMoney</h6>
-              <p class="text-muted mb-0">Derniere mise a jour: {{ today.date }}</p>
-            </div>
-            <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{ methods_data.0 }} $</h6>
-            </div>
-          </div>
-          <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-            <div class="text-md-center text-xl-left">
-              <h6 class="mb-1">Ventes avec Cash</h6>
-              <p class="text-muted mb-0">Derniere mise a jour {{ today }}</p>
-            </div>
-            <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{ methods_data.1 }} $</h6>
-            </div>
-          </div>
-          <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-            <div class="text-md-center text-xl-left">
-              <h6 class="mb-1">Ventes avec Mpesa</h6>
-              <p class="text-muted mb-0">Derniere mise a jour {{ today.date }}</p>
-            </div>
-            <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{ methods_data.2 }} $</h6>
-            </div>
-          </div>
-          <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
-            <div class="text-md-center text-xl-left">
-              <h6 class="mb-1">Ventes avec OrangeMoney</h6>
-              <p class="text-muted mb-0">Derniere mise a jour {{ today.date }}</p>
-            </div>
-            <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
-              <h6 class="font-weight-bold mb-0">{{ methods_data.3 }} $</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-8 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex flex-row justify-content-between">
-            <h4 class="card-title mb-1">Projets ouverts</h4>
-            <p class="text-muted mb-1">Statut de vos données</p>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <div class="preview-list">
-                <div class="preview-item border-bottom">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-primary">
-                      <i class="mdi mdi-file-document"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content d-sm-flex flex-grow">
-                    <div class="flex-grow">
-                      <h6 class="preview-subject">Conception du tableau de bord admin</h6>
-                      <p class="text-muted mb-0">Maquette de l'application web Broadcast</p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted">il y a 15 minutes</p>
-                      <p class="text-muted mb-0">30 tâches, 5 problèmes</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="preview-item border-bottom">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-success">
-                      <i class="mdi mdi-cloud-download"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content d-sm-flex flex-grow">
-                    <div class="flex-grow">
-                      <h6 class="preview-subject">Développement Wordpress</h6>
-                      <p class="text-muted mb-0">Télécharger le nouveau design</p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted">il y a 1 heure</p>
-                      <p class="text-muted mb-0">23 tâches, 5 problèmes</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="preview-item border-bottom">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-info">
-                      <i class="mdi mdi-clock"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content d-sm-flex flex-grow">
-                    <div class="flex-grow">
-                      <h6 class="preview-subject">Réunion de projet</h6>
-                      <p class="text-muted mb-0">Discussion sur le nouveau projet</p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted">il y a 35 minutes</p>
-                      <p class="text-muted mb-0">15 tâches, 2 problèmes</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="preview-item border-bottom">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-danger">
-                      <i class="mdi mdi-email-open"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content d-sm-flex flex-grow">
-                    <div class="flex-grow">
-                      <h6 class="preview-subject">Mail de diffusion</h6>
-                      <p class="text-muted mb-0">Détails de la sortie envoyés à l'équipe</p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted">il y a 55 minutes</p>
-                      <p class="text-muted mb-0">35 tâches, 7 problèmes</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-warning">
-                      <i class="mdi mdi-chart-pie"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content d-sm-flex flex-grow">
-                    <div class="flex-grow">
-                      <h6 class="preview-subject">Conception UI</h6>
-                      <p class="text-muted mb-0">Planification de la nouvelle application</p>
-                    </div>
-                    <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                      <p class="text-muted">il y a 50 minutes</p>
-                      <p class="text-muted mb-0">27 tâches, 4 problèmes</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
     <div class="col-sm-4 grid-margin">
       <div class="card">
         <div class="card-body">
@@ -351,124 +204,64 @@
                   </th>
                   <th>Nom du client</th>
                   <th>N° de commande</th>
-                  <th>Coût du produit</th>
-                  <th>Projet</th>
+                  <th>Coût total</th>
+                  <th>Produit(s)</th>
                   <th>Mode de paiement</th>
-                  <th>Date de début</th>
-                  <th>Statut du paiement</th>
+                  <th>Date</th>
+                  <!--
+                  <th>Statut</th>-->
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <div class="form-check form-check-muted m-0">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input">
-                      </label>
-                    </div>
-                  </td>
-                  <td>
-                    <img src="{% static 'admin-cele/assets/images/faces/face1.jpg' %}"
-                         alt="image" />
-                    <span class="pl-2">Celestin B</span>
-                  </td>
-                  <td>02312</td>
-                  <td>$14,500</td>
-                  <td>Tableau de bord</td>
-                  <td>Carte de crédit</td>
-                  <td>04 Déc 2019</td>
-                  <td>
-                    <div class="badge badge-outline-success">Approuvé</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="form-check form-check-muted m-0">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input">
-                      </label>
-                    </div>
-                  </td>
-                  <td>
-                    <img src="{% static 'admin-cele/assets/images/faces/face2.jpg' %}"
-                         alt="image" />
-                    <span class="pl-2">Estella Bryan</span>
-                  </td>
-                  <td>02312</td>
-                  <td>$14,500</td>
-                  <td>Site web</td>
-                  <td>Paiement à la livraison</td>
-                  <td>04 Déc 2019</td>
-                  <td>
-                    <div class="badge badge-outline-warning">En attente</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="form-check form-check-muted m-0">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input">
-                      </label>
-                    </div>
-                  </td>
-                  <td>
-                    <img src="{% static 'admin-cele/assets/images/faces/face5.jpg' %}"
-                         alt="image" />
-                    <span class="pl-2">Lucy Abbott</span>
-                  </td>
-                  <td>02312</td>
-                  <td>$14,500</td>
-                  <td>Conception d'application</td>
-                  <td>Carte de crédit</td>
-                  <td>04 Déc 2019</td>
-                  <td>
-                    <div class="badge badge-outline-danger">Rejeté</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="form-check form-check-muted m-0">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input">
-                      </label>
-                    </div>
-                  </td>
-                  <td>
-                    <img src="{% static 'admin-cele/assets/images/faces/face3.jpg' %}"
-                         alt="image" />
-                    <span class="pl-2">Peter Gill</span>
-                  </td>
-                  <td>02312</td>
-                  <td>$14,500</td>
-                  <td>Développement</td>
-                  <td>Paiement en ligne</td>
-                  <td>04 Déc 2019</td>
-                  <td>
-                    <div class="badge badge-outline-success">Approuvé</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="form-check form-check-muted m-0">
-                      <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input">
-                      </label>
-                    </div>
-                  </td>
-                  <td>
-                    <img src="{% static 'admin-cele/assets/images/faces/face4.jpg' %}"
-                         alt="image" />
-                    <span class="pl-2">Sallie Reyes</span>
-                  </td>
-                  <td>02312</td>
-                  <td>$14,500</td>
-                  <td>Site web</td>
-                  <td>Carte de crédit</td>
-                  <td>04 Déc 2019</td>
-                  <td>
-                    <div class="badge badge-outline-success">Approuvé</div>
-                  </td>
-                </tr>
+                {% for order in orders %}
+                  <tr>
+                    <td>
+                      <div class="form-check form-check-muted m-0">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-check-input">
+                        </label>
+                      </div>
+                    </td>
+                    <!-- Nom du client -->
+                    <td>
+                      <img src="{% static 'admin-cele/assets/images/faces/face.jpg' %}"
+                           alt="image" />
+                      <span class="pl-2">{{ order.user.username }}</span>
+                    </td>
+                    <!-- Numéro de commande -->
+                    <td>{{ order.id }}</td>
+                    <!-- Total -->
+                    <td>${{ order.total_price }}</td>
+                    <!-- Produit(s) -->
+                    <td>
+                      {% if order.items.count == 1 %}
+                        {{ order.items.first.product.name }}
+                      {% else %}
+                        {{ order.items.count }} produits
+                      {% endif %}
+                    </td>
+                    <!-- Mode paiement (placeholder si pas encore dans le modèle) -->
+                    <td>
+                      {% if order.payment_method %}
+                        {{ order.payment_method }}
+                      {% else %}
+                        -
+                      {% endif %}
+                    </td>
+                    <!-- Date -->
+                    <td>{{ order.created_at|date:"d M Y" }}</td>
+                    <!-- Statut
+                    <td>
+                      {% if order.status == "done" %}
+                        <div class="badge badge-outline-success">Terminé</div>
+                      {% elif order.status == "processing" %}
+                        <div class="badge badge-outline-warning">Traitement</div>
+                      {% else %}
+                        <div class="badge badge-outline-danger">En attente</div>
+                      {% endif %}
+                    </td>-->
+                  </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -482,73 +275,48 @@
         <div class="card-body">
           <div class="d-flex flex-row justify-content-between">
             <h4 class="card-title">Messages</h4>
-            <p class="text-muted mb-1 small">Voir tout</p>
+            <p class="text-muted mb-1 small">
+              <a href="{% url 'list_conversations' %}">Voir tout</a>
+            </p>
           </div>
           <div class="preview-list">
-            <div class="preview-item border-bottom">
-              <div class="preview-thumbnail">
-                <img src="{% static 'admin-cele/assets/images/faces/face6.jpg' %}"
-                     alt="image"
-                     class="rounded-circle" />
-              </div>
-              <div class="preview-item-content d-flex flex-grow">
-                <div class="flex-grow">
-                  <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                    <h6 class="preview-subject">Leonard</h6>
-                    <p class="text-muted text-small">il y a 5 minutes</p>
+            {% if conversations_info %}
+              {% for info in conversations_info %}
+                <div class="preview-item border-bottom">
+                  <!-- Avatar -->
+                  <div class="preview-thumbnail">
+                    <img src="{% static 'admin-cele/assets/images/faces/face.jpg' %}"
+                         alt="image"
+                         class="rounded-circle" />
                   </div>
-                  <p class="text-muted">Eh bien, il semble que cela fonctionne maintenant.</p>
-                </div>
-              </div>
-            </div>
-            <div class="preview-item border-bottom">
-              <div class="preview-thumbnail">
-                <img src="{% static 'admin-cele/assets/images/faces/face8.jpg' %}"
-                     alt="image"
-                     class="rounded-circle" />
-              </div>
-              <div class="preview-item-content d-flex flex-grow">
-                <div class="flex-grow">
-                  <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                    <h6 class="preview-subject">Luella Mills</h6>
-                    <p class="text-muted text-small">il y a 10 minutes</p>
+                  <!-- Contenu -->
+                  <div class="preview-item-content d-flex flex-grow">
+                    <div class="flex-grow">
+                      <div class="d-flex d-md-block d-xl-flex justify-content-between">
+                        <!-- Nom de l’autre participant -->
+                        <h6 class="preview-subject">
+                          {% if info.other %}
+                            {{ info.other.username }}
+                          {% else %}
+                            Utilisateur supprimé
+                          {% endif %}
+                        </h6>
+                        <!-- Temps relatif -->
+                        <p class="text-muted text-small">
+                          {% if info.last_timestamp %}
+                            {{ info.last_timestamp|timesince }} ago
+                          {% else %}
+                            Aucun message
+                          {% endif %}
+                        </p>
+                      </div>
+                      <!-- Dernier message -->
+                      <p class="text-muted">{{ info.last_content|default:"(Pas de message)" }}</p>
+                    </div>
                   </div>
-                  <p class="text-muted">Eh bien, il semble que cela fonctionne maintenant.</p>
                 </div>
-              </div>
-            </div>
-            <div class="preview-item border-bottom">
-              <div class="preview-thumbnail">
-                <img src="{% static 'admin-cele/assets/images/faces/face9.jpg' %}"
-                     alt="image"
-                     class="rounded-circle" />
-              </div>
-              <div class="preview-item-content d-flex flex-grow">
-                <div class="flex-grow">
-                  <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                    <h6 class="preview-subject">Ethel Kelly</h6>
-                    <p class="text-muted text-small">il y a 2 heures</p>
-                  </div>
-                  <p class="text-muted">Veuillez vérifier les tickets</p>
-                </div>
-              </div>
-            </div>
-            <div class="preview-item border-bottom">
-              <div class="preview-thumbnail">
-                <img src="{% static 'admin-cele/assets/images/faces/face11.jpg' %}"
-                     alt="image"
-                     class="rounded-circle" />
-              </div>
-              <div class="preview-item-content d-flex flex-grow">
-                <div class="flex-grow">
-                  <div class="d-flex d-md-block d-xl-flex justify-content-between">
-                    <h6 class="preview-subject">Herman May</h6>
-                    <p class="text-muted text-small">il y a 4 heures</p>
-                  </div>
-                  <p class="text-muted">Merci beaucoup. C'était facile à corriger.</p>
-                </div>
-              </div>
-            </div>
+              {% endfor %}
+            {% endif %}
           </div>
         </div>
       </div>
@@ -564,10 +332,12 @@
                    alt="">
             </div>
             <div class="item">
-              <img src="assets/images/dashboard/Img_5.jpg" alt="">
+              <img src="{% static 'admin-cele/assets/images/dashboard/Img_5.jpg' %}"
+                   alt="">
             </div>
             <div class="item">
-              <img src="assets/images/dashboard/img_6.jpg" alt="">
+              <img src="{% static 'admin-cele/assets/images/dashboard/Img_6.jpg' %}"
+                   alt="">
             </div>
           </div>
           <div class="d-flex py-4">
@@ -666,18 +436,19 @@
     </div>
   </div>
 {% endblock %}
-<script>
+{% block extra_js %}
+  <script>
       const METHODS_LABELS = {{ methods_labels|safe }};
       const METHODS_DATA = {{ methods_data|safe }};
-</script>
-<script>
+  </script>
+  <script>
         window.transactionData = {
           labels: {{ methods_labels|safe }},
           data: {{ methods_data|safe }}
         };
         console.log(window.transactionData);
-</script>
-<script>
+  </script>
+  <script>
   (function ($) {
   'use strict';
   $.fn.andSelf = function () {
@@ -807,4 +578,5 @@
   });
 })(jQuery);
 
-</script>
+  </script>
+{% endblock %}

@@ -268,7 +268,7 @@
               {% endif %}
               {% if user.is_authenticated %}
                 <!-- Favoris -->
-                <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                   <span class="material-symbols-outlined text-xl">favorite</span>
                 </button>
                 <!-- Messages -->
@@ -278,14 +278,14 @@
                 </button>
               {% endif %}
               <!-- Panier -->
-              <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+              <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                 <span class="material-symbols-outlined text-xl">shopping_cart</span>
               </button>
               {% if user.is_authenticated %}
                 <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition md:block">
                   <a href="#"><span class="material-symbols-outlined text-2xl">person</span></a>
                 </button>
-                <button class="flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                   <a href= "{% url 'account_logout' %}">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          fill="none"

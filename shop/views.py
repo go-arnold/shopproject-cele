@@ -148,7 +148,7 @@ def allProducts(request):
     - `categories`: toutes les catégories (utile pour la navigation)
     """
     products_qs = Product.objects.select_related('category_fk').prefetch_related(
-        'features').all()
+        'features').all()  # .order_by("name")
 
     if request.user.is_authenticated:
         for p in products_qs:
@@ -862,10 +862,6 @@ def revendeur_reply(request, notification_id):
     return redirect("conversation_detail", conversation_id=conversation.id)
 
 
-# Assure-toi d'avoir ces imports adaptés à tes models
-# from .models import Conversation, Message
-
-
 @login_required
 def list_conversations(request):
     """
@@ -904,26 +900,21 @@ def list_conversations(request):
             "last_sender": last_sender,
             "last_timestamp": last_timestamp,
         })
-
-    # Filtrage server-side si q fourni
     if q:
         q_lower = q.lower()
         filtered = []
         for item in conversations_info:
             matches = False
 
-            # 1) chercher dans dernier message
             if item["last_content"] and q_lower in item["last_content"].lower():
                 matches = True
 
-            # 2) chercher dans nom de l'autre participant
             other = item["other"]
             if other:
                 fullname = (other.get_full_name() or other.username).lower()
                 if q_lower in fullname or q_lower in other.username.lower():
                     matches = True
 
-            # 3) chercher par id de commande si present
             conv = item["conversation"]
             if q.isdigit() and conv.related_order and str(conv.related_order.id) == q:
                 matches = True

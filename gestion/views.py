@@ -13,7 +13,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from shop.models import Product, Feature, Category, Vente, Notification
+from shop.models import Product, Feature, Category, Vente, Notification, Order, Conversation, Message
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from gestion.decorators import admin_required
@@ -38,120 +38,119 @@ def dashboard(request):
     current_year = today.year
     notifications = Notification.objects.filter(
         user=request.user).order_by("-created_at")
-    notif_count = int(notifications.count())
+    notif_count = notifications.count()
 
     ventes = Vente.objects.select_related('produit', 'produit__category_fk')
 
+    # Requêtes pour les ventes du mois actuel et précédent
     ventes_mois_courant = ventes.filter(
-        date_achat__month=current_month,
-        date_achat__year=current_year
-    )
-    ventes_mois_precedent = ventes.filter(
-        date_achat__month=(current_month - 1 if current_month > 1 else 12),
-        date_achat__year=(current_year if current_month >
-                          1 else current_year - 1)
-    )
+        date_achat__month=current_month, date_achat__year=current_year)
+    ventes_mois_precedent = ventes.filter(date_achat__month=(current_month - 1 if current_month > 1 else 12),
+                                          date_achat__year=(current_year if current_month > 1 else current_year - 1))
 
-    profit_actuel = ventes_mois_courant.aggregate(
-        total_profit=Sum(
-            F('price_final') - F('produit__price_primary'),
-            output_field=DecimalField()
-        )
-    )['total_profit'] or 0
+    # Récupération des revenus totaux et profits (avec aggregation sur une seule requête si possible)
+    def calculate_revenue_and_profit(ventes):
+        revenue = ventes.aggregate(total_revenue=Sum('price_final'))[
+            'total_revenue'] or 0
+        profit = ventes.aggregate(total_profit=Sum(
+            F('price_final') - F('produit__price_primary'), output_field=DecimalField()))['total_profit'] or 0
+        return revenue, profit
 
-    profit_precedent = ventes_mois_precedent.aggregate(
-        total_profit=Sum(
-            F('price_final') - F('produit__price_primary'),
-            output_field=DecimalField()
-        )
-    )['total_profit'] or 0
+    revenu_courant, profit_actuel = calculate_revenue_and_profit(
+        ventes_mois_courant)
+    revenu_precedent, profit_precedent = calculate_revenue_and_profit(
+        ventes_mois_precedent)
 
+    # Croissance en pourcentage
     croissance_pourcentage = 0
     if profit_precedent > 0:
         croissance_pourcentage = (
             (profit_actuel - profit_precedent) / profit_precedent) * 100
 
-    # --- b. Revenu mensuel (ventes du mois courant) ---
-    revenu_courant = ventes_mois_courant.aggregate(
-        total=Sum('price_final'))['total'] or 0
-    revenu_precedent = ventes_mois_precedent.aggregate(
-        total=Sum('price_final'))['total'] or 0
-
-    revenu_pourcentage = 0
-    if revenu_precedent > 0:
-        revenu_pourcentage = (
-            (revenu_courant - revenu_precedent) / revenu_precedent) * 100
-
-    # --- c. Revenu quotidien ---
+    # Revenus et profits pour les ventes d'aujourd'hui et hier
     ventes_aujourdhui = ventes.filter(date_achat__date=today)
     ventes_hier = ventes.filter(date_achat__date=today - timedelta(days=1))
-
     revenu_jour = ventes_aujourdhui.aggregate(
         total=Sum('price_final'))['total'] or 0
     revenu_hier = ventes_hier.aggregate(total=Sum('price_final'))['total'] or 0
-
     revenu_journalier_pourcentage = 0
     if revenu_hier > 0:
         revenu_journalier_pourcentage = (
             (revenu_jour - revenu_hier) / revenu_hier) * 100
 
-    # --- d. Revenu mensuel (catégorie Habits) ---
-    habits_categories = [
-        'Habits/Homme', 'Habits/Femme', 'Habits/Enfants', 'Habits/Souliers', 'Habits/Neutre'
-    ]
-
+    # Revenus pour la catégorie 'Habits'
+    habits_categories = ['Habits/Homme', 'Habits/Femme',
+                         'Habits/Enfants', 'Habits/Souliers', 'Habits/Neutre']
     habits_mois_courant = ventes_mois_courant.filter(
         produit__category_fk__name__in=habits_categories)
     habits_mois_precedent = ventes_mois_precedent.filter(
         produit__category_fk__name__in=habits_categories)
-
-    revenu_habits_courant = habits_mois_courant.aggregate(
-        total=Sum('price_final'))['total'] or 0
-    revenu_habits_precedent = habits_mois_precedent.aggregate(
-        total=Sum('price_final'))['total'] or 0
+    revenu_habits_courant, _ = calculate_revenue_and_profit(
+        habits_mois_courant)
+    revenu_habits_precedent, _ = calculate_revenue_and_profit(
+        habits_mois_precedent)
 
     habits_pourcentage = 0
     if revenu_habits_precedent > 0:
         habits_pourcentage = (
             (revenu_habits_courant - revenu_habits_precedent) / revenu_habits_precedent) * 100
 
-    # --- Autres infos du tableau de bord ---
-    total_ventes = ventes.count()
-    recent_ventes = ventes.order_by('-date_achat')[:5]
-
-    # --- Données pour les méthodes de paiement ---
+    # Données de paiement
     methodes_stats = (
         ventes.values('method')
         .annotate(total=Coalesce(Sum('price_final'), 0, output_field=DecimalField()))
         .order_by('method')
     )
-
     methods_labels = [item['method'] for item in methodes_stats]
     methods_data = [float(item['total']) for item in methodes_stats]
 
+    # Récupération des 5 dernières ventes
+    recent_ventes = ventes.order_by('-date_achat')[:5]
+
+    qs = Conversation.objects.filter(
+        participants=request.user).order_by("-created_at")
+
+    conversations_info = []
+    for conv in qs:
+
+        last_msg = Message.objects.filter(
+            conversation=conv).order_by("-timestamp").first()
+        last_content = last_msg.content if last_msg else ""
+        last_sender = last_msg.sender if last_msg else None
+        last_timestamp = last_msg.timestamp if last_msg else None
+
+        others = conv.participants.exclude(id=request.user.id)
+        other = others.first() if others.exists() else None
+
+        conversations_info.append({
+            "conversation": conv,
+            "other": other,
+            "last_content": last_content,
+            "last_sender": last_sender,
+            "last_timestamp": last_timestamp,
+        })
+
+    # Contexte pour le template
     context = {
         'croissance_potentielle': round(profit_actuel, 2),
         'croissance_pourcentage': round(croissance_pourcentage, 2),
-
         'revenu_mensuel': round(revenu_courant, 2),
-        'revenu_mensuel_pourcentage': round(revenu_pourcentage, 2),
-
+        'revenu_mensuel_pourcentage': round(((revenu_courant - revenu_precedent) / revenu_precedent) * 100 if revenu_precedent > 0 else 0, 2),
         'revenu_quotidien': round(revenu_jour, 2),
         'revenu_quotidien_pourcentage': round(revenu_journalier_pourcentage, 2),
-
         'revenu_habits': round(revenu_habits_courant, 2),
         'revenu_habits_pourcentage': round(habits_pourcentage, 2),
-
-        'total_ventes': total_ventes,
+        'total_ventes': ventes.count(),
         'recent_ventes': recent_ventes,
-
         'methods_labels': methods_labels,
         'methods_data': methods_data,
         'notif_count': notif_count,
-
+        'notifications': notifications,
+        'orders': Order.objects.select_related('user').prefetch_related('items__product'),
+        'conversations_info': conversations_info
     }
 
-    return render(request, 'gestion/dashboard1.html', context)
+    return render(request, "gestion/dashboard1.html", context)
 
 
 @admin_required
@@ -429,9 +428,8 @@ def liste_ventes_rev(request):
         ventes_list = Vente.objects.select_related(
             'produit', 'utilisateur').order_by('-date_achat')
     else:
-        ventes_list = Vente.objects.filter(utilisateur=utilisateur)\
-                                   .select_related('produit', 'utilisateur')\
-                                   .order_by('-date_achat')
+        ventes_list = Vente.objects.filter(utilisateur=utilisateur).select_related(
+            'produit', 'utilisateur').order_by('-date_achat')
 
     filtre = request.GET.get('filtre')
     maintenant = timezone.now()
@@ -467,8 +465,8 @@ def export_ventes_excel(request):
     if utilisateur.groups.filter(name="mukubwa").exists():
         ventes = Vente.objects.select_related('produit', 'utilisateur')
     else:
-        ventes = Vente.objects.filter(utilisateur=utilisateur)\
-                              .select_related('produit', 'utilisateur')
+        ventes = Vente.objects.filter(
+            utilisateur=utilisateur).select_related('produit', 'utilisateur')
 
     wb = openpyxl.Workbook()
     ws = wb.active
@@ -503,8 +501,8 @@ def export_ventes_pdf(request):
     if utilisateur.groups.filter(name="mukubwa").exists():
         ventes = Vente.objects.select_related('produit', 'utilisateur')
     else:
-        ventes = Vente.objects.filter(utilisateur=utilisateur)\
-                              .select_related('produit', 'utilisateur')
+        ventes = Vente.objects.filter(
+            utilisateur=utilisateur).select_related('produit', 'utilisateur')
     logo_url = request.build_absolute_uri(static('static-img/logo-white.png'))
     # Génération du HTML
     html_string = render_to_string('gestion/pdf_ventes.html', {
@@ -585,7 +583,7 @@ def dashboard_pdf(request):
             </style>
         </head>
         <body>
-        
+
             <img src="{logo_url}" class="logo" />
             <h1>Dashboard des Ventes</h1>
         """
@@ -635,8 +633,8 @@ def dashboard_ventes(request):
     if utilisateur.groups.filter(name="mukubwa").exists():
         ventes = Vente.objects.all().select_related('produit', 'utilisateur')
     else:
-        ventes = Vente.objects.filter(utilisateur=utilisateur)\
-                              .select_related('produit', 'utilisateur')
+        ventes = Vente.objects.filter(
+            utilisateur=utilisateur).select_related('produit', 'utilisateur')
 
     last_week = today - timedelta(days=7)
     last_year = today - timedelta(days=365)

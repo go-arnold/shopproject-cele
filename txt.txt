@@ -16,3 +16,13 @@ python manage.py createsuperuser
 
 
 VNYMEW4AAQNG5HRUJ31RB7WQ
+
+
+notif_global
+notif_primary_style_mukubwa_revendeur
+
+tris_notification_paginations
+notification_emails
+
+
+dashboard_admin

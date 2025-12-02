@@ -280,8 +280,8 @@
                     <div class="flex items-center gap-1 sm:gap-4 ml-auto">
                         <!-- Mobile Search Button -->
                         <button id="mobileSearchBtn"
-                                class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
-                            <span class="material-symbols-outlined text-lg sm:text-xl">search</span>
+                                class="md:hidden flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <span class="material-symbols-outlined text-xl">search</span>
                         </button>
                         {% if not user.is_authenticated %}
                             <!-- Desktop: Button S'inscrire -->
@@ -293,9 +293,9 @@
                         {% endif %}
                         {% if user.is_authenticated %}
                             <!-- Favoris -->
-                            <button class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'favorites_list' %}">
-                                    <span class="material-symbols-outlined text-lg sm:text-xl">favorite</span>
+                                    <span class="material-symbols-outlined text-xl">favorite</span>
                                 </a>
                             </button>
                             <!-- Messages - Desktop only -->
@@ -308,7 +308,7 @@
                         {% endif %}
                         <!-- Panier -->
                         <a href="{% url 'cart' %}">
-                            <button class="relative flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <button class="relative flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <span class="material-symbols-outlined text-lg sm:text-xl">shopping_cart</span>
                                 <span class="cart-count absolute -top-0.5 -right-0.5 sm:top-1 sm:right-0.5 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-primary text-[0.6rem] sm:text-xs font-bold text-white">{{ cart_count }}</span>
                             </button>
@@ -317,11 +317,23 @@
                             <!-- Profile - Desktop only -->
                             <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'profile' %}">
-                                    <span class="material-symbols-outlined text-2xl">person</span>
+                                    <span class="material-symbols-outlined text-xl">person</span>
                                 </a>
                             </button>
+                            {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
+                                <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                    <a href="{% url 'notifications' %}">
+                                        <span class="material-symbols-outlined text-xl">notification_add</span>
+                                    </a>
+                                </button>
+                                <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                    <a href="{% url 'gestion:dashboard' %}">
+                                        <span class="material-symbols-outlined text-xl">apps</span>
+                                    </a>
+                                </button>
+                            {% endif %}
                             <!-- Logout -->
-                            <button class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                            <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'account_logout' %}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          fill="none"

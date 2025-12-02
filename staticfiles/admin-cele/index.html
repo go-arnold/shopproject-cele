@@ -3,17 +3,23 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Admin Celebobo</title>
     <!-- plugins:css -->
-    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet"
+          href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     <!-- endinject -->
     <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="assets/vendors/jvectormap/jquery-jvectormap.css">
-    <link rel="stylesheet" href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
-    <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <link rel="stylesheet"
+          href="assets/vendors/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet"
+          href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet"
+          href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet"
+          href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <!-- endinject -->
@@ -27,26 +33,38 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <a class="sidebar-brand brand-logo" href="index.html"><img src="assets/images/logo.png" alt="logo" /></a>
-          <a class="sidebar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+          <a class="sidebar-brand brand-logo" href="index.html">
+            <img src="assets/images/logo.png" alt="logo" />
+          </a>
+          <a class="sidebar-brand brand-logo-mini" href="index.html">
+            <img src="assets/images/logo-mini.svg" alt="logo" />
+          </a>
         </div>
         <ul class="nav">
           <li class="nav-item profile">
             <div class="profile-desc">
               <div class="profile-pic">
                 <div class="count-indicator">
-                  <img class="img-xs rounded-circle " src="assets/images/faces/face15.jpg" alt="">
+                  <img class="img-xs rounded-circle "
+                       src="assets/images/faces/face15.jpg"
+                       alt="">
                   <span class="count bg-success"></span>
                 </div>
                 <div class="profile-name">
                   <h5 class="mb-0 font-weight-normal">Celestin B</h5>
-                  <span>{% for group in user.groups.all %}
-                    {{ group.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}</span>
+                  <span>
+                    {% for group in user.groups.all %}
+                      {{ group.name }}
+                      {% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                  </span>
                 </div>
               </div>
-              <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
-              <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
+              <a href="{% url 'profile' %}"
+                 id="profile-dropdown"
+                 data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
+              <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list"
+                   aria-labelledby="profile-dropdown">
                 <a href="#" class="dropdown-item preview-item">
                   <div class="preview-thumbnail">
                     <div class="preview-icon bg-dark rounded-circle">
@@ -103,9 +121,15 @@
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Boutons</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Listes déroulantes</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">Typographie</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/ui-features/buttons.html">Boutons</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/ui-features/dropdowns.html">Listes déroulantes</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/ui-features/typography.html">Typographie</a>
+                </li>
               </ul>
             </div>
           </li>
@@ -142,7 +166,11 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+            <a class="nav-link"
+               data-toggle="collapse"
+               href="#auth"
+               aria-expanded="false"
+               aria-controls="auth">
               <span class="menu-icon">
                 <i class="mdi mdi-security"></i>
               </span>
@@ -151,16 +179,27 @@
             </a>
             <div class="collapse" id="auth">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Page blanche </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Connexion </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Inscription </a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/blank-page.html">Page blanche</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/error-404.html">404</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/error-500.html">500</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/login.html">Connexion</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pages/samples/register.html">Inscription</a>
+                </li>
               </ul>
             </div>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">
+            <a class="nav-link"
+               href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">
               <span class="menu-icon">
                 <i class="mdi mdi-file-document-box"></i>
               </span>
@@ -174,23 +213,34 @@
         <!-- partial:partials/_navbar.html -->
         <nav class="navbar p-0 fixed-top d-flex flex-row">
           <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
-            <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="index.html">
+              <img src="assets/images/logo-mini.svg" alt="logo" />
+            </a>
           </div>
           <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
-            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <button class="navbar-toggler navbar-toggler align-self-center"
+                    type="button"
+                    data-toggle="minimize">
               <span class="mdi mdi-menu"></span>
             </button>
             <ul class="navbar-nav w-100">
               <li class="nav-item w-100">
                 <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                  <input type="text" class="form-control" placeholder="Rechercher des produits">
+                  <input type="text"
+                         class="form-control"
+                         placeholder="Rechercher des produits">
                 </form>
               </li>
             </ul>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown d-none d-lg-block">
-                <a class="nav-link btn btn-success create-new-button" id="createbuttonDropdown" data-toggle="dropdown" aria-expanded="false" href="#">+ Ajouter un nouveau produit</a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="createbuttonDropdown">
+                <a class="nav-link btn btn-success create-new-button"
+                   id="createbuttonDropdown"
+                   data-toggle="dropdown"
+                   aria-expanded="false"
+                   href="#">+ Ajouter un nouveau produit</a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                     aria-labelledby="createbuttonDropdown">
                   <h6 class="p-3 mb-0">Produits</h6>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
@@ -235,40 +285,51 @@
                 </a>
               </li>
               <li class="nav-item dropdown border-left">
-                <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link count-indicator dropdown-toggle"
+                   id="messageDropdown"
+                   href="#"
+                   data-toggle="dropdown"
+                   aria-expanded="false">
                   <i class="mdi mdi-email"></i>
                   <span class="count bg-success"></span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                     aria-labelledby="messageDropdown">
                   <h6 class="p-3 mb-0">Messages</h6>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
-                      <img src="assets/images/faces/face4.jpg" alt="image" class="rounded-circle profile-pic">
+                      <img src="assets/images/faces/face4.jpg"
+                           alt="image"
+                           class="rounded-circle profile-pic">
                     </div>
                     <div class="preview-item-content">
                       <p class="preview-subject ellipsis mb-1">Mark a envoyé un message</p>
-                      <p class="text-muted mb-0"> Il y a 1 minute </p>
+                      <p class="text-muted mb-0">Il y a 1 minute</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
-                      <img src="assets/images/faces/face2.jpg" alt="image" class="rounded-circle profile-pic">
+                      <img src="assets/images/faces/face2.jpg"
+                           alt="image"
+                           class="rounded-circle profile-pic">
                     </div>
                     <div class="preview-item-content">
                       <p class="preview-subject ellipsis mb-1">Mugisho a envoyé un message</p>
-                      <p class="text-muted mb-0"> Il y a 15 minutes </p>
+                      <p class="text-muted mb-0">Il y a 15 minutes</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
-                      <img src="assets/images/faces/face3.jpg" alt="image" class="rounded-circle profile-pic">
+                      <img src="assets/images/faces/face3.jpg"
+                           alt="image"
+                           class="rounded-circle profile-pic">
                     </div>
                     <div class="preview-item-content">
                       <p class="preview-subject ellipsis mb-1">Esther a envoyé une photo</p>
-                      <p class="text-muted mb-0"> Il y a 18 minutes </p>
+                      <p class="text-muted mb-0">Il y a 18 minutes</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -276,11 +337,15 @@
                 </div>
               </li>
               <li class="nav-item dropdown border-left">
-                <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+                <a class="nav-link count-indicator dropdown-toggle"
+                   id="notificationDropdown"
+                   href="#"
+                   data-toggle="dropdown">
                   <i class="mdi mdi-bell"></i>
                   <span class="count bg-danger"></span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                     aria-labelledby="notificationDropdown">
                   <h6 class="p-3 mb-0">Notifications</h6>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
@@ -291,7 +356,7 @@
                     </div>
                     <div class="preview-item-content">
                       <p class="preview-subject mb-1">Événement aujourd'hui</p>
-                      <p class="text-muted ellipsis mb-0"> Juste un rappel que vous avez un événement aujourd'hui </p>
+                      <p class="text-muted ellipsis mb-0">Juste un rappel que vous avez un événement aujourd'hui</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -303,7 +368,7 @@
                     </div>
                     <div class="preview-item-content">
                       <p class="preview-subject mb-1">Paramètres</p>
-                      <p class="text-muted ellipsis mb-0"> Mettre à jour le tableau de bord </p>
+                      <p class="text-muted ellipsis mb-0">Mettre à jour le tableau de bord</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -315,7 +380,7 @@
                     </div>
                     <div class="preview-item-content">
                       <p class="preview-subject mb-1">Lancer Admin</p>
-                      <p class="text-muted ellipsis mb-0"> Nouveau admin wow! </p>
+                      <p class="text-muted ellipsis mb-0">Nouveau admin wow!</p>
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
@@ -325,12 +390,15 @@
               <li class="nav-item dropdown">
                 <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
                   <div class="navbar-profile">
-                    <img class="img-xs rounded-circle" src="assets/images/faces/face15.jpg" alt="">
+                    <img class="img-xs rounded-circle"
+                         src="assets/images/faces/face15.jpg"
+                         alt="">
                     <p class="mb-0 d-none d-sm-block navbar-profile-name">Celestin B</p>
                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                   </div>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                     aria-labelledby="profileDropdown">
                   <h6 class="p-3 mb-0">Profil</h6>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item preview-item">
@@ -359,7 +427,9 @@
                 </div>
               </li>
             </ul>
-            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+                    type="button"
+                    data-toggle="offcanvas">
               <span class="mdi mdi-format-line-spacing"></span>
             </button>
           </div>
@@ -373,15 +443,21 @@
                   <div class="card-body py-0 px-0 px-sm-3">
                     <div class="row align-items-center">
                       <div class="col-4 col-sm-3 col-xl-2">
-                        <img src="assets/images/dashboard/Group126@2x.png" class="gradient-corona-img img-fluid" alt="">
+                        <img src="assets/images/dashboard/Group126@2x.png"
+                             class="gradient-corona-img img-fluid"
+                             alt="">
                       </div>
                       <div class="col-5 col-sm-7 col-xl-8 p-0">
                         <h4 class="mb-1 mb-sm-0">Vous voulez encore plus de fonctionnalités ?</h4>
-                        <p class="mb-0 font-weight-normal d-none d-sm-block">Contactez Patrick ou Arnold sur <b>gopaty@gmail.com</b></p>
+                        <p class="mb-0 font-weight-normal d-none d-sm-block">
+                          Contactez Patrick ou Arnold sur <b>gopaty@gmail.com</b>
+                        </p>
                       </div>
                       <div class="col-3 col-sm-2 col-xl-2 pl-0 text-center">
                         <span>
-                          <a href="https://www.bootstrapdash.com/product/corona-admin-template/" target="_blank" class="btn btn-outline-light btn-rounded get-started-btn">Voir la version du client</a>
+                          <a href="https://www.bootstrapdash.com/product/corona-admin-template/"
+                             target="_blank"
+                             class="btn btn-outline-light btn-rounded get-started-btn">Voir la version du client</a>
                         </span>
                       </div>
                     </div>
@@ -521,7 +597,7 @@
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
                                 <p class="text-muted">il y a 15 minutes</p>
-                                <p class="text-muted mb-0">30 tâches, 5 problèmes </p>
+                                <p class="text-muted mb-0">30 tâches, 5 problèmes</p>
                               </div>
                             </div>
                           </div>
@@ -538,7 +614,7 @@
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
                                 <p class="text-muted">il y a 1 heure</p>
-                                <p class="text-muted mb-0">23 tâches, 5 problèmes </p>
+                                <p class="text-muted mb-0">23 tâches, 5 problèmes</p>
                               </div>
                             </div>
                           </div>
@@ -572,7 +648,7 @@
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
                                 <p class="text-muted">il y a 55 minutes</p>
-                                <p class="text-muted mb-0">35 tâches, 7 problèmes </p>
+                                <p class="text-muted mb-0">35 tâches, 7 problèmes</p>
                               </div>
                             </div>
                           </div>
@@ -589,7 +665,7 @@
                               </div>
                               <div class="mr-auto text-sm-right pt-2 pt-sm-0">
                                 <p class="text-muted">il y a 50 minutes</p>
-                                <p class="text-muted mb-0">27 tâches, 4 problèmes </p>
+                                <p class="text-muted mb-0">27 tâches, 4 problèmes</p>
                               </div>
                             </div>
                           </div>
@@ -608,7 +684,8 @@
                     <div class="row">
                       <div class="col-8 col-sm-12 col-xl-8 my-auto">
                         <div class="d-flex d-sm-block d-md-flex align-items-center">
-                          <h2 class="mb-0>$32123</h2>
+                          <h2 class="mb-0>$32123
+                          </h2>
                           <p class="text-success ml-2 mb-0 font-weight-medium">+3,5%</p>
                         </div>
                         <h6 class="text-muted font-weight-normal">11,38% depuis le mois dernier</h6>
@@ -630,7 +707,7 @@
                           <h2 class="mb-0">$45850</h2>
                           <p class="text-success ml-2 mb-0 font-weight-medium">+8,3%</p>
                         </div>
-                        <h6 class="text-muted font-weight-normal"> 9,61% depuis le mois dernier</h6>
+                        <h6 class="text-muted font-weight-normal">9,61% depuis le mois dernier</h6>
                       </div>
                       <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
                         <i class="icon-lg mdi mdi-wallet-travel text-danger ml-auto"></i>
@@ -647,7 +724,7 @@
                       <div class="col-8 col-sm-12 col-xl-8 my-auto">
                         <div class="d-flex d-sm-block d-md-flex align-items-center">
                           <h2 class="mb-0">$2039</h2>
-                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2,1% </p>
+                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2,1%</p>
                         </div>
                         <h6 class="text-muted font-weight-normal">2,27% depuis le mois dernier</h6>
                       </div>
@@ -675,13 +752,13 @@
                                 </label>
                               </div>
                             </th>
-                            <th> Nom du client </th>
-                            <th> N° de commande </th>
-                            <th> Coût du produit </th>
-                            <th> Projet </th>
-                            <th> Mode de paiement </th>
-                            <th> Date de début </th>
-                            <th> Statut du paiement </th>
+                            <th>Nom du client</th>
+                            <th>N° de commande</th>
+                            <th>Coût du produit</th>
+                            <th>Projet</th>
+                            <th>Mode de paiement</th>
+                            <th>Date de début</th>
+                            <th>Statut du paiement</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -697,11 +774,11 @@
                               <img src="assets/images/faces/face1.jpg" alt="image" />
                               <span class="pl-2">Celestin B</span>
                             </td>
-                            <td> 02312 </td>
-                            <td> $14,500 </td>
-                            <td> Tableau de bord </td>
-                            <td> Carte de crédit </td>
-                            <td> 04 Déc 2019 </td>
+                            <td>02312</td>
+                            <td>$14,500</td>
+                            <td>Tableau de bord</td>
+                            <td>Carte de crédit</td>
+                            <td>04 Déc 2019</td>
                             <td>
                               <div class="badge badge-outline-success">Approuvé</div>
                             </td>
@@ -718,11 +795,11 @@
                               <img src="assets/images/faces/face2.jpg" alt="image" />
                               <span class="pl-2">Estella Bryan</span>
                             </td>
-                            <td> 02312 </td>
-                            <td> $14,500 </td>
-                            <td> Site web </td>
-                            <td> Paiement à la livraison </td>
-                            <td> 04 Déc 2019 </td>
+                            <td>02312</td>
+                            <td>$14,500</td>
+                            <td>Site web</td>
+                            <td>Paiement à la livraison</td>
+                            <td>04 Déc 2019</td>
                             <td>
                               <div class="badge badge-outline-warning">En attente</div>
                             </td>
@@ -739,11 +816,11 @@
                               <img src="assets/images/faces/face5.jpg" alt="image" />
                               <span class="pl-2">Lucy Abbott</span>
                             </td>
-                            <td> 02312 </td>
-                            <td> $14,500 </td>
-                            <td> Conception d'application </td>
-                            <td> Carte de crédit </td>
-                            <td> 04 Déc 2019 </td>
+                            <td>02312</td>
+                            <td>$14,500</td>
+                            <td>Conception d'application</td>
+                            <td>Carte de crédit</td>
+                            <td>04 Déc 2019</td>
                             <td>
                               <div class="badge badge-outline-danger">Rejeté</div>
                             </td>
@@ -760,11 +837,11 @@
                               <img src="assets/images/faces/face3.jpg" alt="image" />
                               <span class="pl-2">Peter Gill</span>
                             </td>
-                            <td> 02312 </td>
-                            <td> $14,500 </td>
-                            <td> Développement </td>
-                            <td> Paiement en ligne </td>
-                            <td> 04 Déc 2019 </td>
+                            <td>02312</td>
+                            <td>$14,500</td>
+                            <td>Développement</td>
+                            <td>Paiement en ligne</td>
+                            <td>04 Déc 2019</td>
                             <td>
                               <div class="badge badge-outline-success">Approuvé</div>
                             </td>
@@ -781,11 +858,11 @@
                               <img src="assets/images/faces/face4.jpg" alt="image" />
                               <span class="pl-2">Sallie Reyes</span>
                             </td>
-                            <td> 02312 </td>
-                            <td> $14,500 </td>
-                            <td> Site web </td>
-                            <td> Carte de crédit </td>
-                            <td> 04 Déc 2019 </td>
+                            <td>02312</td>
+                            <td>$14,500</td>
+                            <td>Site web</td>
+                            <td>Carte de crédit</td>
+                            <td>04 Déc 2019</td>
                             <td>
                               <div class="badge badge-outline-success">Approuvé</div>
                             </td>
@@ -808,7 +885,9 @@
                     <div class="preview-list">
                       <div class="preview-item border-bottom">
                         <div class="preview-thumbnail">
-                          <img src="assets/images/faces/face6.jpg" alt="image" class="rounded-circle" />
+                          <img src="assets/images/faces/face6.jpg"
+                               alt="image"
+                               class="rounded-circle" />
                         </div>
                         <div class="preview-item-content d-flex flex-grow">
                           <div class="flex-grow">
@@ -822,7 +901,9 @@
                       </div>
                       <div class="preview-item border-bottom">
                         <div class="preview-thumbnail">
-                          <img src="assets/images/faces/face8.jpg" alt="image" class="rounded-circle" />
+                          <img src="assets/images/faces/face8.jpg"
+                               alt="image"
+                               class="rounded-circle" />
                         </div>
                         <div class="preview-item-content d-flex flex-grow">
                           <div class="flex-grow">
@@ -836,7 +917,9 @@
                       </div>
                       <div class="preview-item border-bottom">
                         <div class="preview-thumbnail">
-                          <img src="assets/images/faces/face9.jpg" alt="image" class="rounded-circle" />
+                          <img src="assets/images/faces/face9.jpg"
+                               alt="image"
+                               class="rounded-circle" />
                         </div>
                         <div class="preview-item-content d-flex flex-grow">
                           <div class="flex-grow">
@@ -850,7 +933,9 @@
                       </div>
                       <div class="preview-item border-bottom">
                         <div class="preview-thumbnail">
-                          <img src="assets/images/faces/face11.jpg" alt="image" class="rounded-circle" />
+                          <img src="assets/images/faces/face11.jpg"
+                               alt="image"
+                               class="rounded-circle" />
                         </div>
                         <div class="preview-item-content d-flex flex-grow">
                           <div class="flex-grow">
@@ -870,7 +955,8 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Diaporama Portfolio</h4>
-                    <div class="owl-carousel owl-theme full-width owl-carousel-dash portfolio-carousel" id="owl-carousel-basic">
+                    <div class="owl-carousel owl-theme full-width owl-carousel-dash portfolio-carousel"
+                         id="owl-carousel-basic">
                       <div class="item">
                         <img src="assets/images/dashboard/Rectangle.jpg" alt="">
                       </div>
@@ -899,9 +985,14 @@
                         </div>
                       </div>
                     </div>
-                    <p class="text-muted">Eh bien, il semble que cela fonctionne maintenant. </p>
+                    <p class="text-muted">Eh bien, il semble que cela fonctionne maintenant.</p>
                     <div class="progress progress-md portfolio-progress">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar bg-success"
+                           role="progressbar"
+                           style="width: 50%"
+                           aria-valuenow="25"
+                           aria-valuemin="0"
+                           aria-valuemax="100"></div>
                     </div>
                   </div>
                 </div>
@@ -911,7 +1002,9 @@
                   <div class="card-body">
                     <h4 class="card-title">Liste de tâches</h4>
                     <div class="add-items d-flex">
-                      <input type="text" class="form-control todo-list-input" placeholder="entrer une tâche..">
+                      <input type="text"
+                             class="form-control todo-list-input"
+                             placeholder="entrer une tâche..">
                       <button class="add btn btn-primary todo-list-add-btn">Ajouter</button>
                     </div>
                     <div class="list-wrapper">
@@ -919,35 +1012,45 @@
                         <li>
                           <div class="form-check form-check-primary">
                             <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Créer une facture </label>
+                              <input class="checkbox" type="checkbox">
+                              Créer une facture
+                            </label>
                           </div>
                           <i class="remove mdi mdi-close-box"></i>
                         </li>
                         <li>
                           <div class="form-check form-check-primary">
                             <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Réunion avec Alita </label>
+                              <input class="checkbox" type="checkbox">
+                              Réunion avec Alita
+                            </label>
                           </div>
                           <i class="remove mdi mdi-close-box"></i>
                         </li>
                         <li class="completed">
                           <div class="form-check form-check-primary">
                             <label class="form-check-label">
-                              <input class="checkbox" type="checkbox" checked> Préparer la présentation </label>
+                              <input class="checkbox" type="checkbox" checked>
+                              Préparer la présentation
+                            </label>
                           </div>
                           <i class="remove mdi mdi-close-box"></i>
                         </li>
                         <li>
                           <div class="form-check form-check-primary">
                             <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Planifier la sortie du week-end </label>
+                              <input class="checkbox" type="checkbox">
+                              Planifier la sortie du week-end
+                            </label>
                           </div>
                           <i class="remove mdi mdi-close-box"></i>
                         </li>
                         <li>
                           <div class="form-check form-check-primary">
                             <label class="form-check-label">
-                              <input class="checkbox" type="checkbox"> Aller chercher les enfants à l'école </label>
+                              <input class="checkbox" type="checkbox">
+                              Aller chercher les enfants à l'école
+                            </label>
                           </div>
                           <i class="remove mdi mdi-close-box"></i>
                         </li>
@@ -957,7 +1060,6 @@
                 </div>
               </div>
             </div>
-            
           </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->

@@ -7,7 +7,9 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>
-      {% block title %}Tableau de bord Admin{% endblock %}
+      {% block title %}
+        Tableau de bord Admin
+      {% endblock title %}
     </title>
     <!-- plugins:css -->
     <link rel="stylesheet"
@@ -21,7 +23,7 @@
     <link rel="stylesheet"
           href="{% static 'admin-cele/assets/vendors/owl-carousel-2/owl.carousel.min.css' %}">
     <link rel="stylesheet"
-          href="{% static 'admin-celeassets/vendors/owl-carousel-2/owl.theme.default.min.css' %}">
+          href="{% static 'admin-cele/assets/vendors/owl-carousel-2/owl.theme.default.min.css' %}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <!-- End Plugin css for this page -->
@@ -31,8 +33,7 @@
     <link rel="stylesheet"
           href="{% static 'admin-cele/assets/css/style.css' %}">
     <!-- End layout styles -->
-    <link rel="shortcut icon"
-          href="{% static 'admin-cele/assets/images/logo.png' %}" />
+    <link rel="shortcut icon" href="{% static 'static-img/sicon-32.png' %}" />
     {% block extra_css %}{% endblock %}
   </head>
   <body>
@@ -72,7 +73,7 @@
               <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
               <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list"
                    aria-labelledby="profile-dropdown">
-                <a href="#" class="dropdown-item preview-item">
+                <a href="{% url 'profile' %}" class="dropdown-item preview-item">
                   <div class="preview-thumbnail">
                     <div class="preview-icon bg-dark rounded-circle">
                       <i class="mdi mdi-settings text-primary"></i>
@@ -83,7 +84,8 @@
                   </div>
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item preview-item">
+                <a href="{% url 'account_change_password' %}"
+                   class="dropdown-item preview-item">
                   <div class="preview-thumbnail">
                     <div class="preview-icon bg-dark rounded-circle">
                       <i class="mdi mdi-onepassword  text-info"></i>
@@ -94,16 +96,6 @@
                   </div>
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-dark rounded-circle">
-                      <i class="mdi mdi-calendar-today text-success"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">Liste de tâches</p>
-                  </div>
-                </a>
               </div>
             </div>
           </li>
@@ -429,7 +421,7 @@
                      aria-labelledby="profileDropdown">
                   <h6 class="p-3 mb-0">Profil</h6>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item preview-item">
+                  <a href="{% url 'profile' %}" class="dropdown-item preview-item">
                     <div class="preview-thumbnail">
                       <div class="preview-icon bg-dark rounded-circle">
                         <i class="mdi mdi-settings text-success"></i>
@@ -451,8 +443,6 @@
                       <!---->
                     </div>
                   </a>
-                  <div class="dropdown-divider"></div>
-                  <p class="p-3 mb-0 text-center">Paramètres avancés</p>
                 </div>
               </li>
             </ul>

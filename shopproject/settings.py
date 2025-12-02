@@ -66,6 +66,10 @@ cloudinary.config(
     api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
 )
 
+STATIC_URL = 'static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build','staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -149,11 +153,6 @@ TIME_ZONE = 'Africa/Kigali'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-STATIC_URL = 'static/'
-# STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles'),)
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build','staticfiles')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 ROOT_URLCONF = 'shopproject.urls'

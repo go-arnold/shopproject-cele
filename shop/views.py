@@ -817,8 +817,11 @@ def assign_revendeur(request, notification_id):
     conversation = notification.conversation
     conversation.participants.add(revendeur)
 
-    notification.is_order_assigned = True
-    notification.save()
+    Notification.objects.filter(
+        conversation=conversation,
+        user__groups__name="mukubwa",
+        type="order"
+    ).update(is_order_assigned=True)
 
     # Envoyer notif au revendeur choisi
     Notification.objects.create(

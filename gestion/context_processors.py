@@ -1,4 +1,5 @@
 from shop.models import Notification, Message, Conversation
+from django.db.models import Max, Q
 
 
 def notifications(request):
@@ -6,43 +7,34 @@ def notifications(request):
         return {
             "notifications": [],
             "notif_count": 0,
-            "notify_message": False
+            "notify_message": False,
+            "msg_count": 0,
+            "notif_signal": False,
         }
 
-    # Notifications
-    notifications = Notification.objects.filter(
-        user=request.user
-    ).order_by("-created_at")
+    # --- Notifications ---
+    notifications_qs = Notification.objects.filter(
+        user=request.user).order_by("-created_at")
+    notif_count = notifications_qs.count()
 
-    notif_count = notifications.count()
-
-    # Conversations de l'utilisateur
-    conversations = (
+    # --- Messages non répondus par d'autres utilisateurs ---
+    # On cherche les conversations où le dernier message n'a pas été envoyé par un autre utilisateur
+    # On utilise annotate pour récupérer le dernier message par conversation
+    conversations_with_last_message = (
         Conversation.objects.filter(participants=request.user)
-        .prefetch_related("messages")
-        .order_by("-created_at")
+        .annotate(last_msg_id=Max("messages__id"), last_msg_sender=Max("messages__sender_id"))
     )
 
-    notify_me = False
-    msg_count = 0
-    for conv in conversations:
-        last_msg = conv.messages.order_by("-timestamp").first()
+    # On compte celles où l'utilisateur était l'avant-dernier à répondre
+    msg_count = conversations_with_last_message.filter(
+        last_msg_sender=request.user.id).count()
+    notify_message = msg_count > 0
+    notif_signal = notify_message
 
-        if not last_msg:
-            continue
-
-        if last_msg.sender != request.user:
-            notify_me = True
-            msg_count += 1
-            break
-    if msg_count > 0:
-        notif_signal = True
-    else:
-        notif_signal = False
     return {
-        "notifications": notifications,
+        "notifications": notifications_qs,
         "notif_count": notif_count,
-        "notify_message": notify_me,
+        "notify_message": notify_message,
         "msg_count": msg_count,
         "notif_signal": notif_signal,
     }

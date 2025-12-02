@@ -319,6 +319,12 @@ class Message(models.Model):
             return f"{self.sender}: {self.content[:30]}"
         return f"{self.sender}: [Image]"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['conversation', 'timestamp']),
+            models.Index(fields=['sender']),
+        ]
+
 
 class Notification(models.Model):
     TYPE_CHOICES = [

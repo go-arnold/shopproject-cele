@@ -16,6 +16,8 @@ def notifications(request):
     notifications_qs = Notification.objects.filter(
         user=request.user).order_by("-created_at")
     notif_count = notifications_qs.count()
+    not_read_notif = Notification.objects.filter(
+        user=request.user).filter(is_read=False).order_by("-created_at").count()
 
     # --- Messages non répondus par d'autres utilisateurs ---
     # On cherche les conversations où le dernier message n'a pas été envoyé par un autre utilisateur
@@ -37,4 +39,5 @@ def notifications(request):
         "notify_message": notify_message,
         "msg_count": msg_count,
         "notif_signal": notif_signal,
+        "not_read_notif": not_read_notif,
     }

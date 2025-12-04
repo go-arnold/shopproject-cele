@@ -355,4 +355,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // S'assurer que le loading est caché au chargement initial de la page
     hideLoading();
 
+
+
+
+
 });

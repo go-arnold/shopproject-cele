@@ -28,8 +28,9 @@
           rel="stylesheet" />
     <style>
     .material-symbols-outlined {
-      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-    }
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-display: block; 
+}
 
     /* Animation for fade-in sections */
     .fade-in {
@@ -112,48 +113,33 @@
     }
     </style>
     <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#640D5F",
-            "background-light": "#f8f6f8",
-            "background-dark": "#12121c",
-          },
-          fontFamily: { display: ["Inter", "sans-serif"] },
-        },
-      },
-    };
-    </script>
-    <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#640D5F",
-            "background-light": "#f8f6f8",
-            "background-dark": "#121826",
-            "surface-dark": "#1F2937",
-            "surface-light": "#FFFFFF",
-            "text-light-primary": "#E5E7EB",
-            "text-light-secondary": "#9CA3AF",
-            "text-dark-primary": "#1F2937",
-            "text-dark-secondary": "#4B5563",
-          },
-          fontFamily: {
-            display: ["Inter", "sans-serif"],
-          },
-          borderRadius: {
-            DEFAULT: "0.25rem",
-            lg: "0.5rem",
-            xl: "0.75rem",
-            full: "9999px",
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#640D5F",
+              "background-light": "#f8f6f8",
+              "background-dark": "#121826",
+              "surface-dark": "#1F2937",
+              "surface-light": "#FFFFFF",
+              "text-light-primary": "#E5E7EB",
+              "text-light-secondary": "#9CA3AF",
+              "text-dark-primary": "#1F2937",
+              "text-dark-secondary": "#4B5563",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
           },
         },
-      },
-    };
+      };
     </script>
   </head>
   <body class="font-display bg-background-light dark:bg-background-dark text-[#EAEAEA] relative overflow-x-hidden">
@@ -179,6 +165,7 @@
                   <a href="{% url 'home' %}">
                     <img src="{% static 'static-img/logo-white.png' %}"
                          alt="CELEBOBO"
+                         loading="lazy"
                          class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
                   </a>
                 </div>
@@ -226,9 +213,9 @@
                   {% endif %}
                   <!-- Panier -->
                   <a href="{% url 'cart' %}">
-                    <button class="relative flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <span class="material-symbols-outlined text-lg sm:text-xl">shopping_cart</span>
-                      <span class="cart-count absolute -top-0.5 -right-0.5 sm:top-1 sm:right-0.5 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-primary text-[0.6rem] sm:text-xs font-bold text-white">{{ cart_count }}</span>
+                    <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                      <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                      <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
                     </button>
                   </a>
                   {% if user.is_authenticated %}
@@ -239,16 +226,17 @@
                       </a>
                     </button>
                     {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
-                      <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                        <a href="{% url 'notifications' %}">
+                      <a href="{% url 'notifications' %}">
+                        <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                           <span class="material-symbols-outlined text-xl">notification_add</span>
-                        </a>
-                      </button>
-                      <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                        <a href="{% url 'gestion:dashboard' %}">
+                          <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
+                        </button>
+                      </a>
+                      <a href="{% url 'gestion:dashboard' %}">
+                        <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                           <span class="material-symbols-outlined text-xl">apps</span>
-                        </a>
-                      </button>
+                        </button>
+                      </a>
                     {% endif %}
                     <!-- Logout -->
                     <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
@@ -323,8 +311,8 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 p-3 sm:p-4">
                   {% for category in categories %}
                     <a href="{% url 'category_detail' category.pk %}"
-                       class="group relative overflow-hidden rounded-md sm:rounded-lg aspect-[2/1] flex flex-col justify-end p-2 sm:p-3 md:p-4 bg-cover bg-center transition-transform duration-300 hover:scale-105"
-                       style="background-image: linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%), url('{{ category.image.url }}')">
+                       class="group relative overflow-hidden rounded-md sm:rounded-lg aspect-[2/1] flex flex-col justify-end p-2 sm:p-3 md:p-4 bg-cover bg-center transition-transform duration-300 hover:scale-105 lazy-bg"
+                       data-bg="{{ category.image.url }}">
                       <!-- Mobile plus petit, desktop normal -->
                       <p class="text-white text-xs sm:text-sm md:text-lg font-semibold sm:font-bold leading-tight">{{ category.name }}</p>
                     </a>
@@ -339,9 +327,9 @@
                 <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-4 mt-4">
                   {% for product in new_products %}
                     <div class="flex flex-col gap-1.5 lg:gap-2 group">
-                      <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark"
+                      <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark lazyy-bg"
                            data-alt="{{ product.name }}"
-                           style='background-image: url("{{ product.image.url }}")'>
+                           data-bg="{{ product.image.url }}">
                         <button class="absolute bottom-2 right-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                           <a href="{% url 'product_detail' product.pk %}">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -831,6 +819,43 @@
                     })
                 }
             });
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const lazyBgs = document.querySelectorAll(".lazy-bg");
+        const lazyyBgs = document.querySelectorAll(".lazyy-bg");
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const bg = el.getAttribute("data-bg");
+                    el.style.backgroundImage = `
+                        linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
+                        url('${bg}')
+                    `;
+                    observer.unobserve(el);
+                }
+            });
+        });
+
+        const observer_bien = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const bg = el.getAttribute("data-bg");
+                    el.style.backgroundImage = `
+                        url('${bg}')
+                    `;
+                    observer.unobserve(el);
+                }
+            });
+        });
+
+
+        lazyBgs.forEach(bg => observer.observe(bg));
+        lazyyBgs.forEach(bg => observer_bien.observe(bg));
+    });
     </script>
     <script src="{% static 'script/cart.js' %}"></script>
   </body>

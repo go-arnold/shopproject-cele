@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-{% load i18n %}
-{% load account socialaccount %}
+{% load i18n allauth %}
 {% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
 <html class="dark" lang="fr">
     <head>
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>Connexion</title>
+        <title>{% trans "Se connecter" %}</title>
         <link rel="icon"
               type="image/x-icon"
               sizes="16x16"
@@ -19,154 +19,145 @@
               type="image/png"
               sizes="16x16"
               href="{% static 'static-img/sicon-16.png' %}">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
               rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
               rel="stylesheet" />
-        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-        <script id="tailwind-config">
+        <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#640D5F",
-                        "background-light": "#f8f6f8",
-                        "background-dark": "#12182B",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#12121B",
                     },
                     fontFamily: {
                         "display": ["Inter", "sans-serif"]
                     },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
                 },
             },
         }
         </script>
-        <style type="text/tailwindcss">
-        body {
-            @apply font-display;
+        <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
         }
         </style>
     </head>
-    <body class="bg-background-light dark:bg-background-dark">
-        <div class="relative flex h-auto min-h-screen w-full flex-col dark group/design-root overflow-x-hidden font-display text-white"
-             style="background-color: #12182B">
-            <div class="flex h-full min-h-screen grow flex-col items-center justify-center p-4">
-                <div class="w-full max-w-md">
-                    <div class="mb-2 flex flex-col items-center text-center">
-                        <div class="mb-4 flex items-center gap-3">
-                            <img class="h-16 w-auto"
-                                 src="{% static 'static-img/logo-white.png' %}"
-                                 alt="logo">
-                        </div>
-                    </div>
-                    <div class="w-full rounded-xl bg-[#1E253A] p-8 shadow-lg">
-                        <div class="mb-6 text-center">
-                            <h2 class="text-3xl font-bold tracking-tight text-white">Connexion à votre compte</h2>
-                            <p class="mt-2 text-base text-[#A9A9A9]">Saisissez vos identifiants pour accéder à votre compte.</p>
-                        </div>
-                        {% if messages %}
-                            <div class="mb-4">
-                                {% for message in messages %}
-                                    <div class="p-3 rounded text-sm {% if message.tags %}text-{{ message.tags }}{% endif %} bg-white/5">{{ message }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <form method="POST"
-                              action="{% url 'account_login' %}"
-                              class="flex w-full flex-col gap-5">
-                            {% csrf_token %}
-                            {% get_providers as socialaccount_providers %}
-                            <label class="flex flex-1 flex-col">
-                                <p class="pb-2 text-sm font-medium leading-normal text-[#F5F5F5]">Email ou nom d'utilisateur</p>
-                                <input class="form-input flex h-12 min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-none bg-[#12182B] p-4 text-base font-normal leading-normal text-[#F5F5F5] placeholder:text-[#A9A9A9] focus:border-none focus:outline-0 focus:ring-2 focus:ring-inset focus:ring-primary {% if form.login.errors %}is-invalid{% endif %}"
-                                       name="{{ form.login.name }}"
-                                       id="{{ form.login.id_for_label }}"
-                                       value="{{ form.login.value|default:'' }}"
-                                       placeholder="Entrez votre email ou nom d'utilisateur"
-                                       {% if form.login.field.required %}required{% endif %}
-                                       style="color: #F5F5F5;
-                                              border-color: transparent;
-                                              --tw-ring-color: #640D5F" />
-                                {% if form.login.errors %}
-                                    <div class="text-sm text-red-400 mt-1">
-                                        {% for error in form.login.errors %}{{ error }}{% endfor %}
-                                    </div>
-                                {% endif %}
-                            </label>
-                            <label class="flex flex-1 flex-col">
-                                <p class="pb-2 text-sm font-medium leading-normal text-[#F5F5F5]">Mot de passe</p>
-                                <div class="flex w-full flex-1 items-stretch rounded-lg bg-[#12182B] focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary">
-                                    <input class="form-input flex h-12 min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg border-none bg-transparent p-4 pr-2 text-base font-normal leading-normal text-[#F5F5F5] placeholder:text-[#A9A9A9] focus:outline-0 focus:ring-0 {% if form.password.errors %}is-invalid{% endif %}"
-                                           name="{{ form.password.name }}"
-                                           id="{{ form.password.id_for_label }}"
-                                           placeholder="Entrez votre mot de passe"
-                                           type="password"
-                                           {% if form.password.field.required %}required{% endif %} />
-                                    <button id="togglePasswordBtnMain"
-                                            type="button"
-                                            aria-pressed="false"
-                                            aria-label="Afficher le mot de passe"
-                                            class="flex items-center justify-center rounded-r-lg bg-transparent pr-4 text-[#A9A9A9] hover:text-white">
-                                        <span class="material-symbols-outlined text-2xl">visibility_off</span>
-                                    </button>
-                                </div>
-                                {% if form.password.errors %}
-                                    <div class="text-sm text-red-400 mt-1">
-                                        {% for error in form.password.errors %}{{ error }}{% endfor %}
-                                    </div>
-                                {% endif %}
-                            </label>
-                            <div class="flex flex-wrap items-center justify-end gap-4">
-                                <a class="text-sm font-medium text-[#A9A9A9] hover:text-primary hover:underline"
-                                   href="{% url 'account_reset_password' %}"
-                                   style="--hover-color: #640D5F">Mot de passe oublié ?</a>
-                            </div>
-                            {% if redirect_field_value %}
-                                <input type="hidden"
-                                       name="{{ redirect_field_name }}"
-                                       value="{{ redirect_field_value }}" />
-                            {% endif %}
-                            <div class="text-center">
-                                <button type="submit"
-                                        class="flex h-12 w-full items-center justify-center rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg transition-all hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#1E253A]"
-                                        style="background-color: #640D5F;
-                                               --tw-ring-color: #640D5F">{% trans "Se connecter" %}</button>
-                            </div>
-                            <p class="mt-8 text-center text-sm text-[#A9A9A9]">
-                                Si vous n'avez pas de compte ? <a class="font-semibold text-white hover:text-primary hover:underline"
-    href="{% url 'account_signup' %}"
-    style="--hover-color: #640D5F">S'inscrire</a>
-                            </p>
-                        </form>
-                    </div>
+    <body class="bg-background-light dark:bg-background-dark font-display text-[#E0E0E0]">
+        <div class="flex min-h-screen w-full flex-col items-center justify-center p-3 sm:p-6 lg:p-8">
+            <main class="w-full max-w-md">
+                <!-- Logo -->
+                <div class="mb-1 flex flex-col items-center">
+                    <img class="h-12 sm:h-16 w-auto"
+                         src="{% static 'static-img/logo-white.png' %}"
+                         alt="logo">
                 </div>
-            </div>
+                <!-- Card -->
+                <div class="w-full rounded-xl bg-[#1E1E2C]/50 p-4 sm:p-8">
+                    <div class="flex flex-col items-center mb-4 sm:mb-6">
+                        <h2 class="text-white text-xl sm:text-2xl font-bold leading-tight">{% trans "Se connecter" %}</h2>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1 text-center">{% trans "Accédez à votre compte" %}</p>
+                    </div>
+                    <!-- Messages d'erreur/succès -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="mb-3 rounded-lg {% if message.tags == 'error' %}bg-red-800/40 text-red-300{% elif message.tags == 'success' %}bg-green-800/40 text-green-300{% else %}bg-blue-800/40 text-blue-300{% endif %} p-2.5  justify-center text-xs sm:text-sm">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <!-- Affichage des erreurs globales du formulaire -->
+                    {% if form.non_field_errors %}
+                        <div class="mb-3 rounded-lg bg-red-800/40 text-red-300 p-2.5 text-xs sm:text-sm">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    <!-- Message si pas encore de compte -->
+                    <p class="mb-4 text-center text-xs sm:text-sm text-gray-400">
+                        {% trans "Pas encore de compte ?" %}
+                        <a class="font-semibold text-primary underline-offset-4 transition hover:underline"
+                           href="{% url 'account_signup' %}">{% trans "Inscrivez-vous" %}</a>
+                    </p>
+                    <!-- Formulaire de connexion -->
+                    <form method="post"
+                          action="{% url 'account_login' %}"
+                          class="flex w-full flex-col gap-3 sm:gap-4">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="flex flex-col gap-1">
+                                {% if not field.name == "remember" %}
+                                    <label class="text-xs sm:text-sm font-medium text-[#E0E0E0]"
+                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% endif %}
+                                {% if field.name == "remember" %}
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Case "Se souvenir de moi" avec une taille plus petite -->
+                                        <input type="checkbox"
+                                               name="remember"
+                                               id="{{ field.id_for_label }}"
+                                               class="h-4 w-4 sm:h-5 sm:w-5 rounded border-[#3A2739] bg-[#1E1E2C] text-primary focus:ring-2 focus:ring-primary focus:outline-none">
+                                        <label for="{{ field.id_for_label }}"
+                                               class="text-xs sm:text-sm text-[#E0E0E0]">
+                                            {% trans "Se souvenir de moi" %}
+                                        </label>
+                                    </div>
+                                {% else %}
+                                    <!-- Autres champs du formulaire -->
+                                    {{ field|add_class:"h-10 sm:h-12 w-full rounded-lg border border-[#3A2739] bg-[#1E1E2C] px-3 sm:px-4 text-sm sm:text-base text-white placeholder:text-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" }}
+                                {% endif %}
+                                {% if field.errors %}<p class="text-red-400 text-xs mt-1">{{ field.errors|striptags }}</p>{% endif %}
+                            </div>
+                        {% endfor %}
+                        {{ redirect_field }}
+                        <!-- Lien mot de passe oublié -->
+                        <div class="flex justify-end">
+                            <a class="text-xs sm:text-sm text-primary hover:underline underline-offset-4"
+                               href="{% url 'account_reset_password' %}">{% trans "Mot de passe oublié ?" %}</a>
+                        </div>
+                        <button class="mt-2 flex h-10 sm:h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm sm:text-base font-bold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                                type="submit">{% trans "Se connecter" %}</button>
+                    </form>
+                    {% if PASSKEY_LOGIN_ENABLED or LOGIN_BY_CODE_ENABLED %}
+                        <div class="my-4 sm:my-6 flex items-center">
+                            <div class="flex-1 border-t border-[#3A2739]"></div>
+                            <span class="px-3 text-xs sm:text-sm text-gray-500">{% trans "OU" %}</span>
+                            <div class="flex-1 border-t border-[#3A2739]"></div>
+                        </div>
+                        <div class="flex flex-col gap-2 sm:gap-3">
+                            {% if PASSKEY_LOGIN_ENABLED %}
+                                <button type="submit"
+                                        form="mfa_login"
+                                        id="passkey_login"
+                                        class="flex h-10 sm:h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-primary bg-transparent px-4 text-sm sm:text-base font-semibold text-primary transition hover:bg-primary/10">
+                                    {% trans "Se connecter avec une clé d'accès" %}
+                                </button>
+                            {% endif %}
+                            {% if LOGIN_BY_CODE_ENABLED %}
+                                <a href="{{ request_login_code_url }}"
+                                   class="flex h-10 sm:h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-primary bg-transparent px-4 text-sm sm:text-base font-semibold text-primary transition hover:bg-primary/10">
+                                    {% trans "Recevoir un code de connexion" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% if SOCIALACCOUNT_ENABLED %}
+                        <!-- Connexion sociale si activée -->
+                        <div class="mt-4 sm:mt-6">{% include "socialaccount/snippets/login.html" %}</div>
+                    {% endif %}
+                </div>
+            </main>
         </div>
+        {% if PASSKEY_LOGIN_ENABLED %}
+            {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
+        {% endif %}
     </body>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        try {
-            const pwdSelector = 'input[name="{{ form.password.name }}"]';
-            const pwdInput = document.querySelector(pwdSelector);
-            const toggle = document.getElementById('togglePasswordBtnMain');
-            if (!pwdInput || !toggle) return;
-
-            function setAria(visible) {
-                toggle.setAttribute('aria-pressed', visible ? 'true' : 'false');
-                toggle.setAttribute('aria-label', visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
-            }
-
-            toggle.addEventListener('click', function (e) {
-                const isPassword = pwdInput.type === 'password';
-                pwdInput.type = isPassword ? 'text' : 'password';
-                const icon = toggle.querySelector('span.material-symbols-outlined');
-                if (icon) icon.textContent = isPassword ? 'visibility' : 'visibility_off';
-                setAria(isPassword);
-            });
-        } catch (err) {
-            console.error(err);
-        }
-    });
-    </script>
 </html>

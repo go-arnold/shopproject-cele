@@ -162,12 +162,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-ACCOUNT_LOGIN_METHODS = ['email']
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
-# Email backend en dev
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
     'django.template.context_processors.request',
@@ -181,3 +177,20 @@ ACCOUNT_ADAPTER = 'gestion.adapters.CustomAccountAdapter'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 
 CART_SESSION_ID = "cart"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'arnoldciku@gmail.com'
+EMAIL_HOST_PASSWORD = 'ewhdyavamcdmbjyr'
+DEFAULT_FROM_EMAIL = 'arnoldciku@gmail.com'
+
+ACCOUNT_LOGIN_METHODS = ['email', 'username']
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+ACCOUNT_LOGIN_BY_CODE_TIMEOUT = 600
+ACCOUNT_PASSWORD_RESET_BY_CODE_TIMEOUT = 600
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False

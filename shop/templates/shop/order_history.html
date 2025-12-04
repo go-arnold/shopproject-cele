@@ -300,7 +300,7 @@
                             {% endif %}
                             <!-- Panier -->
                             <a href="{% url 'cart' %}">
-                                <button class="relative  items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition-colors">
+                                <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                     <span class="material-symbols-outlined text-xl">shopping_cart</span>
                                     <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
                                 </button>
@@ -313,16 +313,17 @@
                                     </a>
                                 </button>
                                 {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
-                                    <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                        <a href="{% url 'notifications' %}">
+                                    <a href="{% url 'notifications' %}">
+                                        <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                             <span class="material-symbols-outlined text-xl">notification_add</span>
-                                        </a>
-                                    </button>
-                                    <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                        <a href="{% url 'gestion:dashboard' %}">
+                                            <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
+                                        </button>
+                                    </a>
+                                    <a href="{% url 'gestion:dashboard' %}">
+                                        <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                             <span class="material-symbols-outlined text-xl">apps</span>
-                                        </a>
-                                    </button>
+                                        </button>
+                                    </a>
                                 {% endif %}
                                 <!-- Logout -->
                                 <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">

@@ -1,25 +1,42 @@
 {% extends "account/base_manage.html" %}
 {% load i18n %}
+{% load static %}
 {% load allauth %}
 {% block head_title %}
-    {% trans "Verify Your Email Address" %}
+    Vérifiez votre adresse e-mail
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Verify Your Email Address" %}
-    {% endelement %}
-    {% url 'account_email' as email_url %}
-    {% element p %}
-        {% blocktrans %}This part of the site requires us to verify that
-you are who you claim to be. For this purpose, we require that you
-verify ownership of your email address. {% endblocktrans %}
-    {% endelement %}
-    {% element p %}
-        {% blocktrans %}We have sent an email to you for
-verification. Please click on the link inside that email. If you do not see the verification email in your main inbox, check your spam folder. Otherwise
-contact us if you do not receive it within a few minutes.{% endblocktrans %}
-    {% endelement %}
-    {% element p %}
-        {% blocktrans %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your email address</a>.{% endblocktrans %}
-    {% endelement %}
+    <div class="w-full max-w-md mx-auto mt-8 sm:mt-12 bg-white/10 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-xl text-center">
+        <!-- Logo -->
+        <div class="flex justify-center mb-6">
+            <img src="{% static 'static-img/logo-white.png' %}"
+                 alt="Logo"
+                 class="w-24 sm:w-28 md:w-32 mx-auto">
+        </div>
+        <!-- Messages Django -->
+        {% if messages %}
+            <div class="mb-4 space-y-2">
+                {% for message in messages %}
+                    <div class=" text-sm px-3 py-2 rounded-lg border {% if message.tags == 'success' %} bg-green-100 text-green-700 border-green-300 {% elif message.tags == 'error' %} bg-red-100 text-red-700 border-red-300 {% elif message.tags == 'warning' %} bg-yellow-100 text-yellow-800 border-yellow-300 {% else %} bg-gray-100 text-gray-700 border-gray-300 {% endif %} ">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <!-- Titre -->
+        <h1 class="text-center text-xl sm:text-2xl font-semibold text-white mb-4">Vérifiez votre adresse e-mail</h1>
+        <!-- Texte explicatif -->
+        {% url 'account_email' as email_url %}
+        <p class="text-white/80 text-center mb-4 leading-relaxed">
+            Cette partie du site nécessite que nous vérifiions votre identité. Pour cela, nous vous demandons de confirmer que vous êtes bien le propriétaire de votre adresse e-mail.
+        </p>
+        <p class="text-white/80 text-center mb-4 leading-relaxed">
+            Nous vous avons envoyé un e-mail de vérification. Cliquez sur le lien contenu dans cet e-mail.
+            Si vous ne voyez pas l'e-mail dans votre boîte principale, vérifiez votre dossier spam.
+            Contactez-nous si vous ne le recevez pas dans quelques minutes.
+        </p>
+        <p class="text-white/80 text-center leading-relaxed">
+            <strong>Note :</strong> vous pouvez toujours <a href="{{ email_url }}" class="text-primary/80 hover:underline">changer votre adresse e-mail</a>.
+        </p>
+    </div>
 {% endblock content %}

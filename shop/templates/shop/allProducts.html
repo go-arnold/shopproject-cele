@@ -311,9 +311,9 @@
                         {% endif %}
                         <!-- Panier -->
                         <a href="{% url 'cart' %}">
-                            <button class="relative flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                <span class="material-symbols-outlined text-lg sm:text-xl">shopping_cart</span>
-                                <span class="cart-count absolute -top-0.5 -right-0.5 sm:top-1 sm:right-0.5 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-primary text-[0.6rem] sm:text-xs font-bold text-white">{{ cart_count }}</span>
+                            <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                                <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                                <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
                             </button>
                         </a>
                         {% if user.is_authenticated %}
@@ -324,16 +324,17 @@
                                 </a>
                             </button>
                             {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
-                                <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                    <a href="{% url 'notifications' %}">
+                                <a href="{% url 'notifications' %}">
+                                    <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                         <span class="material-symbols-outlined text-xl">notification_add</span>
-                                    </a>
-                                </button>
-                                <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                                    <a href="{% url 'gestion:dashboard' %}">
+                                        <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
+                                    </button>
+                                </a>
+                                <a href="{% url 'gestion:dashboard' %}">
+                                    <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                         <span class="material-symbols-outlined text-xl">apps</span>
-                                    </a>
-                                </button>
+                                    </button>
+                                </a>
                             {% endif %}
                             <!-- Logout -->
                             <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
@@ -475,8 +476,8 @@
                                         <!-- IMAGE + PRICE TAG -->
                                         <div class="relative">
                                             <a href="{% url 'product_detail' product.pk %}">
-                                                <div class="aspect-square w-full bg-cover bg-center"
-                                                     style="background-image: url('{{ product.image.url }}')"></div>
+                                                <div class="aspect-square w-full bg-cover bg-center lazy-bg"
+                                                     data-bg="{{ product.image.url }}"></div>
                                             </a>
                                             <!-- PRICE TAG -->
                                             <div class="absolute top-1 right-1 z-10 bg-primary text-white text-[8px] px-1.5 py-0.5 font-semibold rounded-full shadow-md sm:text-[10px] sm:px-2 sm:py-0.5 md:text-xs md:px-3 md:py-1">
@@ -1044,6 +1045,43 @@
                     badge.classList.add("hidden");
                 }
             });
+        </script>
+        <script>
+      document.addEventListener("DOMContentLoaded", () => {
+          const lazyBgs = document.querySelectorAll(".lazy-bg");
+          
+
+          const observer = new IntersectionObserver(entries => {
+              entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                      const el = entry.target;
+                      const bg = el.getAttribute("data-bg");
+                      el.style.backgroundImage = `
+                          linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
+                          url('${bg}')
+                      `;
+                      observer.unobserve(el);
+                  }
+              });
+          });
+
+          const observer_bien = new IntersectionObserver(entries => {
+              entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                      const el = entry.target;
+                      const bg = el.getAttribute("data-bg");
+                      el.style.backgroundImage = `
+                          url('${bg}')
+                      `;
+                      observer.unobserve(el);
+                  }
+              });
+          });
+
+
+          lazyBgs.forEach(bg => observer.observe(bg));
+          
+      });
         </script>
         <script src="{% static 'script/cart.js' %}"></script>
     </body>

@@ -906,11 +906,11 @@ def assign_revendeur_discussion(request, notification_id):
         user=revendeur,
         conversation=conversation,
         type="order",
-        title="Assignation de commande",
-        body=f"Vous avez été assigné à la commande #{conversation.related_order.id}",
+        title="Assignation de discussion",
+        body="Vous avez été appelé à avoir une nouvelle discussion avec un client.\n\n La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait pour la satisafaction du client!",
     )
     subject = "[CELEBOBO-BUSINESS] NOUVELLE ASSIGNATION - SIMPLE DISCUSSION"
-    text_content = f"Vous avez été assigné à la discussion #{conversation.related_order.id}\n\n La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait pour la satisafaction du client!"
+    text_content = "Vous avez été assigné à la discussion avec un client.\n\n La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait pour la satisafaction du client!"
     is_simple = True
     if revendeur.email:
         send_html_email(subject, [revendeur.email], "shop/assign_rev_email.html",

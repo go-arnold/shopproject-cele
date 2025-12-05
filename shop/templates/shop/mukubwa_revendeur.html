@@ -244,7 +244,7 @@
                             <a href="{% url 'notifications' %}">
                                 <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                     <span class="material-symbols-outlined text-xl">notification_add</span>
-                                    <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
+                                    <span class=" absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
                                 </button>
                             </a>
                             <a href="{% url 'gestion:dashboard' %}">
@@ -419,6 +419,56 @@
                                                                     <p class="text-[10px] text-white/60">Il y a {{ notif.created_at|timesince }}</p>
                                                                 </div>
                                                                 <p class="text-xs text-white/80 mb-3 leading-relaxed">{{ notif.body }}</p>
+                                                                <form method="POST" action="{% url 'assign_revendeur_discuss' notif.id %}">
+                                                                    {% csrf_token %}
+                                                                    {% if not notif.is_order_assigned %}
+                                                                        <div class="mt-3 pt-3 border-t border-border-dark flex flex-col sm:flex-row gap-3">
+                                                                            <div class="relative flex-grow">
+                                                                                <label class="text-[10px] font-medium text-white/60 mb-1 block">Chercher et désigner un revendeur</label>
+                                                                                <select name="revendeur_id"
+                                                                                        required
+                                                                                        class="w-full h-9 px-3 text-sm bg-surface-dark border border-border-dark rounded-lg text-white/80 focus:ring-2 focus:ring-primary transition-colors">
+                                                                                    <option value="">Sélectionner un revendeur</option>
+                                                                                    {% for r in revendeurs %}<option value="{{ r.id }}">{{ r.username }}</option>{% endfor %}
+                                                                                </select>
+                                                                                <span class="material-symbols-outlined text-white/50 absolute right-2 bottom-2">expand_more</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                    <div class="mt-3 pt-3 border-t border-border-dark flex justify-center">
+                                                                        {% if not notif.is_order_assigned %}
+                                                                            <button type="submit"
+                                                                                    class="h-9 px-5 mx-1 bg-primary/80 hover:bg-primary text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-glow">
+                                                                                <span class="material-symbols-outlined text-base">assignment_ind</span>
+                                                                                Assigner
+                                                                            </button>
+                                                                            <a href="{% url 'mukubwa_reply' notif.id %}"
+                                                                               class="h-9 px-5 mx-1 bg-primary/80 hover:bg-primary text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-glow">
+                                                                                <span class="material-symbols-outlined text-base">check_circle</span>
+                                                                                Répondre moi-même
+                                                                            </a>
+                                                                        {% else %}
+                                                                            <button disabled
+                                                                                    class="h-9 px-5 mx-1 bg-green-600 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-glow opacity-70 cursor-not-allowed">
+                                                                                <span class="material-symbols-outlined text-base">assignment_ind</span>
+                                                                                Déjà assigné
+                                                                            </button>
+                                                                            <a href="{% url 'mukubwa_reply' notif.id %}"
+                                                                               class="h-9 px-5 mx-1 bg-primary/80 hover:bg-primary text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-glow">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                     fill="none"
+                                                                                     viewBox="0 0 24 24"
+                                                                                     stroke-width="1.5"
+                                                                                     stroke="currentColor"
+                                                                                     class="size-4 text-base">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                                                </svg>
+                                                                                Voir quand-même
+                                                                            </a>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </form>
                                                                 <a class="text-xs font-semibold text-primary hover:text-white transition-colors"
                                                                    href="{% url 'conversation_detail' notif.conversation.id %}">
                                                                     Poursuivre la conversation directement

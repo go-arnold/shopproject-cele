@@ -41,6 +41,8 @@ urlpatterns = [
     path("notifications/", views.notifications_view, name="notifications"),
     path("notifications/<int:notification_id>/assign/",
          views.assign_revendeur, name="assign_revendeur"),
+    path("notifications/<int:notification_id>/assign_discuss/",
+         views.assign_revendeur_discussion, name="assign_revendeur_discuss"),
     path("notifications/<int:notification_id>/mukubwa-reply/",
          views.mukubwa_reply, name="mukubwa_reply"),
     path("notifications/<int:notification_id>/revendeur-reply/",

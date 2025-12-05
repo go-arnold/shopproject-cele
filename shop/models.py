@@ -282,13 +282,8 @@ class Conversation(models.Model):
     """
 
     participants = models.ManyToManyField(User, related_name="conversations")
-
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # Pour savoir si elle a été créée via le panier
     is_from_cart = models.BooleanField(default=False)
-
-    # Optionnel : lien direct vers la commande — utile pour la suite
     related_order = models.ForeignKey(
         'Order', on_delete=models.SET_NULL, null=True, blank=True, related_name="conversations"
     )
@@ -296,7 +291,7 @@ class Conversation(models.Model):
     @property
     def display_name(self):
         if self.is_from_cart and self.related_order:
-            return f"Concernant la commande #{self.related_order.id}"
+            return f"Discussion exclusivement sur la commande #{self.related_order.id}"
         return f"Discussion #{self.id} avec agent"
 
     def __str__(self):

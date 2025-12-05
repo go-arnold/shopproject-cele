@@ -4,24 +4,18 @@ from datetime import datetime
 from django.utils import timezone
 from django.utils.timesince import timesince
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
-from .models import Conversation, Message
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Order, OrderItem, Conversation, Message, Notification, Product
 from django.http import Http404, HttpResponseForbidden
 from django.contrib.auth.models import Group
-from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Product, FavoriteProduct
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Max, Count
 from django.db import transaction
 from .models import Product, Category, Testimony, FavoriteProduct
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
 import random
 from django.db.models import Q
 from .cart import Cart
@@ -602,6 +596,7 @@ def start_conversation_from_cart(request):
         total += subtotal
         lines.append(f"- {name} × {qty} = {subtotal} $")
         item['line'] = f"{name} × {qty} = {subtotal} $"
+        item['subtotal'] = subtotal
 
     lines.append(f"\nTotal : {total} $")
 
@@ -632,9 +627,10 @@ def start_conversation_from_cart(request):
             body=f"{request.user} a envoyé une demande d'achat.",
             conversation=conversation
         )
+
     # 5.1 ENVOYER LES EMAILS AUX MUKUBWA AUSSI
 
-    subject = "Nouvelle Commande Client"
+    subject = "[ CELEBOBO-BUSINESS ] Nouvelle Commande Client"
     template_name = "shop/email_notify_mukubwa.html"
     text_content = f"{request.user} a envoyé une demande d'achat.\n\n\n {auto_message} \n\n Notification générée automatiquement par votre système"
     context = {
@@ -643,6 +639,8 @@ def start_conversation_from_cart(request):
         "cart": cart,
         "total": total
     }
+    if isinstance(recipients, str):
+        recipients = [recipients]
     try:
         send_html_email(subject, recipients, template_name,
                         text_content, context)
@@ -730,18 +728,20 @@ def send_message_ajax(request, conversation_id):
         image=image if image else None,
     )
     if not conversation.is_from_cart:
-        # savoir le premier message de la conversation
+
         is_first = Message.objects.filter(
             conversation=conversation).count() == 1
-        # is_first = conversation.message_set.count() == 1
+
         if is_first:
             try:
                 mukubwa_group = Group.objects.get(name="mukubwa")
                 mukubwa_users = mukubwa_group.user_set.all()
             except Group.DoesNotExist:
                 mukubwa_users = []
-
+            recipients = []
             for admin in mukubwa_users:
+                if admin.email:
+                    recipients.append(admin.email)
                 Notification.objects.create(
                     user=admin,
                     title=f"Nouvelle discussion par {request.user}",
@@ -749,6 +749,23 @@ def send_message_ajax(request, conversation_id):
                     conversation=conversation,
                     type="chat"
                 )
+            subject = f"[ CELEBOBO-BUSINESS ] Nouvelle Discussion demandée par un {request.user}"
+            template_name = "shop/email_notify_mukubwa.html"
+            text_content = f"{request.user} a envoyé une demande d'achat.\n\n\n {msg.content} \n\n Notification générée automatiquement par votre système"
+            context = {
+                "logo_url": request.build_absolute_uri(static('static-img/logo-white.png')),
+                "msg": msg,
+                "yes": True
+
+            }
+            if isinstance(recipients, str):
+                recipients = [recipients]
+            try:
+                send_html_email(subject, recipients, template_name,
+                                text_content, context)
+                print("Email envoyé avec succès à:", recipients)
+            except Exception as e:
+                print(f"Erreur lors de l'envoi de l'email : {e}")
 
     return JsonResponse({
         "id": msg.id,
@@ -836,7 +853,6 @@ def assign_revendeur(request, notification_id):
 
     revendeur = get_object_or_404(User, id=revendeur_id)
 
-    # Ajouter revendeur dans participants
     conversation = notification.conversation
     conversation.participants.add(revendeur)
 
@@ -846,7 +862,6 @@ def assign_revendeur(request, notification_id):
         type="order"
     ).update(is_order_assigned=True)
 
-    # Envoyer notif au revendeur choisi
     Notification.objects.create(
         user=revendeur,
         conversation=conversation,
@@ -854,6 +869,52 @@ def assign_revendeur(request, notification_id):
         title="Assignation de commande",
         body=f"Vous avez été assigné à la commande #{conversation.related_order.id}",
     )
+    subject = "[CELEBOBO-BUSINESS] NOUVELLE ASSIGNATION- UNE COMMANDE"
+    text_content = f"Vous avez été assigné à la commande #{conversation.related_order.id}\n\n La conversation sera du type Commande, Agissez vite s'il vous plait !"
+    if revendeur.email:
+        send_html_email(subject, [revendeur.email], "shop/assign_rev_email.html",
+                        text_content, {"conversation": conversation, })
+
+    return redirect("notifications")
+
+
+@login_required
+def assign_revendeur_discussion(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+
+    if not request.user.groups.filter(name="mukubwa").exists():
+        return HttpResponseForbidden("Accès refusé")
+
+    revendeur_id = request.POST.get("revendeur_id")
+
+    if not revendeur_id:
+        messages.error(request, "Veuillez sélectionner un revendeur.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    revendeur = get_object_or_404(User, id=revendeur_id)
+
+    conversation = notification.conversation
+    conversation.participants.add(revendeur)
+
+    Notification.objects.filter(
+        conversation=conversation,
+        user__groups__name="mukubwa",
+        type="chat"
+    ).update(is_order_assigned=True)
+
+    Notification.objects.create(
+        user=revendeur,
+        conversation=conversation,
+        type="order",
+        title="Assignation de commande",
+        body=f"Vous avez été assigné à la commande #{conversation.related_order.id}",
+    )
+    subject = "[CELEBOBO-BUSINESS] NOUVELLE ASSIGNATION - SIMPLE DISCUSSION"
+    text_content = f"Vous avez été assigné à la discussion #{conversation.related_order.id}\n\n La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait pour la satisafaction du client!"
+    is_simple = True
+    if revendeur.email:
+        send_html_email(subject, [revendeur.email], "shop/assign_rev_email.html",
+                        text_content, {"conversation": conversation, "is_simple": is_simple})
 
     return redirect("notifications")
 
@@ -975,7 +1036,6 @@ def conversation_new(request):
         is_from_cart=False,
         related_order=None
     )
-    conv.participants.add(request.user)
 
     return redirect('conversation_detail', conversation_id=conv.id)
 

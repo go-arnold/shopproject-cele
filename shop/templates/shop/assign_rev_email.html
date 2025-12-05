@@ -25,7 +25,7 @@
         }
 
         h1 {
-            color: #4da6ff;
+            color: #30a5f3ff;
             margin-bottom: 30px;
             font-size: 32px;
             font-weight: 600;
@@ -40,6 +40,13 @@
             font-weight: 500;
         }
 
+        p {
+            text-align: left;
+            margin-top: 20px;
+            color: #66c2ff;
+            font-size: 22px;
+            font-weight: 500;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -93,71 +100,25 @@
             color: #132046;
         }
 
-        p {
-            text-align: left;
-            margin-top: 20px;
-            color: #66c2ff;
-            font-size: 22px;
-            font-weight: 500;
-        }
-        .total {
-            font-size: 20px;
-            font-weight: 700;
-            color: #4da6ff;
-            background-color: #132046;
-            padding: 10px 20px;
-            margin-top: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
-
-        .footer {
-            margin-top: 50px;
-            font-size: 12px;
-            color: #132046;
-        }
-
         </style>
     </head>
-    {% if not yes %}
+    {% if not is_simple %}
         <body>
             <!-- Logo centré -->
             <img src="{{ logo_url }}" class="logo" alt="Logo">
             <!-- Titre principal -->
-            <h1>Liste des produits en Commande</h1>
+            <h1>Assignation de Commande</h1>
             <!-- -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Produit</th>
-                        <th>Quantité</th>
-                        <th>Prix Unitaire</th>
-                        <th></th>
-                        <th>Sous-total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart %}
-                        <tr>
-                            <td>{{ item.product.name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ item.price }} $usd</td>
-                            <td>{{ item.line }}</td>
-                            <td>{{ item.subtotal }} $usd</td>
-                        </tr>
-                    {% endfor %}
-                    <!-- Ligne total -->
-                    <tr class="total-row">
-                        <td colspan="4">Total Général</td>
-                        <td>{{ total }} USD</td>
-                    </tr>
-                </tbody>
-            </table>
+            <p>
+                Vous avez été assigné à la commande #{{ conversation.related_order.id }}
+                <br>
+                La conversation sera du type Commande, Agissez vite s'il vous plait !
+            </p>
             <!-- Total affiché en grand -->
-            <div class="total">Total à Payer : {{ total }} USD</div>
+            <div class="total">CELEBOBO Business Automated Email</div>
             <!-- Footer -->
             <div class="footer">
-                <p>Merci pour votre achat !</p>
+                <p>Merci de vite satisfaire le client !</p>
             </div>
         </body>
     {% else %}
@@ -165,10 +126,10 @@
             <!-- Logo centré -->
             <img src="{{ logo_url }}" class="logo" alt="Logo">
             <!-- Titre principal -->
-            <h1>Vous avez ete sollicite par un client</h1>
+            <h1>Assignation de la Discussion</h1>
             <!-- -->
-            <p class="total">
-                Vous avez été appelé à avoir une nouvelle discussion avec un client
+            <p>
+                Vous avez été assigné à une nouvelle discussion avec le client
                 <br>
                 La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait pour la satisafaction du client!
             </p>

@@ -1,3 +1,5 @@
+from django.templatetags.static import static
+from .utils import send_html_email
 from datetime import datetime
 from django.utils import timezone
 from django.utils.timesince import timesince
@@ -599,6 +601,7 @@ def start_conversation_from_cart(request):
         subtotal = qty * price
         total += subtotal
         lines.append(f"- {name} × {qty} = {subtotal} $")
+        item['line'] = f"{name} × {qty} = {subtotal} $"
 
     lines.append(f"\nTotal : {total} $")
 
@@ -618,7 +621,10 @@ def start_conversation_from_cart(request):
     except Group.DoesNotExist:
         mukubwa_users = []
 
+    recipients = []
     for admin in mukubwa_users:
+        if admin.email:
+            recipients.append(admin.email)
         Notification.objects.create(
             user=admin,
             title="Nouvelle commande",
@@ -626,6 +632,23 @@ def start_conversation_from_cart(request):
             body=f"{request.user} a envoyé une demande d'achat.",
             conversation=conversation
         )
+    # 5.1 ENVOYER LES EMAILS AUX MUKUBWA AUSSI
+
+    subject = "Nouvelle Commande Client"
+    template_name = "shop/email_notify_mukubwa.html"
+    text_content = f"{request.user} a envoyé une demande d'achat.\n\n\n {auto_message} \n\n Notification générée automatiquement par votre système"
+    context = {
+        "auto_message": auto_message,
+        "logo_url": request.build_absolute_uri(static('static-img/logo-white.png')),
+        "cart": cart,
+        "total": total
+    }
+    try:
+        send_html_email(subject, recipients, template_name,
+                        text_content, context)
+        print("Email envoyé avec succès à:", recipients)
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'email : {e}")
 
     # 6. VIDER PANIER APRÈS ENVOI
     cart.clear()

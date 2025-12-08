@@ -28,7 +28,7 @@ DEBUG = False
 
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 ALLOWED_HOSTS = ["127.0.0.1", "celebobo.onrender.com",
-                 "localhost", "following-tasha-celebobo-0d1b267c.koyeb.app"]
+                 "localhost", "https://corresponding-lion-celebobo-6027c8a6.koyeb.app/"]
 
 # Application definition
 INSTALLED_APPS = [

@@ -24,12 +24,11 @@ load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
+SECRET_KEY = "django-insecure-33m#7*z((&*^oc%v4z(!o4kd+@+4m@g3m+ma=06k0o!by5rtih"
 DEBUG = False
 
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
-ALLOWED_HOSTS = ["127.0.0.1", "celebobo.onrender.com",
-                 "localhost", "corresponding-lion-celebobo-6027c8a6.koyeb.app"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [

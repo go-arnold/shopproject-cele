@@ -1,4 +1,6 @@
 {% load static %}
+{% load i18n %}
+{% load allauth %}
 {% load account %}
 <!DOCTYPE html>
 <html lang="fr">
@@ -42,35 +44,36 @@
                 {% user_display confirmation.email_address.user as user_display %}
                 {% if can_confirm %}
                     <p class="text-sm text-gray-300 mb-6 leading-relaxed">
-                        {% blocktranslate with confirmation.email_address.email as email %}
+                        {% blocktrans with confirmation.email_address.email as email %}
 Veuillez confirmer que <a href="mailto:{{ email }}" class="text-primary hover:underline">{{ email }}</a>
 est bien une adresse e-mail appartenant à l’utilisateur <span class="text-white font-semibold">{{ user_display }}</span>.
-</p>
-{% url 'account_confirm_email' confirmation.key as action_url %}
-<form method="post" action="{{ action_url }}" class="mt-6">
-{% csrf_token %}
-{{ redirect_field }}
-<button type="submit" class="w-full h-11 rounded-lg bg-primary hover:bg-primary/80 text-white font-semibold transition">
-Confirmer l’adresse e-mail
-</button>
-</form>
-{% else %}
-<p class="text-sm text-red-400 mb-4">
-{% blocktrans %}
-                    Cette adresse e-mail ne peut pas être confirmée car elle a déjà été confirmée par un autre compte.
+</p>{% endblocktrans %}
+                        {% url 'account_confirm_email' confirmation.key as action_url %}
+                        <form method="post" action="{{ action_url }}" class="mt-6">
+                            {% csrf_token %}
+                            {{ redirect_field }}
+                            <button type="submit"
+                                    class="w-full h-11 rounded-lg bg-primary hover:bg-primary/80 text-white font-semibold transition">
+                                Confirmer l’adresse e-mail
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-sm text-red-400 mb-4">
+                            {% blocktrans %}
+Cette adresse e-mail ne peut pas être confirmée car elle a déjà été confirmée par un autre compte.
                 {% endblocktrans %}
-</p>
-{% endif %}
-{% else %}
-{% url 'account_email' as email_url %}
-<p class="text-sm text-gray-300 mb-6">
-{% blocktrans %}
+                        </p>
+                    {% endif %}
+                {% else %}
+                    {% url 'account_email' as email_url %}
+                    <p class="text-sm text-gray-300 mb-6">
+                        {% blocktrans %}
                 Ce lien de confirmation est invalide ou a expiré.  
                 Veuillez <a href="{{ email_url }}" class="text-primary hover:underline">
                 demander un nouveau lien de confirmation</a>.
             {% endblocktrans %}
-</p>
-{% endif %}
-</div>
-</body>
-</html>
+                    </p>
+                {% endif %}
+            </div>
+        </body>
+    </html>

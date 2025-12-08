@@ -2,6 +2,6 @@ echo "*/node_modules/" > static/.gitignore
 
 Dockerfile
 .dockerignore
-/.venv/
+.venv/
 
 .env

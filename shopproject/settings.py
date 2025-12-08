@@ -80,6 +80,8 @@ STORAGES = {
     },
 }
 
+CSRF_TRUSTED_ORIGINS = ['https://*.koyeb.app']
+
 MEDIA_URL = '/media/'
 
 SITE_ID = 1

@@ -31,10 +31,6 @@ DEBUG = False
 ALLOWED_HOSTS = ["127.0.0.1", "celebobo.onrender.com",
                  "localhost", "corresponding-lion-celebobo-6027c8a6.koyeb.app"]
 
-if 'KOYEB' in os.environ or 'koyeb.app' in os.environ.get('ALLOWED_HOSTS', ''):
-    ALLOWED_HOSTS.append('.koyeb.app')
-
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -200,7 +196,3 @@ ACCOUNT_LOGIN_BY_CODE_TIMEOUT = 600
 ACCOUNT_PASSWORD_RESET_BY_CODE_TIMEOUT = 600
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.koyeb.app',
-]

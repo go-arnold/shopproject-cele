@@ -20,6 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -28,7 +29,11 @@ DEBUG = False
 
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 ALLOWED_HOSTS = ["127.0.0.1", "celebobo.onrender.com",
-                 "localhost", "https://corresponding-lion-celebobo-6027c8a6.koyeb.app/"]
+                 "localhost", "corresponding-lion-celebobo-6027c8a6.koyeb.app"]
+
+if 'KOYEB' in os.environ or 'koyeb.app' in os.environ.get('ALLOWED_HOSTS', ''):
+    ALLOWED_HOSTS.append('.koyeb.app')
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -195,3 +200,7 @@ ACCOUNT_LOGIN_BY_CODE_TIMEOUT = 600
 ACCOUNT_PASSWORD_RESET_BY_CODE_TIMEOUT = 600
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.koyeb.app',
+]

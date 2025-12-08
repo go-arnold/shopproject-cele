@@ -1,1 +1,7 @@
 echo "*/node_modules/" > static/.gitignore
+
+Dockerfile
+.dockerignore
+/.venv/
+
+tryout.py

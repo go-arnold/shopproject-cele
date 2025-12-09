@@ -37,7 +37,7 @@ def validate_long_description(value):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=80, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to="categories/", blank=True, null=True)
 
     class Meta:

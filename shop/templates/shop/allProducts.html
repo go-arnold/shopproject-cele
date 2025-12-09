@@ -505,6 +505,15 @@
                                                     {% endif %}
                                                 </button>
                                             {% endif %}
+                                            <button id="addToCartj"
+                                                    data-product-id="{{ product.id }}"
+                                                    class="add-to-cart-btn absolute pointer-events-auto bottom-1 left-1 z-10 bg-primary text-white text-[8px] px-1.5 py-0.5 font-semibold rounded-full shadow-md sm:text-[10px] sm:px-2 sm:py-0.5 md:text-xs md:px-3 md:py-1">
+                                                <span class="material-symbols-outlined text-base">shopping_cart</span>
+                                            </button>
+                                            <!-- PRICE TAG -->
+                                            <div class="absolute bottom-1 right-1 z-10 bg-primary text-white text-[8px] px-1.5 py-0.5 font-semibold rounded-full shadow-md sm:text-[10px] sm:px-2 sm:py-0.5 md:text-xs md:px-3 md:py-1">
+                                                {{ product.badge }}
+                                            </div>
                                         </div>
                                         <!-- CONTENT -->
                                         <div class="flex flex-1 flex-col px-4 pt-4 pb-1">
@@ -1001,36 +1010,61 @@
         
         </script>
         <script>
-            document.addEventListener("click", function (e) {
-                if (e.target.closest(".favorite-btn")) {
-                    const btn = e.target.closest(".favorite-btn");
-                    const productId = btn.dataset.product;
+           document.addEventListener("click", function (e) {
+                    if (e.target.closest(".favorite-btn")) {
+                        const btn = e.target.closest(".favorite-btn");
+                        const productId = btn.dataset.product;
 
-                    fetch(`/favori/${productId}/toggle/`, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-                            "X-Requested-With": "XMLHttpRequest",
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.favori) {
-                            btn.innerHTML = `
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                                </svg>
-                                `;
-                        } else {
+                        // Changer immédiatement l'icône pour donner un retour utilisateur instantané
+                        if (btn.classList.contains("favori")) {
+                            // Si le bouton est actuellement favori, on le marque comme non favori
                             btn.innerHTML = `
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                 </svg>
-                                `;
+                            `;
+                            btn.classList.remove("favori");  // Retirer la classe "favori"
+                        } else {
+                            // Si le bouton est actuellement non favori, on le marque comme favori
+                            btn.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                                    <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                                </svg>
+                            `;
+                            btn.classList.add("favori");  // Ajouter la classe "favori"
                         }
-                    })
-                }
-            });
+
+                        // Envoyer la requête en arrière-plan pour enregistrer l'état réel
+                        fetch(`/favori/${productId}/toggle/`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                                "X-Requested-With": "XMLHttpRequest",
+                            }
+                        })
+                        .then(res => res.json())
+                        .catch(err => {
+                            console.error('Erreur lors de la requête:', err);
+                            // Si erreur, remettre l'icône à son état précédent (au cas où l'API échoue)
+                            if (btn.classList.contains("favori")) {
+                                // Restaurer l'icône favori
+                                btn.innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                                        <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                                    </svg>
+                                `;
+                            } else {
+                                // Restaurer l'icône non favori
+                                btn.innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                    </svg>
+                                `;
+                            }
+                        });
+                    }
+                });
+
         </script>
         <script>
             // ===== Messages counter  =====

@@ -146,7 +146,9 @@ def dashboard(request):
 
         last_msg = Message.objects.filter(
             conversation=conv).order_by("-timestamp").first()
-        last_content = last_msg.content[:40] if last_msg else ""
+        last_content = last_msg.content[:40] if last_msg and hasattr(
+            last_msg, 'content') else ""
+
         last_sender = last_msg.sender if last_msg else None
         last_timestamp = last_msg.timestamp if last_msg else None
 

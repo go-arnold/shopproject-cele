@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>CELEBOBO - Loading</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+              rel="stylesheet" />
+        <style type="text/tailwindcss">
+        @layer utilities {
+            @keyframes pulse-glow {
+                0%, 100% {
+                    filter: drop-shadow(0 0 5px #640D5F) drop-shadow(0 0 10px #640D5F);
+                    opacity: 0.3;
+                }
+                50% {
+                    filter: drop-shadow(0 0 15px #640D5F) drop-shadow(0 0 30px #640D5F);
+                    opacity: 1;
+                }
+            }
+            .animate-pulse-glow {
+                animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+        }
+        </style>
+        <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#640D5F",
+                        "background-light": "#f8f6f8",
+                        "background-dark": "#0A0314",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+        </script>
+    </head>
+    <body class="font-display">
+        <div class="relative flex h-screen w-full flex-col bg-background-dark text-white overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <div class="absolute -top-1/4 -left-1/4 h-1/2 w-1/2 rounded-full bg-primary/20 blur-3xl opacity-50"></div>
+                <div class="absolute -bottom-1/4 -right-1/4 h-1/2 w-1/2 rounded-full bg-primary/30 blur-3xl opacity-50"></div>
+            </div>
+            <div class="relative z-10 flex h-full grow flex-col items-center justify-center">
+                <div class="flex flex-col items-center justify-center p-4">
+                    <div class="animate-pulse-glow">
+                        <img alt="CELEBOBO Logo"
+                             class="w-full max-w-sm h-auto"
+                             src="static-img/logo-white.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

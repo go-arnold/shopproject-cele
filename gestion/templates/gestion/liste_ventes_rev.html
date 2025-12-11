@@ -1,116 +1,157 @@
-{% extends 'gestion/base.html' %}
+{% extends 'base_cele.html' %}
 {% load static %}
 {% block title %}Liste des ventes - Cele Admin{% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="col-lg-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Liste des ventes</h4>
-                    <p class="card-description">Historique des ventes récentes</p>
-                    <p class="card-description">Exportez en documents</p>
-                    <div class="">
-                        <a href="{% url 'gestion:export_ventes_excel' %}"
-                           type="button"
-                           class="btn btn-outline-warning btn-fw">Exportez en Excel</a>
-                        <a href="{% url 'gestion:export_ventes_pdf' %}"
-                           type="button"
-                           class="btn btn-outline-warning btn-fw">Exportez en PDF</a>
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 py-4">
+        <div class="bg-component-dark rounded-xl shadow-md">
+            <div class="p-4 sm:p-6">
+                <h4 class="text-lg sm:text-xl font-bold text-text-dark-primary mb-1">Liste des ventes</h4>
+                <p class="text-xs sm:text-sm text-text-dark-secondary mb-4">Historique des ventes récentes</p>
+                {% if messages %}
+                    <div class="space-y-3 mb-6">
+                        {% for message in messages %}
+                            <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+                                <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+                                <button type="button"
+                                        onclick="this.parentElement.remove()"
+                                        class="text-xl leading-none opacity-70 hover:opacity-100 select-none">
+                                    &times;
+                                </button>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <p class="card-description pt-2">Filtrez les ventes selon :</p>
-                    <div>
-                        <a href="?filtre=2"
-                           type="button"
-                           class="btn btn-outline-info btn-fw mx-3">2 derniers jours</a>
-                        <a href="?filtre=7"
-                           type="button"
-                           class="btn btn-outline-secondary btn-fw mx-3">7 derniers jours</a>
-                        <a href="?filtre=30"
-                           type="button"
-                           class="btn btn-outline-info btn-fw mx-3">1 mois</a>
-                        <a href="?filtre=90"
-                           type="button"
-                           class="btn btn-outline-secondary btn-fw mx-3">Dernier Trimestre</a>
-                        <a href="?" type="button" class ="btn btn-outline-success btn-fw mx-3">Tout</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Date d'achat</th>
-                                    <th>Produit</th>
-                                    <th>Ajouté par</th>
-                                    <th>Prix final</th>
-                                    <th>Méthode de paiement</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for vente in ventes %}
-                                    <tr>
-                                        <td>{{ vente.date_achat|date:"d M Y, H:i" }}</td>
-                                        <td>{{ vente.produit.name }}</td>
-                                        <td>{{ vente.utilisateur.get_full_name|default:vente.utilisateur.username }}</td>
-                                        <td>
-                                            {% if vente.price_final %}
-                                                {{ vente.price_final }} <small class="text-muted">usd$</small>
-                                            {% else %}
-                                                {{ vente.produit.price }} <small class="text-muted">usd$</small>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ vente.method }}</td>
-                                        <td class="text-center">
-                                            <a href="{% url 'gestion:modifier_vente' vente.id %}"
-                                               class="text-secondary">
-                                                <i class="mdi mdi-settings" style="font-size: 20px;"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="6" class="text-center text-muted py-4">Aucune vente enregistrée pour le moment.</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Pagination -->
-                    {% if ventes.has_other_pages %}
-                        <nav aria-label="Pagination des ventes" class="mt-3">
-                            <ul class="pagination justify-content-center">
-                                {% if ventes.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ ventes.previous_page_number }}">&laquo;</a>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item disabled">
-                                        <span class="page-link">&laquo;</span>
-                                    </li>
-                                {% endif %}
-                                {% for num in ventes.paginator.page_range %}
-                                    {% if ventes.number == num %}
-                                        <li class="page-item active">
-                                            <span class="page-link">{{ num }}</span>
-                                        </li>
-                                    {% else %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                                {% if ventes.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ ventes.next_page_number }}">&raquo;</a>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item disabled">
-                                        <span class="page-link">&raquo;</span>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                    {% endif %}
+                {% endif %}
+                <!-- Export -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <a href="{% url 'gestion:export_ventes_excel' %}"
+                       class="rounded-lg border border-yellow-500 text-yellow-500 px-3 py-1.5 text-xs sm:text-sm hover:bg-yellow-500 hover:text-black transition">
+                        Exportez en Excel
+                    </a>
+                    <a href="{% url 'gestion:export_ventes_pdf' %}"
+                       class="rounded-lg border border-yellow-500 text-yellow-500 px-3 py-1.5 text-xs sm:text-sm hover:bg-yellow-500 hover:text-black transition">
+                        Exportez en PDF
+                    </a>
                 </div>
+                <!-- Filtres -->
+                <p class="text-xs sm:text-sm text-text-dark-secondary mb-2">Filtrer par période :</p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <a href="?filtre=2"
+                       class="border border-blue-500 text-blue-500 px-3 py-1.5 rounded-lg text-xs sm:text-sm hover:bg-blue-500 hover:text-black">2 derniers jours</a>
+                    <a href="?filtre=7"
+                       class="border border-gray-400 text-gray-300 px-3 py-1.5 rounded-lg text-xs sm:text-sm hover:bg-gray-400 hover:text-black">7 derniers jours</a>
+                    <a href="?filtre=30"
+                       class="border border-blue-500 text-blue-500 px-3 py-1.5 rounded-lg text-xs sm:text-sm hover:bg-blue-500 hover:text-black">1 mois</a>
+                    <a href="?filtre=90"
+                       class="border border-gray-400 text-gray-300 px-3 py-1.5 rounded-lg text-xs sm:text-sm hover:bg-gray-400 hover:text-black">Dernier trimestre</a>
+                    <a href="?"
+                       class="border border-green-500 text-green-500 px-3 py-1.5 rounded-lg text-xs sm:text-sm hover:bg-green-500 hover:text-black">Tout</a>
+                </div>
+                <!-- Recherche par date -->
+                <form method="get" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs sm:text-sm text-text-dark-secondary mb-1">Rechercher par date d'achat</label>
+                        <input type="date"
+                               name="date_achat"
+                               value="{{ date_achat_search|default:'' }}"
+                               class="w-full rounded-lg border border-border-dark bg-background-dark px-3 py-2 text-xs sm:text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm text-text-dark-secondary mb-1">Rechercher par date d'enregistrement</label>
+                        <input type="date"
+                               name="date_enregistrement"
+                               value="{{ date_enregistrement_search|default:'' }}"
+                               class="w-full rounded-lg border border-border-dark bg-background-dark px-3 py-2 text-xs sm:text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                    </div>
+                    <div class="sm:col-span-2 flex gap-2">
+                        <button type="submit"
+                                class="rounded-lg bg-primary text-white px-4 py-2 text-xs sm:text-sm font-semibold hover:bg-primary/90">
+                            Rechercher
+                        </button>
+                        <a href="?"
+                           class="rounded-lg border border-border-dark px-4 py-2 text-xs sm:text-sm text-text-dark-secondary hover:bg-white/10">
+                            Réinitialiser
+                        </a>
+                    </div>
+                </form>
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-background-dark border-b border-border-dark text-left text-xs sm:text-sm text-text-dark-secondary">
+                                <th class="px-3 py-2">Date d'achat</th>
+                                <th class="px-3 py-2">Produit</th>
+                                <th class="px-3 py-2">Ajouté par</th>
+                                <th class="px-3 py-2">Prix final</th>
+                                <th class="px-3 py-2">Méthode de paiement</th>
+                                <th class="px-3 py-2 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border-dark text-xs sm:text-sm">
+                            {% for vente in ventes %}
+                                <tr class="hover:bg-white/5">
+                                    <td class="px-3 py-2">{{ vente.date_achat|date:"d M Y, H:i" }}</td>
+                                    <td class="px-3 py-2">{{ vente.produit.name }}</td>
+                                    <td class="px-3 py-2">{{ vente.utilisateur.get_full_name|default:vente.utilisateur.username }}</td>
+                                    <td class="px-3 py-2">
+                                        {% if vente.price_final %}
+                                            {{ vente.price_final }} <span class="text-xs text-text-dark-secondary">usd$</span>
+                                        {% else %}
+                                            {{ vente.produit.price }} <span class="text-xs text-text-dark-secondary">usd$</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-3 py-2">{{ vente.method }}</td>
+                                    <td class="px-3 py-2 text-center">
+                                        <a href="{% url 'gestion:modifier_vente' vente.id %}"
+                                           class="text-text-dark-secondary hover:text-primary">⚙️</a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-6 text-text-dark-secondary">Aucune vente enregistrée pour le moment.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                {% if ventes.has_other_pages %}
+                    <nav class="mt-4 flex justify-center">
+                        <ul class="flex gap-1 text-xs sm:text-sm">
+                            {% if ventes.has_previous %}
+                                <li>
+                                    <a href="?page={{ ventes.previous_page_number }}"
+                                       class="px-3 py-1 border border-border-dark rounded">&laquo;</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <span class="px-3 py-1 border border-border-dark rounded opacity-50">&laquo;</span>
+                                </li>
+                            {% endif %}
+                            {% for num in ventes.paginator.page_range %}
+                                {% if ventes.number == num %}
+                                    <li>
+                                        <span class="px-3 py-1 bg-primary text-white rounded">{{ num }}</span>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a href="?page={{ num }}"
+                                           class="px-3 py-1 border border-border-dark rounded hover:bg-white/10">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if ventes.has_next %}
+                                <li>
+                                    <a href="?page={{ ventes.next_page_number }}"
+                                       class="px-3 py-1 border border-border-dark rounded">&raquo;</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <span class="px-3 py-1 border border-border-dark rounded opacity-50">&raquo;</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
             </div>
         </div>
     </div>

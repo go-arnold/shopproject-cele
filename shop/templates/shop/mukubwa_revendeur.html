@@ -315,23 +315,6 @@
                                                 <h3 class="text-white text-lg sm:text-xl font-semibold">Notifications</h3>
                                                 <p class="text-white/60 text-xs sm:text-sm mt-1">Affichage de dernières mises à jour</p>
                                             </div>
-                                            <div class="flex items-center gap-3 w-full sm:w-auto">
-                                                <div class="relative w-full sm:w-36">
-                                                    <select class="w-full h-10 px-3 text-sm appearance-none bg-background-dark border border-border-dark rounded-lg text-white/80 focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
-                                                        <option>Tout types</option>
-                                                        <option>Commande</option>
-                                                        <option>Discussion</option>
-                                                    </select>
-                                                    <span class="material-symbols-outlined text-white/50 absolute right-2 top-1/2 -translate-y-1/2">expand_more</span>
-                                                </div>
-                                                <div class="relative w-full sm:w-36">
-                                                    <select class="w-full h-10 px-3 text-sm appearance-none bg-background-dark border border-border-dark rounded-lg text-white/80 focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
-                                                        <option>Tri: Le plus récent</option>
-                                                        <option>Tri: Le plus ancien</option>
-                                                    </select>
-                                                    <span class="material-symbols-outlined text-white/50 absolute right-2 top-1/2 -translate-y-1/2">expand_more</span>
-                                                </div>
-                                            </div>
                                         </div>
                                         <!-- NOTIFICATIONS LIST -->
                                         <div class="space-y-3">
@@ -528,11 +511,16 @@
                                             {% endfor %}
                                         </div>
                                         <!-- LOAD MORE -->
-                                        <div class="flex items-center justify-center pt-5 mt-3 border-t border-border-dark">
-                                            <button class="text-xs font-semibold text-primary hover:text-white transition-colors">
-                                                Montrez plus de notifications
-                                            </button>
-                                        </div>
+                                        {% if is_paginated %}
+                                            {% if page_obj.has_next %}
+                                                <div class="flex items-center justify-center pt-5 mt-3 border-t border-border-dark">
+                                                    <a href="?page={{ page_obj.next_page_number }}"
+                                                       class="text-xs font-semibold text-primary hover:text-white transition-colors">
+                                                        Montrez plus de notifications
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <!-- RIGHT CONTENT -->

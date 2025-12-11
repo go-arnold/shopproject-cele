@@ -1,0 +1,239 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <link rel="shortcut icon" href="{% static 'static-img/sicon-32.png' %}" />
+        <title>
+            {% block title %}Admin Dashboard{% endblock %}
+        </title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+              rel="stylesheet" />
+        <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#640c5f",
+                        "background-light": "#f8f6f8",
+                        "background-dark": "#121828",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+        </script>
+        <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+        
+        /* Sidebar mobile overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; right: 40%; bottom: 0; left: 0;
+            /*background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); */
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 40;
+    }
+        
+        .sidebar-overlay.active {
+            display: block;
+        }
+        
+        /* Sidebar mobile */
+        aside {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        @media (max-width: 768px) {
+            aside {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 50;
+                transform: translateX(-100%);
+            }
+            
+            aside.active {
+                transform: translateX(0);
+            }
+        }
+        </style>
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+        <!-- Overlay pour mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <div class="flex h-screen">
+            <!-- Sidebar -->
+            <aside id="sidebar"
+                   class="w-64 flex-shrink-0 bg-white/5 dark:bg-black/20 p-3 sm:p-4 flex flex-col justify-between">
+                <div class="flex flex-col gap-6 sm:gap-8">
+                    <!-- Logo -->
+                    <div class="flex items-center justify-center gap-3 px-3 py-2 overflow-hidden">
+                        <img src="{% static "static-img/logo-white.png" %}">
+                    </div>
+                    <!-- Menu de navigation -->
+                    <div class="flex flex-col gap-1.5 sm:gap-2">
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                           href="{% url 'gestion:dashboard' %}">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl">dashboard</span>
+                            <p class="text-sm font-medium">Tableau de bord</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'admin_products' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                           href="{% url 'gestion:admin_products' %}">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl">inventory_2</span>
+                            <p class="text-sm font-medium">Gestion de produits</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'ajouter_vente' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                           href="{% url 'gestion:ajouter_vente' %}">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl">assignment_add</span>
+                            <p class="text-sm font-medium">Enregistrer une vente</p>
+                        </a>
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                           href="{% url 'gestion:liste_ventes' %}">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl">receipt_long</span>
+                            <p class="text-sm font-medium">Gestion de ventes</p>
+                        </a>
+                        {% if request.user.groups.all.0.name == "mukubwa" %}
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes_rev' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                               href="{% url 'gestion:liste_ventes_rev' %}">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">reviews</span>
+                                <p class="text-sm font-medium">Revoir les ventes</p>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard_ventes' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                               href="{% url 'gestion:dashboard_ventes' %}">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">monitoring</span>
+                                <p class="text-sm font-medium">Graphiques</p>
+                            </a>
+                        {% endif %}
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'home' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                           href="{% url 'home' %}">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl">group</span>
+                            <p class="text-sm font-medium">Page Client</p>
+                        </a>
+                    </div>
+                </div>
+                <!-- Profile section -->
+                <div class="flex flex-col gap-1.5 sm:gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'profile' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                       href="{% url 'profile' %}">
+                        <span class="material-symbols-outlined text-xl sm:text-2xl">account_circle</span>
+                        <p class="text-sm font-medium">Mon Profil</p>
+                    </a>
+                </div>
+            </aside>
+            <div class="flex flex-col flex-1 overflow-y-auto w-full md:w-auto">
+                <!-- Header -->
+                <header class="sticky top-0 z-10 flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 dark:border-white/10 bg-background-dark/80 backdrop-blur-sm px-3 sm:px-6 lg:px-8 py-3">
+                    <div class="flex items-center gap-3 sm:gap-6 lg:gap-8 flex-1">
+                        <!-- Menu hamburger (mobile uniquement) -->
+                        <button id="menuBtn"
+                                class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+                            <span class="material-symbols-outlined">menu</span>
+                        </button>
+                        <!-- Barre de recherche -->
+                        <label class="flex-1 max-w-xs sm:max-w-md lg:max-w-lg">
+                            <form class="flex w-full items-stretch rounded-lg h-9 sm:h-10"
+                                  method="GET"
+                                  action="{% url 'results' %}">
+                                <div class="text-gray-400 flex bg-white/5 dark:bg-black/20 items-center justify-center pl-3 sm:pl-4 rounded-l-lg border-r-0">
+                                    <span class="material-symbols-outlined text-xl sm:text-2xl">search</span>
+                                </div>
+                                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary border-none bg-white/5 dark:bg-black/20 h-full placeholder:text-gray-400 px-3 sm:px-4 text-sm sm:text-base font-normal"
+                                       placeholder="Rechercher..."
+                                       value=""
+                                       name="q" />
+                            </form>
+                        </label>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-4">
+                        <!-- Bouton Notifications -->
+                        <button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 w-9 sm:h-10 sm:w-10 bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+                            <a href="{% url 'notifications' %}"><span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span></a>
+                            {% if notif_signal %}
+                                <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-full w-full bg-primary"></span>
+                                </span>
+                            {% endif %}
+                        </button>
+                        <!-- Bouton Messages -->
+                        <button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 w-9 sm:h-10 sm:w-10 bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+                            <a href="{% url 'list_conversations' %}"><span class="material-symbols-outlined text-xl sm:text-2xl">chat</span></a>
+                            {% if notify_me %}
+                                <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+                                    <span class="relative inline-flex rounded-full h-full w-full bg-primary"></span>
+                                </span>
+                            {% endif %}
+                        </button>
+                        <!-- Profile User (caché sur très petit mobile) -->
+                        <div class="hidden sm:flex items-center gap-2 sm:gap-3 pl-2">
+                            {% if request.user.profile.image.url %}
+                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 sm:size-10"
+                                     style='background-image: url("{{ request.user.profile.image.url }}")'></div>
+                            {% else %}
+                                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 sm:size-10"
+                                     style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCE8Ie2a0Y5YylktSiRjudGxE-oxta3dLopK0DB6G8FNgZGqWP1x7fGUYo_tHGjZ11NLIGdn6yEbLfqd9MI2ffXE6bfsoau5PF4abnCfL1CFaAZZcsyeK4SS5SrZKnFC_kMIZw5BJg2JYmB0jpBRTVjinXDczMYjRLGgqQuul2G1YsXZ2xlUR0_JzLrN36MKLmmJbcyyLTYGriLGEJYT413nZLYnFK3KJNv5j9SsFxcwhmnY3KOS1oWTQL2eW2Q36a6l8VoAGgchB4")'>
+                                </div>
+                            {% endif %}
+                            <div class="hidden lg:flex flex-col text-right">
+                                <h1 class="text-white text-sm font-medium">
+                                    {{ request.user.get_full_name|default:request.user.username.capitalize }}
+                                </h1>
+                                <p class="text-gray-400 text-xs">
+                                    {% for group in user.groups.all %}
+                                        {{ group.name.capitalize }}
+                                        {% if not forloop.last %},{% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <!-- Main Content -->
+                <main class="flex-1 p-4 sm:p-6 lg:p-8">
+                    {% block content %}{% endblock %}
+                </main>
+            </div>
+        </div>
+        <!-- Script pour le menu mobile -->
+        <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+        
+        menuBtn.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        
+        // Fermer la sidebar lors du clic sur un lien (mobile)
+        const sidebarLinks = sidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+        </script>
+        {% block extra_js %}
+        {% endblock %}
+    </body>
+</html>

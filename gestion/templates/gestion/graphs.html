@@ -1,0 +1,420 @@
+{% extends 'base_cele.html' %}
+{% load static %}
+{% block title %}Statistiques - Cele Admin{% endblock %}
+{% block extra_css %}{% endblock %}
+{% block content %}
+    <div class="w-full px-6 py-8">
+        <h3 class="text-2xl font-semibold mb-6">Passer en revue ce qui se passe sur la plateforme</h3>
+        <div class="mb-6">
+            <button id="btnExportPDF"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 shadow">
+                <i class="mdi mdi-download text-xl"></i>
+                Exporter en PDF
+            </button>
+        </div>
+        <!-- GRID PRINCIPALE -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 1. Ventes 7 jours -->
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Ventes des 7 derniers jours</h4>
+                <canvas id="chart-ventes-7j" class="w-full h-64"></canvas>
+            </div>
+            <!-- 2. CA mensuel -->
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Chiffre d'affaires — 12 derniers mois</h4>
+                <canvas id="chart-ca-12m" class="w-full h-64"></canvas>
+            </div>
+            <!-- 3. Méthodes de paiement -->
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Répartition des méthodes de paiement</h4>
+                <canvas id="chart-methodes" class="w-full h-64"></canvas>
+            </div>
+            <!-- 4. Top produits -->
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Top 10 produits vendus</h4>
+                <canvas id="chart-top-produits" class="w-full h-64"></canvas>
+            </div>
+            <!-- 5. Ventes par revendeur -->
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Nombre de ventes par revendeur</h4>
+                <canvas id="chart-ventes-revendeur" class="w-full h-64"></canvas>
+            </div>
+            <!-- 6. CA par revendeur -->
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Chiffre d'affaires par revendeur</h4>
+                <canvas id="chart-ca-revendeur" class="w-full h-64"></canvas>
+            </div>
+        </div>
+        <!-- SECTION LARGE -->
+        <div class="grid grid-cols-1 mt-6">
+            <div class="bg-background-dark rounded-xl shadow p-6">
+                <h4 class="text-lg font-semibold mb-4">Revenu habillement pour les 7 derniers jours</h4>
+                <canvas id="chart-habillement" class="w-full h-72"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'script/Chart.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+(function () {
+    'use strict';
+
+    // === Données injectées depuis Django (assure-toi d'avoir |safe dans la template) ===
+const ventes7J_raw = {{ ventes_7j| safe }};
+const caMensuel_raw = {{ ca_mensuel| safe }};
+const methodes_raw = {{ methode_repartition| safe }};
+const topProduits_raw = {{ top_produits| safe }};
+const caParRevendeur_raw = {{ ca_par_revendeur| safe }};
+const ventesParRevendeur_raw = {{ ventes_par_revendeur| safe }};
+const ventesHabillement_raw = {{ ventes_habillement| safe }};
+
+// === Palette / styles (je respecte tes couleurs existantes) ===
+const palette = {
+    pink_bg: 'rgba(255, 99, 132, 0.2)',
+    pink_border: 'rgba(255,99,132,1)',
+    blue_bg: 'rgba(54, 162, 235, 0.2)',
+    blue_border: 'rgba(54, 162, 235, 1)',
+    yellow_bg: 'rgba(255, 206, 86, 0.2)',
+    yellow_border: 'rgba(255, 206, 86, 1)',
+    green_bg: 'rgba(75, 192, 192, 0.2)',
+    green_border: 'rgba(75, 192, 192, 1)',
+    purple_bg: 'rgba(153, 102, 255, 0.2)',
+    purple_border: 'rgba(153, 102, 255, 1)',
+    orange_bg: 'rgba(255, 159, 64, 0.2)',
+    orange_border: 'rgba(255, 159, 64, 1)',
+    semi1: 'rgba(255, 99, 132, 0.5)',
+    semi2: 'rgba(54, 162, 235, 0.5)',
+    semi3: 'rgba(255, 206, 86, 0.5)'
+};
+
+// === Helpers date / mapping ===
+function formatDateYMD(d) {
+    // YYYY-MM-DD
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+function formatMonthYM(d) {
+    // YYYY-MM
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    return `${yyyy}-${mm}`;
+}
+
+function lastNDaysLabels(n, endDate = new Date()) {
+    const labels = [];
+    const date = new Date(endDate);
+    // normalize time
+    date.setHours(0, 0, 0, 0);
+    for (let i = n - 1; i >= 0; i--) {
+        const d = new Date(date);
+        d.setDate(date.getDate() - i);
+        labels.push(formatDateYMD(d));
+    }
+    return labels;
+}
+
+function lastNMonthsLabels(n, endDate = new Date()) {
+    const labels = [];
+    const date = new Date(endDate);
+    // go to first day of current month to avoid DST edge cases
+    date.setDate(1);
+    for (let i = n - 1; i >= 0; i--) {
+        const d = new Date(date.getFullYear(), date.getMonth() - i, 1);
+        labels.push(formatMonthYM(d));
+    }
+    return labels;
+}
+
+function mapByKey(arr, keyName, valueName) {
+    const map = {};
+    if (!Array.isArray(arr)) return map;
+    arr.forEach(item => {
+        const k = item[keyName];
+        const v = item[valueName];
+        map[String(k)] = (v === null || v === undefined) ? 0 : v;
+    });
+    return map;
+}
+
+// === Construire labels complets et séries numériques ===
+
+// 1) Ventes 7 jours (nombre de ventes par jour)
+const labels_7j = lastNDaysLabels(7);
+// ventes7J_raw attendu: [{"day": "YYYY-MM-DD", "total": X }, ...]
+const map_7j = mapByKey(ventes7J_raw, 'day', 'total');
+const data_7j = labels_7j.map(lbl => map_7j[lbl] ? Number(map_7j[lbl]) : 0);
+
+// 2) CA mensuel (dernier 12 mois) - caMensuel_raw attendu: [{month: "YYYY-MM", total: X}, ...]
+const labels_12m = lastNMonthsLabels(12);
+const map_ca = mapByKey(caMensuel_raw, 'month', 'total');
+const data_ca_12m = labels_12m.map(lbl => {
+    const v = map_ca[lbl];
+    return v === undefined || v === null ? 0 : Number(v);
+});
+
+// 3) Répartition méthode paiement (doughnut)
+// methodes_raw attendu: [{"method": "...", "total": X }, ...]
+const methodes_labels = Array.isArray(methodes_raw) ? methodes_raw.map(m => m.method) : [];
+const methodes_values = Array.isArray(methodes_raw) ? methodes_raw.map(m => Number(m.total)) : [];
+
+// Si vide, fournir un item "Aucun"
+if (methodes_labels.length === 0) {
+    methodes_labels.push('Aucune donnée');
+    methodes_values.push(1);
+}
+
+// 4) Top produits (jusqu'à 10) - topProduits_raw attendu: [{produit:"...", total:X}, ...]
+const topLabels = Array.isArray(topProduits_raw) ? topProduits_raw.map(p => p.produit) : [];
+const topValues = Array.isArray(topProduits_raw) ? topProduits_raw.map(p => Number(p.total)) : [];
+// Pas de remplissage nécessaire — on affiche ce qu'il y a (si moins de 10, ça s'affiche)
+
+// 5) Ventes par revendeur (actuellement counts totaux)
+const revLabels = Array.isArray(ventesParRevendeur_raw) ? ventesParRevendeur_raw.map(r => r.revendeur) : [];
+const revValues = Array.isArray(ventesParRevendeur_raw) ? ventesParRevendeur_raw.map(r => Number(r.total)) : [];
+
+if (revLabels.length === 0) {
+    revLabels.push('Aucun revendeur');
+    revValues.push(1);
+}
+
+// 6) CA par revendeur
+const caRevLabels = Array.isArray(caParRevendeur_raw) ? caParRevendeur_raw.map(r => r.revendeur) : [];
+const caRevValues = Array.isArray(caParRevendeur_raw) ? caParRevendeur_raw.map(r => Number(r.total)) : [];
+
+if (caRevLabels.length === 0) {
+    caRevLabels.push('Aucun revendeur');
+    caRevValues.push(1);
+}
+
+// 7) Ventes habillement par jour (revenu par jour) - ventesHabillement_raw attendu: [{day:"YYYY-MM-DD", total: X}, ...]
+const labels_hab = lastNDaysLabels(7);
+const map_hab = mapByKey(ventesHabillement_raw, 'day', 'total');
+const data_hab = labels_hab.map(lbl => {
+    const v = map_hab[lbl];
+    return v === undefined || v === null ? 0 : Number(v);
+});
+
+// === Options Chart.js (v2 style, préservant ton style existant) ===
+const commonOptions = {
+    scales: {
+        yAxes: [{
+            ticks: { beginAtZero: true },
+            gridLines: { color: "rgba(204, 204, 204,0.1)" }
+        }],
+        xAxes: [{
+            gridLines: { color: "rgba(204, 204, 204,0.1)" }
+        }]
+    },
+    legend: { display: false },
+    elements: { point: { radius: 0 } }
+};
+
+const doughnutOptions = {
+    responsive: true,
+    animation: { animateScale: true, animateRotate: true },
+    legend: { position: 'right' }
+};
+
+// === Création des charts ===
+$(function () {
+
+    // Helper create chart safe (évite crash si canvas absent)
+    function createChart(ctxSelector, cfg) {
+        if ($(ctxSelector).length) {
+            const ctx = $(ctxSelector).get(0).getContext("2d");
+            return new Chart(ctx, cfg);
+        }
+        return null;
+    }
+
+    // 1. Variation ventes (7 jours) - area/line chart
+    createChart("#chart-ventes-7j", {
+        type: 'line',
+        data: {
+            labels: labels_7j,
+            datasets: [{
+                label: 'Ventes (nb) - 7 jours',
+                data: data_7j,
+                borderColor: palette.blue_border,
+                backgroundColor: palette.blue_bg,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: Object.assign({}, commonOptions, {
+            elements: { point: { radius: 3 } },
+            legend: { display: true }
+        })
+    });
+
+    // 2. Variation ventes (CA) - 12 mois - bar chart
+    createChart("#chart-ca-12m", {
+        type: 'bar',
+        data: {
+            labels: labels_12m,
+            datasets: [{
+                label: 'Chiffre d\'affaires (12 mois)',
+                data: data_ca_12m,
+                backgroundColor: [
+                    palette.pink_bg, palette.blue_bg, palette.yellow_bg,
+                    palette.green_bg, palette.purple_bg, palette.orange_bg,
+                    palette.blue_bg, palette.pink_bg, palette.yellow_bg,
+                    palette.green_bg, palette.purple_bg, palette.orange_bg
+                ],
+                borderColor: [
+                    palette.pink_border, palette.blue_border, palette.yellow_border,
+                    palette.green_border, palette.purple_border, palette.orange_border,
+                    palette.blue_border, palette.pink_border, palette.yellow_border,
+                    palette.green_border, palette.purple_border, palette.orange_border
+                ],
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: Object.assign({}, commonOptions, { legend: { display: false } })
+    });
+
+    // 3. Répartition des ventes par méthode (doughnut)
+    createChart("#chart-methodes", {
+        type: 'doughnut',
+        data: {
+            labels: methodes_labels,
+            datasets: [{
+                data: methodes_values,
+                backgroundColor: [palette.semi1, palette.semi2, palette.semi3, palette.purple_bg, palette.orange_bg],
+                borderColor: [palette.pink_border, palette.blue_border, palette.yellow_border, palette.purple_border, palette.orange_border]
+            }]
+        },
+        options: doughnutOptions
+    });
+
+    // 4. Top 10 produits vendus - bar chart (gère <10 automatiquement)
+    createChart("#chart-top-produits", {
+        type: 'bar',
+        data: {
+            labels: topLabels.length ? topLabels : ['Aucun produit'],
+            datasets: [{
+                label: 'Nombre de ventes',
+                data: topValues.length ? topValues : [1],
+                backgroundColor: topLabels.map((_, i) => {
+                    // cycle palette if besoin
+                    const arr = [palette.pink_bg, palette.blue_bg, palette.yellow_bg, palette.green_bg, palette.purple_bg];
+                    return arr[i % arr.length];
+                }),
+                borderColor: topLabels.map((_, i) => {
+                    const arr = [palette.pink_border, palette.blue_border, palette.yellow_border, palette.green_border, palette.purple_border];
+                    return arr[i % arr.length];
+                }),
+                borderWidth: 1
+            }]
+        },
+        options: Object.assign({}, commonOptions, { legend: { display: false } })
+    });
+
+    // 5. Ventes par revendeur (totaux) - bar chart
+    createChart("#chart-ventes-revendeur", {
+        type: 'bar',
+        data: {
+            labels: revLabels,
+            datasets: [{
+                label: 'Nombre de ventes par revendeur',
+                data: revValues,
+                backgroundColor: revLabels.map((_, i) => {
+                    const arr = [palette.blue_bg, palette.pink_bg, palette.yellow_bg, palette.green_bg, palette.purple_bg];
+                    return arr[i % arr.length];
+                }),
+                borderColor: revLabels.map((_, i) => {
+                    const arr = [palette.blue_border, palette.pink_border, palette.yellow_border, palette.green_border, palette.purple_border];
+                    return arr[i % arr.length];
+                }),
+                borderWidth: 1
+            }]
+        },
+        options: Object.assign({}, commonOptions, { legend: { display: false } })
+    });
+
+    // 6. CA par revendeur - bar chart
+    createChart("#chart-ca-revendeur", {
+        type: 'bar',
+        data: {
+            labels: caRevLabels,
+            datasets: [{
+                label: 'Chiffre d\'affaires par revendeur',
+                data: caRevValues,
+                backgroundColor: caRevLabels.map((_, i) => {
+                    const arr = [palette.yellow_bg, palette.green_bg, palette.purple_bg, palette.orange_bg, palette.blue_bg];
+                    return arr[i % arr.length];
+                }),
+                borderColor: caRevLabels.map((_, i) => {
+                    const arr = [palette.yellow_border, palette.green_border, palette.purple_border, palette.orange_border, palette.blue_border];
+                    return arr[i % arr.length];
+                }),
+                borderWidth: 1
+            }]
+        },
+        options: Object.assign({}, commonOptions, { legend: { display: false } })
+    });
+
+    // 7. Revenu habillement (par jour - 7 derniers jours) - line chart
+    createChart("#chart-habillement", {
+        type: 'line',
+        data: {
+            labels: labels_hab,
+            datasets: [{
+                label: 'Revenu habillement (7j)',
+                data: data_hab,
+                borderColor: palette.pink_border,
+                backgroundColor: palette.pink_bg,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: Object.assign({}, commonOptions, {
+            elements: { point: { radius: 3 } },
+            legend: { display: true }
+        })
+    });
+
+}); }) ();
+    </script>
+    <script>
+document.getElementById("btnExportPDF").addEventListener("click", function () {
+
+    const charts = [
+        "chart-ventes-7j",
+        "chart-ca-12m",
+        "chart-methodes",
+        "chart-top-produits",
+        "chart-ventes-revendeur",
+        "chart-ca-revendeur",
+        "chart-habillement",
+    ];
+
+    const images = charts.map(id => {
+        const canvas = document.getElementById(id);
+        return canvas.toDataURL("image/png");
+    });
+
+    fetch("{% url 'gestion:dashboard_pdf' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ images: images })
+    })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "dashboard.pdf";
+            a.click();
+        });
+});
+    </script>
+{% endblock %}

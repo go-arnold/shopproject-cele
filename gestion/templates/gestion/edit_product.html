@@ -1,240 +1,259 @@
-{% extends 'gestion/base.html' %}
-{% load static %}
+{% extends 'base_cele.html' %}
 {% block title %}Modifier un produit - Cele Admin{% endblock %}
 {% block content %}
-  <div class="page-header">
-    <h3 class="page-title">Gestion Generale des produits</h3>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Modifier le produit</li>
-        <li class="breadcrumb-item">
-          <a href="{% url 'home' %}">Client</a>
-        </li>
-      </ol>
-    </nav>
-  </div>
-  <!-- Afficher les messages -->
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
-           role="alert">
-        {{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    {% endfor %}
-  {% endif %}
-  <div class="row">
-    <div class="col-12 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Modifier le produit: {{ product.name }}</h4>
-          <p class="card-description">Modifiez les informations du produit</p>
-          <form method="post" enctype="multipart/form-data" class="forms-sample">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="name">Nom du produit</label>
-              <input type="text"
-                     class="form-control"
-                     id="name"
-                     name="name"
-                     value="{{ product.name }}"
-                     required>
+  <div class="max-w-5xl mx-auto p-6">
+    <div class="shadow-lg rounded-xl p-6">
+      <h2 class="text-2xl font-bold text-text-dark-primary mb-4">Modifier un produit</h2>
+      <!-- Afficher les messages d'erreur -->
+      {% if messages %}
+        <div class="space-y-3 mb-6">
+          {% for message in messages %}
+            <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+              <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+              <button type="button"
+                      onclick="this.parentElement.remove()"
+                      class="text-xl leading-none opacity-70 hover:opacity-100 select-none">&times;</button>
             </div>
-            <div class="form-group">
-              <label for="price_primary">Prix d'achat du produit</label>
-              <input type="number"
-                     class="form-control"
-                     id="price_primary"
-                     name="price_primary"
-                     step="0.01"
-                     value="{{ product.price_primary }}"
-                     required
-                     max="10000">
-            </div>
-            <div class="form-group">
-              <label for="price">Prix de vente du produit</label>
-              <input type="number"
-                     class="form-control"
-                     id="price"
-                     name="price"
-                     step="0.01"
-                     value="{{ product.price }}"
-                     required
-                     max="10000">
-            </div>
-            <div class="form-group">
-              <label for="image">L'image du produit</label>
-              {% if product.image %}
-                <div class="mb-2">
-                  <img src="{{ product.image.url }}"
-                       alt="{{ product.name }}"
-                       style="max-width: 200px;
-                              height: auto">
-                </div>
-              {% endif %}
-              <input type="file"
-                     class="form-control"
-                     id="image"
-                     name="image"
-                     accept="image/*">
-              <small class="form-text text-muted">Laissez vide pour conserver l'image actuelle</small>
-            </div>
-            <div class="form-group">
-              <label for="badge">Badge sur le produit</label>
-              <input type="text"
-                     class="form-control"
-                     id="badge"
-                     name="badge"
-                     value="{{ product.badge }}"
-                     required>
-            </div>
-            <div class="form-group">
-              <label for="category">Catégorie</label>
-              <select class="form-control" id="category" name="category">
-                {% for cat in categories %}
-                  <option value="{{ cat.id }}"
-                          {% if product.category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="rating">Rating</label>
-              <input type="number"
-                     class="form-control"
-                     id="rating"
-                     name="rating"
-                     min="0"
-                     max="5"
-                     step="0.1"
-                     value="{{ product.rating }}"
-                     required>
-            </div>
-            <div class="form-group">
-              <label for="reviews">Nombre d'avis</label>
-              <input type="number"
-                     class="form-control"
-                     id="reviews"
-                     name="reviews"
-                     min="0"
-                     value="{{ product.reviews }}"
-                     required>
-            </div>
-            <div class="form-group">
-              <label for="description">Description</label>
-              <textarea class="form-control"
-                        id="description"
-                        name="description"
-                        maxlength="100"
-                        minlength="20"
-                        rows="4"
-                        required>{{ product.description }}</textarea>
-            </div>
-            <div class="form-group">
-              <label for="date_wish">Devrait être vendu avant le</label>
-              <input type="date"
-                     class="form-control"
-                     id="date_wish"
-                     name="date_wish"
-                     value="{{ product.date_wish|date:'Y-m-d' }}">
-            </div>
-            <!-- Section Features -->
-            <div class="form-group">
-              <label>Caractéristiques du produit</label>
-              <div id="features-container">
-                {% for feature in product.features.all %}
-                  <div class="feature-item mb-2">
-                    <div class="input-group">
-                      <input type="text"
-                             class="form-control"
-                             name="features[]"
-                             value="{{ feature.name }}">
-                      <div class="input-group-append">
-                        <button class="btn btn-danger btn-sm remove-feature" type="button">
-                          <i class="mdi mdi-delete"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                {% empty %}
-                  <div class="feature-item mb-2">
-                    <div class="input-group">
-                      <input type="text"
-                             class="form-control"
-                             name="features[]"
-                             placeholder="Ex: Écran 6.5 pouces">
-                      <div class="input-group-append">
-                        <button class="btn btn-danger btn-sm remove-feature"
-                                type="button"
-                                style="display:none">
-                          <i class="mdi mdi-delete"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                {% endfor %}
-              </div>
-              <button type="button" class="btn btn-success btn-sm mt-2" id="add-feature">
-                <i class="mdi mdi-plus"></i> Ajouter une caractéristique
-              </button>
-            </div>
-            <button type="submit" class="btn btn-primary mr-2">Enregistrer les modifications</button>
-            <a href="{% url 'gestion:admin_products' %}" class="btn btn-dark">Annuler</a>
-          </form>
+          {% endfor %}
         </div>
-      </div>
+      {% endif %}
+      <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <!-- Nom du produit -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-1" for="name">Nom du produit</label>
+          <input type="text"
+                 id="name"
+                 name="name"
+                 value="{{ product.name }}"
+                 required
+                 class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" />
+        </div>
+        <!-- Description courte -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-1"
+                 for="description">Description</label>
+          <textarea id="description"
+                    name="description"
+                    rows="3"
+                    maxlength="255"
+                    class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.description }}</textarea>
+        </div>
+        <!-- Description longue -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-1"
+                 for="long_description">Description longue</label>
+          <textarea id="long_description"
+                    name="long_description"
+                    rows="4"
+                    class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.long_description }}</textarea>
+        </div>
+        <!-- Caractéristiques / entretien -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-1"
+                 for="chara_entretien">Caractéristiques / Entretien</label>
+          <textarea id="chara_entretien"
+                    name="chara_entretien"
+                    rows="3"
+                    class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.chara_entretien }}</textarea>
+        </div>
+        <!-- Politique de livraison -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="delivery_policy_phase1">Politique livraison phase 1</label>
+            <textarea id="delivery_policy_phase1"
+                      name="delivery_policy_phase1"
+                      rows="3"
+                      class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.delivery_policy_phase1 }}</textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="delivery_policy_phase2">Politique livraison phase 2</label>
+            <textarea id="delivery_policy_phase2"
+                      name="delivery_policy_phase2"
+                      rows="3"
+                      class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.delivery_policy_phase2 }}</textarea>
+          </div>
+        </div>
+        <!-- Prix -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="price_primary">Prix d'achat</label>
+            <input type="number"
+                   id="price_primary"
+                   name="price_primary"
+                   value="{{ product.price_primary }}"
+                   step="0.01"
+                   class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1" for="price">Prix de vente</label>
+            <input type="number"
+                   id="price"
+                   name="price"
+                   value="{{ product.price }}"
+                   step="0.01"
+                   class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1" for="badge">Badge du produit</label>
+            <input type="text"
+                   id="badge"
+                   name="badge"
+                   value="{{ product.badge }}"
+                   class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                   placeholder="Ex: NOUVEAU, SOLDE, POPULAIRE">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="price_solde">Prix soldé</label>
+            <input type="number"
+                   id="price_solde"
+                   name="price_solde"
+                   value="{{ product.price_solde }}"
+                   step="0.01"
+                   class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+          </div>
+        </div>
+        <!-- Catégorie -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-1" for="category">Catégorie</label>
+          <select id="category"
+                  name="category"
+                  class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+            {% for cat in categories %}
+              <option value="{{ cat.id }}"
+                      {% if product.category_fk and product.category_fk.id == cat.id %}selected{% endif %}>
+                {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <!-- Date limite -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-1"
+                 for="date_wish">Devrait être vendu avant le</label>
+          <input type="date"
+                 id="date_wish"
+                 name="date_wish"
+                 value="{{ product.date_wish|date:'Y-m-d' }}"
+                 class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+        </div>
+        <!-- Images -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1" for="image">Image principale</label>
+            <input type="file"
+                   id="image"
+                   name="image"
+                   accept="image/*"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="image_one">Image 1</label>
+            <input type="file"
+                   id="image_one"
+                   name="image_one"
+                   accept="image/*"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="image_two">Image 2</label>
+            <input type="file"
+                   id="image_two"
+                   name="image_two"
+                   accept="image/*"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-text-gray-400-1"
+                   for="image_three">Image 3</label>
+            <input type="file"
+                   id="image_three"
+                   name="image_three"
+                   accept="image/*"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+        </div>
+        <!-- Features dynamiques -->
+        <div>
+          <label class="block text-sm font-medium text-text-gray-400-2">Caractéristiques du produit</label>
+          <div id="features-container" class="space-y-2">
+            {% for feature in product.features.all %}
+              <div class="flex items-center gap-2">
+                <input type="text"
+                       name="features[]"
+                       value="{{ feature.name }}"
+                       class="w-full border border-border-dark  rounded-lg px-3 py-2 bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+                <button type="button"
+                        class="remove-feature bg-red-500 text-white px-3 py-1 rounded">Supprimer</button>
+              </div>
+            {% empty %}
+              <div class="flex items-center gap-2">
+                <input type="text"
+                       name="features[]"
+                       placeholder="Ex: Écran 6.5 pouces"
+                       class="w-full border border-border-dark  rounded-lg px-3 py-2 bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
+                <button type="button"
+                        class="remove-feature bg-red-500 text-white px-3 py-1 rounded"
+                        style="display:none">Supprimer</button>
+              </div>
+            {% endfor %}
+          </div>
+          <button type="button"
+                  id="add-feature"
+                  class="mt-2 bg-green-500 text-white px-4 py-2 rounded">Ajouter une caractéristique</button>
+        </div>
+        <!-- Boutons -->
+        <div class="flex flex-wrap gap-4 mt-4">
+          <button type="submit"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+            Enregistrer
+          </button>
+          <a href="{% url 'gestion:admin_products' %}"
+             class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2 rounded-lg transition">Annuler</a>
+        </div>
+      </form>
     </div>
   </div>
 {% endblock %}
 {% block extra_js %}
-  <!-- Script pour gérer les features dynamiques -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const addFeatureBtn = document.getElementById('add-feature');
-        const featuresContainer = document.getElementById('features-container');
-        
-        // Fonction pour ajouter une nouvelle feature
-        addFeatureBtn.addEventListener('click', function() {
-            const featureItem = document.createElement('div');
-            featureItem.className = 'feature-item mb-2';
-            featureItem.innerHTML = `
-                <div class="input-group">
-                    <input type="text" class="form-control" name="features[]" placeholder="Ex: Batterie 5000mAh">
-                    <div class="input-group-append">
-                        <button class="btn btn-danger btn-sm remove-feature" type="button">
-                            <i class="mdi mdi-delete"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            featuresContainer.appendChild(featureItem);
-            updateRemoveButtons();
-        });
-        
-        // Fonction pour supprimer une feature
-        featuresContainer.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-feature') || e.target.closest('.remove-feature')) {
-                const featureItem = e.target.closest('.feature-item');
-                featureItem.remove();
-                updateRemoveButtons();
-            }
-        });
-        
-        // Fonction pour afficher/masquer les boutons de suppression
-        function updateRemoveButtons() {
-            const featureItems = featuresContainer.querySelectorAll('.feature-item');
-            featureItems.forEach((item, index) => {
-                const removeBtn = item.querySelector('.remove-feature');
-                if (featureItems.length > 1) {
-                    removeBtn.style.display = 'block';
-                } else {
-                    removeBtn.style.display = 'none';
-                }
-            });
-        }
-        
+document.addEventListener('DOMContentLoaded', function() {
+    const addFeatureBtn = document.getElementById('add-feature');
+    const featuresContainer = document.getElementById('features-container');
+
+    addFeatureBtn.addEventListener('click', function() {
+        const featureItem = document.createElement('div');
+        featureItem.className = 'flex items-center gap-2';
+        featureItem.innerHTML = `
+            <input type="text" name="features[]" placeholder="Ex: Batterie 5000mAh" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            <button type="button" class="remove-feature bg-red-500 text-white px-3 py-1 rounded">Supprimer</button>
+        `;
+        featuresContainer.appendChild(featureItem);
         updateRemoveButtons();
     });
+
+    featuresContainer.addEventListener('click', function(e) {
+        if(e.target.classList.contains('remove-feature')){
+            e.target.closest('div').remove();
+            updateRemoveButtons();
+        }
+    });
+
+    function updateRemoveButtons(){
+        const featureItems = featuresContainer.querySelectorAll('div');
+        featureItems.forEach((item, index) => {
+            const btn = item.querySelector('.remove-feature');
+            btn.style.display = featureItems.length > 1 ? 'block' : 'none';
+        });
+    }
+
+    updateRemoveButtons();
+});
   </script>
 {% endblock %}

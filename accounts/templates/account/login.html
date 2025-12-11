@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Se connecter{% endblock %}
-
 {% block content %}
-<h1 style="color:red;">TEST LOGIN TEMPLATE</h1>
-<div class="card col-lg-4 mx-auto">
-  <div class="card-body px-5 py-5">
-    <h3 class="card-title text-center mb-3">
-      <img src="{% static 'assets/images/logo/logo-white.png' %}" alt="logo celebobo" style="max-width: 50%;">
-    </h3>
-    <h3 class="text-center mb-3 mt-3 " style="color:#EF88AD">Connectez-vous</h3>
-
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <div class="text-center">
-        <button type="submit" class="btn btn-block enter-btn" style="background-color: #640D5F;">Se connecter</button>
-      </div>
-    </form>
-
-    <p class="sign-up">
-      Si vous n'avez pas de compte <a href="{% url 'account_signup' %}">Inscrivez-vous</a>
-    </p>
+  <h1 style="color:red;">TEST LOGIN TEMPLATE</h1>
+  <div class="card col-lg-4 mx-auto">
+    <div class="card-body px-5 py-5">
+      <h3 class="card-title text-center mb-3">
+        <img src="{% static 'static-img/logo-white.png' %}"
+             alt="logo celebobo"
+             style="max-width: 50%">
+      </h3>
+      <h3 class="text-center mb-3 mt-3 " style="color:#EF88AD">Connectez-vous</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="text-center">
+          <button type="submit"
+                  class="btn btn-block enter-btn"
+                  style="background-color: #640D5F">Se connecter</button>
+        </div>
+      </form>
+      <p class="sign-up">
+        Si vous n'avez pas de compte <a href="{% url 'account_signup' %}">Inscrivez-vous</a>
+      </p>
+    </div>
   </div>
-</div>
 {% endblock %}

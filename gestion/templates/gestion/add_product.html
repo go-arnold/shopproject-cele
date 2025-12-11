@@ -1,232 +1,253 @@
-{% extends 'gestion/base.html' %}
-{% load static %}
+{% extends 'base_cele.html' %}
 {% block title %}Ajouter un produit - Cele Admin{% endblock %}
 {% block content %}
-  <div class="page-header">
-    <h3 class="page-title">Gestion Generale des produits</h3>
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Voir la version</li>
-        <li class="breadcrumb-item">
-          <a href="{% url 'home' %}">Client</a>
-        </li>
-      </ol>
-    </nav>
-  </div>
-  <!-- Afficher les messages d'erreur -->
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
-           role="alert">
-        {{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    {% endfor %}
-  {% endif %}
-  <div class="row">
-    <div class="col-12 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Ajouter un produit</h4>
-          <p class="card-description">Remplissez les informations du produit</p>
-          <form method="post" enctype="multipart/form-data" class="forms-sample">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="name">Nom du produit</label>
+  <div class="mx-auto max-w-5xl px-2 sm:px-4">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-text-dark-primary">
+        Ajouter un produit
+      </h1>
+    </div>
+    <div class="flex flex-col gap-4 sm:gap-6 rounded-xl bg-component-dark p-3 sm:p-6">
+      <!-- Afficher les messages d'erreur -->
+      {% if messages %}
+        <div class="space-y-3 mb-6">
+          {% for message in messages %}
+            <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+              <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+              <button type="button"
+                      onclick="this.parentElement.remove()"
+                      class="text-xl leading-none opacity-70 hover:opacity-100 select-none">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <!-- Ligne 1: Nom et description courte -->
+        <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Nom du produit</span>
               <input type="text"
-                     class="form-control"
-                     id="name"
                      name="name"
+                     id="name"
                      required
-                     placeholder="Le nom du produit">
-            </div>
-            <div class="form-group">
-              <label for="price_primary">Prix d'achat du produit</label>
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                     placeholder="Nom du produit">
+            </label>
+          </div>
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Description courte</span>
+              <textarea name="description"
+                        id="description"
+                        rows="3"
+                        required
+                        class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Entre 20 et 100 caractères, doit contenir un verbe"></textarea>
+            </label>
+          </div>
+        </div>
+        <!-- Ligne 2: Prix -->
+        <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix d'achat ($)</span>
               <input type="number"
-                     class="form-control"
-                     id="price_primary"
                      name="price_primary"
+                     id="price_primary"
                      step="0.01"
                      required
-                     placeholder="Je l'ai acheté à"
-                     max="10000">
-            </div>
-            <div class="form-group">
-              <label for="price">Prix de vente du produit</label>
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                     placeholder="Prix d'achat">
+            </label>
+          </div>
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix de vente ($)</span>
               <input type="number"
-                     class="form-control"
-                     id="price"
                      name="price"
+                     id="price"
                      step="0.01"
                      required
-                     placeholder="Je le vends à"
-                     max="10000">
-            </div>
-            <div class="form-group">
-              <label for="image">L'image du produit</label>
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                     placeholder="Prix de vente">
+            </label>
+          </div>
+        </div>
+        <!-- Ligne 3: Prix solde -->
+        <div>
+          <label class="flex flex-col">
+            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix solde ($)</span>
+            <input type="number"
+                   name="price_solde"
+                   id="price_solde"
+                   step="0.01"
+                   class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                   placeholder="Prix solde si applicable">
+          </label>
+        </div>
+        <!-- Ligne 4: Images -->
+        <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Image principale</span>
               <input type="file"
-                     class="form-control"
-                     id="image"
                      name="image"
                      accept="image/*"
-                     required
-                     placeholder="Formats acceptés: JPG, PNG, WEBP">
-            </div>
-            <div class="form-group">
-              <label for="badge">Badge sur le produit</label>
-              <input type="text"
-                     class="form-control"
-                     id="badge"
-                     name="badge"
-                     required
-                     placeholder="Exemple: NOUVEAU, SOLDE, PRO, POPULAIRE">
-            </div>
-            <div class="form-group">
-              <label for="category">Catégorie</label>
-              <select class="form-control" id="category" name="category">
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Image secondaire 1</span>
+              <input type="file"
+                     name="image_one"
+                     accept="image/*"
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Image secondaire 2</span>
+              <input type="file"
+                     name="image_two"
+                     accept="image/*"
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Image secondaire 3</span>
+              <input type="file"
+                     name="image_three"
+                     accept="image/*"
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
+        </div>
+        <!-- Ligne 5: Catégorie et date souhaitée -->
+        <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Catégorie</span>
+              <select name="category"
+                      id="category"
+                      class="form-select h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
                 {% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}
               </select>
-            </div>
-            <div class="form-group">
-              <label for="rating">Rating</label>
-              <input type="number"
-                     class="form-control"
-                     id="rating"
-                     name="rating"
-                     min="0"
-                     max="5"
-                     step="0.1"
-                     placeholder="Entre 0 et 5"
-                     value="4.5"
-                     required>
-            </div>
-            <div class="form-group">
-              <label for="reviews">Nombre d'avis</label>
-              <input type="number"
-                     class="form-control"
-                     id="reviews"
-                     name="reviews"
-                     min="0"
-                     value="0"
-                     required
-                     placeholder="Le nombre d'avis">
-            </div>
-            <div class="form-group">
-              <label for="description">Description</label>
-              <textarea class="form-control"
-                        id="description"
-                        name="description"
-                        maxlength="100"
-                        minlength="20"
-                        placeholder="Entre 20 et 100 caractères. Doit contenir un verbe (est, avec, permet, offre, etc.)"
-                        rows="4"
-                        required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="date_wish">Devrait etre vendu avant le</label>
+            </label>
+          </div>
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Vendu avant le</span>
               <input type="date"
-                     class="form-control"
-                     id="date_wish"
                      name="date_wish"
-                     required>
-            </div>
-            <div class="form-group">
-              <label>Caractéristiques du produit</label>
-              <div id="features-container">
-                {% for feature in product.features.all %}
-                  <div class="feature-item mb-2">
-                    <div class="input-group">
-                      <input type="text"
-                             class="form-control"
-                             name="features[]"
-                             value="{{ feature.name }}">
-                      <div class="input-group-append">
-                        <button class="btn btn-danger btn-sm remove-feature" type="button">
-                          <i class="mdi mdi-delete"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                {% empty %}
-                  <div class="feature-item mb-2">
-                    <div class="input-group">
-                      <input type="text"
-                             class="form-control"
-                             name="features[]"
-                             placeholder="Ex: Écran 6.5 pouces">
-                      <div class="input-group-append">
-                        <button class="btn btn-danger btn-sm remove-feature"
-                                type="button"
-                                style="display:none">
-                          <i class="mdi mdi-delete"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                {% endfor %}
-              </div>
-              <button type="button" class="btn btn-success btn-sm mt-2" id="add-feature">
-                <i class="mdi mdi-plus"></i> Ajouter une caractéristique
-              </button>
-            </div>
-            <button type="submit" class="btn btn-primary mr-2">Enregistrer</button>
-            <a href="{% url 'gestion:admin_products' %}" class="btn btn-dark">Abandonner</a>
-          </form>
+                     id="date_wish"
+                     required
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
         </div>
-      </div>
+        <!-- Ligne 6: Long description -->
+        <div>
+          <label class="flex flex-col">
+            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Description longue</span>
+            <textarea name="long_description"
+                      rows="4"
+                      class="form-input h-10 md:h-32 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                      placeholder="Description détaillée du produit"></textarea>
+          </label>
+        </div>
+        <!-- Ligne 7: Caractéristiques / entretien -->
+        <div>
+          <label class="flex flex-col">
+            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Caractéristiques / Entretien</span>
+            <textarea name="chara_entretien"
+                      rows="3"
+                      class="form-input h-10 md:h-24 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                      placeholder="Séparez par des sauts de ligne ou ';'"></textarea>
+          </label>
+        </div>
+        <!-- Ligne 8: Delivery policies -->
+        <div>
+          <label class="flex flex-col">
+            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Delivery Policy Phase 1</span>
+            <textarea name="delivery_policy_phase1"
+                      rows="3"
+                      class="form-input h-10 md:h-24 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                      placeholder="Phase 1 de la politique de livraison"></textarea>
+          </label>
+        </div>
+        <div>
+          <label class="flex flex-col">
+            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Delivery Policy Phase 2</span>
+            <textarea name="delivery_policy_phase2"
+                      rows="3"
+                      class="form-input h-10 md:h-24 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                      placeholder="Phase 2 de la politique de livraison"></textarea>
+          </label>
+        </div>
+        <!-- Ligne 9: Features dynamiques -->
+        <div>
+          <label class="flex flex-col">
+            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Caractéristiques dynamiques</span>
+            <div id="features-container" class="flex flex-col gap-2">
+              <div class="feature-item flex gap-2">
+                <input type="text"
+                       name="features[]"
+                       placeholder="Ex: Écran 6.5 pouces"
+                       class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm">
+                <button type="button"
+                        class="bg-red-600 hover:bg-red-700 text-white px-3 rounded-lg remove-feature">
+                  Supprimer
+                </button>
+              </div>
+            </div>
+            <button type="button"
+                    id="add-feature"
+                    class="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+              Ajouter une caractéristique
+            </button>
+          </label>
+        </div>
+        <!-- Boutons -->
+        <div class="flex flex-wrap gap-4 mt-4">
+          <button type="submit"
+                  class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2 rounded-lg transition">
+            Enregistrer
+          </button>
+          <a href="{% url 'gestion:admin_products' %}"
+             class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2 rounded-lg transition">
+            Abandonner
+          </a>
+        </div>
+      </form>
     </div>
   </div>
 {% endblock %}
 {% block extra_js %}
-  <!-- Script pour gérer les features dynamiques -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const addFeatureBtn = document.getElementById('add-feature');
-        const featuresContainer = document.getElementById('features-container');
-        
-        // Fonction pour ajouter une nouvelle feature
-        addFeatureBtn.addEventListener('click', function() {
-            const featureItem = document.createElement('div');
-            featureItem.className = 'feature-item mb-2';
-            featureItem.innerHTML = `
-                <div class="input-group">
-                    <input type="text" class="form-control" name="features[]" placeholder="Ex: Batterie 5000mAh">
-                    <div class="input-group-append">
-                        <button class="btn btn-danger btn-sm remove-feature" type="button">
-                            <i class="mdi mdi-delete"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-            featuresContainer.appendChild(featureItem);
-            updateRemoveButtons();
-        });
-        
-        // Fonction pour supprimer une feature
-        featuresContainer.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-feature') || e.target.closest('.remove-feature')) {
-                const featureItem = e.target.closest('.feature-item');
-                featureItem.remove();
-                updateRemoveButtons();
-            }
-        });
-        
-        // Fonction pour afficher/masquer les boutons de suppression
-        function updateRemoveButtons() {
-            const featureItems = featuresContainer.querySelectorAll('.feature-item');
-            featureItems.forEach((item, index) => {
-                const removeBtn = item.querySelector('.remove-feature');
-                if (featureItems.length > 1) {
-                    removeBtn.style.display = 'block';
-                } else {
-                    removeBtn.style.display = 'none';
-                }
-            });
-        }
-        
-        updateRemoveButtons();
+document.addEventListener('DOMContentLoaded', function() {
+    const addFeatureBtn = document.getElementById('add-feature');
+    const featuresContainer = document.getElementById('features-container');
+
+    addFeatureBtn.addEventListener('click', function() {
+        const featureItem = document.createElement('div');
+        featureItem.className = 'feature-item flex gap-2';
+        featureItem.innerHTML = `
+            <input type="text" name="features[]" placeholder="Ex: Batterie 5000mAh" class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm">
+            <button type="button" class="bg-red-600 hover:bg-red-700 text-white px-3 rounded-lg remove-feature">Supprimer</button>
+        `;
+        featuresContainer.appendChild(featureItem);
     });
+
+    featuresContainer.addEventListener('click', function(e) {
+        if(e.target.classList.contains('remove-feature')) {
+            const featureItem = e.target.closest('.feature-item');
+            featureItem.remove();
+        }
+    });
+});
   </script>
 {% endblock %}

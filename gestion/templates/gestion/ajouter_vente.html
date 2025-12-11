@@ -1,183 +1,143 @@
-{% extends 'gestion/base.html' %}
-{% load static %}
-{% block title %}Ajouter une vente - Cele Admin{% endblock %}
-
-{% block content %}      
-<div class="row">
-  <div class="col-12 grid-margin">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Enregistrement d'une vente</h4>
-        <form class="form-sample" method="post">
-          {% csrf_token %}
-          <p class="card-description">1. Détails de la vente </p>
-
-          <!-- Produit + Date -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="produit">Numéro du produit vendu:</label>
-                <div class="col-sm-9">
-                  <input type="text" class="form-control" list="produits" name="produit_id" id="produit"
-                         placeholder="Entrez le nom ou sélectionnez un produit" required />
+{% extends 'base_cele.html' %}
+{% block title %}CELEBOBO - Admin Products{% endblock %}
+{% block content %}
+    <div class="mx-auto max-w-4xl px-2 sm:px-4">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-text-dark-primary">
+                Enregistrer une vente
+            </h1>
+        </div>
+        <div class="flex flex-col gap-4 sm:gap-6 rounded-xl bg-component-dark p-3 sm:p-6">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+                    <div class="md:col-span-2">
+                        <label class="flex flex-col">
+                            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Produit vendu</span>
+                            <input class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                   placeholder="Commencer à taper"
+                                   type="text"
+                                   list="produits"
+                                   name="produit_id"
+                                   id="produit"
+                                   required />
+                            <datalist id="produits">
+                                {% for produit in produits %}<option value="{{ produit.id }}">{{ produit.name }}</option>{% endfor %}
+                            </datalist>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex flex-col">
+                            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Date de la vente</span>
+                            <input class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                   type="date"
+                                   name="date_achat"
+                                   id="date_achat"
+                                   required />
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex flex-col">
+                            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix final ($)</span>
+                            <input class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                                   step="0.1"
+                                   name="price_final"
+                                   id="price_final"
+                                   placeholder="Prix réellement vendu"
+                                   type="number" />
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex flex-col">
+                            <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Méthode de paiement</span>
+                            <select id="payment_method"
+                                    name="method"
+                                    class="form-select h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+                                {% for value, label in methods %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                            </select>
+                        </label>
+                    </div>
                 </div>
-                <datalist id="produits">
-                  {% for produit in produits %}
-                  <option value="{{ produit.id }}">{{ produit.name }}</option>
-                  {% endfor %}
-                </datalist>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="date_achat">Date d'achat:</label>
-                <div class="col-sm-9">
-                  <input type="date" class="form-control" name="date_achat" id="date_achat" required />
+                <div class="my-4 sm:my-8 flex flex-col gap-2 border-t border-border-dark pt-4 sm:pt-6">
+                    <p class="text-xs sm:text-sm text-text-dark-secondary leading-relaxed">
+                        Songez à la possibilité de rembourser le client en cas de retour du produit.
+                        Et assurez-vous de conserver toujours une trace de la vente.
+                        Tout ceci est important pour la gestion de votre inventaire et la satisfaction de vos clients.
+                    </p>
                 </div>
-              </div>
-            </div>
-          </div>                     
-
-          <!-- Prix final et méthode -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="price_final">Prix final(en $):</label>
-                <div class="col-sm-9">
-                  <input type="number" class="form-control" step="0.01" name="price_final"
-                         id="price_final" placeholder="Prix réellement vendu" />
+                <div class="space-y-4">
+                    <label class="flex flex-col input-wrapper">
+                        <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Nom du produit</span>
+                        <input class="auto-field form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm"
+                               type="text"
+                               id="product_name"
+                               readonly />
+                        <div class="spinner"></div>
+                    </label>
+                    <label class="flex flex-col input-wrapper">
+                        <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Catégorie</span>
+                        <input class="auto-field form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm"
+                               type="text"
+                               id="category"
+                               readonly />
+                        <div class="spinner"></div>
+                    </label>
+                    <label class="flex flex-col input-wrapper">
+                        <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix normal ($)</span>
+                        <input class="auto-field form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm"
+                               type="number"
+                               id="normal_price"
+                               readonly />
+                        <div class="spinner"></div>
+                    </label>
+                    <label class="flex flex-col input-wrapper">
+                        <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix d'achat ($)</span>
+                        <input class="auto-field form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm"
+                               type="number"
+                               id="purchase_price"
+                               readonly />
+                        <div class="spinner"></div>
+                    </label>
                 </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="payment_method">Méthode de paiement</label>
-                <div class="col-sm-9">
-                  <select class="form-control" id="payment_method" name="method">
-                    {% for value, label in methods %}
-                    <option value="{{ value }}">{{ label }}</option>
-                    {% endfor %}
-                  </select>
+                <div class="mt-6 sm:mt-8 flex flex-col-reverse sm:flex-row-reverse gap-2 sm:gap-3 border-t border-border-dark pt-4 sm:pt-6">
+                    <button class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-primary px-4 sm:px-6 text-sm md:text-base font-bold text-white hover:bg-primary/90 sm:w-auto"
+                            type="submit">Enregistrer la vente</button>
+                    <button class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-transparent px-4 sm:px-6 text-sm md:text-base font-medium text-text-dark-secondary hover:bg-white/10 sm:w-auto"
+                            type="reset">Vider le formulaire</button>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <p class="card-description text-warning">
-            Songez à la possibilité de rembourser le client en cas de retour du produit.
-            Et assurez-vous de conserver toujours une trace de la vente. 
-            Tout ceci est important pour la gestion de votre inventaire et la satisfaction de vos clients.
-          </p>
-
-          <p class="card-description">2. Informations sur le produit (<span class="text-success">remplies automatiquement</span>)</p>
-
-          <!-- Champs auto-remplis avec spinner -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group row position-relative">
-                <label class="col-sm-3 col-form-label">Nom du produit</label>
-                <div class="col-sm-9 position-relative">
-                  <div class="input-wrapper">
-                    <input type="text" class="form-control auto-field" id="product_name" 
-                      style="background-color: #2A3038; color: rgb(204, 200, 200);" 
-                      readonly />
-                    <div class="spinner"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group row position-relative">
-                <label class="col-sm-3 col-form-label">Catégorie</label>
-                <div class="col-sm-9 position-relative">
-                  <div class="input-wrapper">
-                    <input type="text" class="form-control auto-field" id="category" 
-                      style="background-color: #2A3038; color: rgb(204, 200, 200);" 
-                      readonly />
-                    <div class="spinner"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group row position-relative">
-                <label class="col-sm-3 col-form-label">Prix normal(en $):</label>
-                <div class="col-sm-9 position-relative">
-                  <div class="input-wrapper">
-                    <input type="number" class="form-control auto-field" id="normal_price" 
-                      style="background-color: #2A3038; color: rgb(204, 200, 200);" 
-                      readonly />
-                    <div class="spinner"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group row position-relative">
-                <label class="col-sm-3 col-form-label">Prix d'achat(en $):</label>
-                <div class="col-sm-9 position-relative">
-                  <div class="input-wrapper">
-                    <input type="number" class="form-control auto-field" id="purchase_price" 
-                      style="background-color: #2A3038; color: rgb(204, 200, 200);" 
-                      readonly />
-                    <div class="spinner"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary mt-3">Enregistrer la vente</button>
-        </form>
-      </div>
+            </form>
+        </div>
     </div>
-  </div>
-</div>
+    <style>
+.input-wrapper { position: relative; }
 
-<style>
-/* Style du spinner centré */
-.input-wrapper {
-  position: relative;
-}
 .spinner {
   position: absolute;
-  top: 50%;
+  top: 65%;
   left: 50%;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(204, 200, 200, 0.3);
-  border-top-color: rgb(204, 200, 200);
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(204,198,198,0.3);
+  border-top-color: rgb(204,198,198);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   animation: spin 0.8s linear infinite;
   display: none;
 }
+
 @keyframes spin {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
-.auto-field[readonly] {
-  cursor: not-allowed;
-}
-</style>
 
+.auto-field[readonly] { cursor: not-allowed; }
+    </style>
 {% endblock %}
-
 {% block extra_js %}
-<script>
+    <script>
 document.getElementById('produit').addEventListener('change', async function() {
   const productId = this.value;
   if (!productId) return;
 
-  // Affiche les spinners et vide les champs
   document.querySelectorAll('.spinner').forEach(sp => sp.style.display = 'block');
   document.querySelectorAll('.auto-field').forEach(f => f.value = '');
 
@@ -190,17 +150,15 @@ document.getElementById('produit').addEventListener('change', async function() {
       return;
     }
 
-    // Remplir les champs automatiquement
     document.getElementById('product_name').value = data.name || '';
     document.getElementById('normal_price').value = data.price || '';
     document.getElementById('purchase_price').value = data.price_primary || '';
     document.getElementById('category').value = data.category || '';
   } catch (error) {
-    console.error("Erreur lors du chargement du produit :", error);
+    console.error("Erreur :", error);
   } finally {
-    // Cache les spinners
     document.querySelectorAll('.spinner').forEach(sp => sp.style.display = 'none');
   }
 });
-</script>
+    </script>
 {% endblock %}

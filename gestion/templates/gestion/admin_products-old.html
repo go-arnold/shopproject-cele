@@ -1,0 +1,516 @@
+{% extends 'gestion/base.html' %}
+{% load static %}
+{% block title %}Gérer les produits - Cele Admin{% endblock %}
+{% block extra_css %}
+    <style>
+    body {
+        background: linear-gradient(135deg,  rgba(226,226,226,1) 0%,rgba(219,219,219,1) 50%,rgba(209,209,209,1) 50%,rgba(209,209,209,1) 50%,rgba(254,254,254,1) 100%) center/cover no-repeat;
+        min-height:100vh
+            }
+    .card {
+        width:360px;
+        background:#191c24;
+        border-radius:15px;
+        box-shadow:0 5px 20px rgba(0,0,0,.1);
+        transition:.3s;
+        font-family:'Segoe UI',sans-serif;
+        margin:20px auto;
+        overflow:hidden;
+        position:relative;cursor:pointer
+    }
+    .card:hover {
+        transform:translateY(-5px);
+        box-shadow:0 10px 25px rgba(0,0,0,.15)
+    }
+    .badge {
+        position:absolute;
+        top:10px;
+        right:10px;
+        background: linear-gradient(to right,  rgba(169,3,41,1) 0%,rgba(196,72,72,1) 44%,rgba(170,34,56,1) 100%);
+        color:#fff;
+        padding:5px 10px;
+        font-size:11px;
+        font-weight:600;
+        letter-spacing:1px;
+        text-transform:uppercase;
+        border-radius:10px;
+        box-shadow:0 3px 10px rgba(0,0,0,.2);
+        z-index:10
+    }
+    .tilt {
+        overflow:hidden
+    }
+    .img {
+        height:200px;
+        overflow:hidden
+    }
+    .img img {
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        transition:transform .5s
+    }
+    .card:hover .img img {
+        transform:scale(1.05)
+    }
+    .info {
+        padding:20px
+    }
+    .cat {
+        font-size:11px;
+        font-weight:600;
+        letter-spacing:1px;
+        text-transform:uppercase;
+        color:#71717A;
+        margin-bottom:5px
+    }
+    .title {
+        font-size:18px;
+        font-weight:700;
+        color:#fff;
+        margin:0 0 10px;
+        letter-spacing:-.5px
+    }
+    .desc {
+        font-size:13px;
+        color:#6c7293;
+        line-height:1.4;
+        margin-bottom:12px
+    }
+    .feats {
+        display:flex;
+        gap:6px;
+        margin-bottom:15px
+    }
+    .feat {
+        font-size:10px;
+        background:#F4F4F5;
+        color:#191c24;
+        padding:3px 8px;
+        border-radius:10px;
+        font-weight:500
+    }
+    .bottom {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:12px
+    }
+    .price {
+        display:flex;
+        flex-direction:column
+    }
+    .old {
+        font-size:13px;
+        text-decoration:solid;
+        color:#A1A1AA;
+        margin-bottom:2px
+    }
+    .new {
+        font-size:20px;
+        font-weight:700;
+        color:#6c7293
+    }
+    .btn { 
+        background:linear-gradient(45deg,#18181B,#27272A);
+        color:#fff;
+        border:none;
+        border-radius:10px;
+        padding:8px 15px;
+        font-size:13px;
+        font-weight:600;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:6px;
+        transition:.3s;
+        box-shadow:0 3px 10px rgba(0,0,0,.1)
+    }
+    .btn:hover {
+        background:linear-gradient(45deg,#27272A,#3F3F46);
+        transform:translateY(-2px);
+        box-shadow:0 5px 15px rgba(0,0,0,.15)
+    }
+    .btn:before {
+        content:'';
+        position:absolute;
+        top:0;
+        left:-100%;
+        width:100%;
+        height:100%;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
+        transition:.5s
+    }
+    .btn:hover:before {
+        left:100%
+    }
+    .icon {
+        transition:transform .3s
+    }
+    .btn:hover .icon {
+        transform:rotate(-10deg) scale(1.1)
+    }
+    .meta {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        border-top:1px solid #F4F4F5;
+        padding-top:12px
+    }
+    .rating {
+        display:flex;
+        align-items:center;
+        gap:2px
+    }
+    .rcount {
+        margin-left:6px;
+        font-size:11px;
+        color:#71717A
+    }
+    .stock {
+        font-size:11px;
+        font-weight:600;
+        color:#22C55E
+    }
+    @media (max-width:400px) {
+        .card {
+            width:90%
+        }
+        .title {
+            font-size:16px
+        }
+        .img {
+            height:180px
+        }
+        .bottom {
+            flex-direction:column;
+            align-items:flex-start;
+            gap:10px
+        }
+        .price {
+            margin-bottom:5px
+        }
+        .btn {
+            width:100%;
+            justify-content:center
+        }
+    }
+
+
+        .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: none;               /* caché par défaut */
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    transition: opacity .18s ease;
+    opacity: 0;
+    }
+    .modal-overlay[aria-hidden="false"] {
+    display: flex;
+    opacity: 1;
+    }
+
+    .modal-content {
+    background: #1f222d;
+    color: #fff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 650px;
+    padding: 20px;
+    position: relative;
+    border: 1px solid #2c2f3a;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+
+    .close-modal {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #aaa;
+    background: none;
+    border: none;
+    }
+    .close-modal:hover { color: #fff; 
+    }
+
+    /* loader spinner */
+    #deleteModalBody .spinner {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border: 3px solid #555;
+        border-top-color: #ff6b6b;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading { opacity: 0.5; pointer-events: none; }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="header">
+        <div style="display: flex;
+                    justify-content: space-between;
+                    align-items: center">
+            <div>
+                <h1>Gérer les produits</h1>
+                <p style="color: #666; margin-top: 10px;">{{ products.paginator.count }} produit(s) au total</p>
+            </div>
+            <a href="{% url 'gestion:add_product' %}" class="btn btn-primary">➕ Ajouter un produit</a>
+        </div>
+    </div>
+    <div class="row">
+        {% for product in products %}
+            <div class="card" data-product-id="{{ product.id }}">
+                <div class="badge">{{ product.badge }}</div>
+                <div class="tilt">
+                    <div class="img">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="cat">{{ product.category.category }}</div>
+                    <h2 class="title">{{ product.name }}</h2>
+                    <p class="desc">{{ product.description }}</p>
+                    <p class="desc">
+                        Produit ajouté depuis le {{ product.date_added|date:"d/m/Y" }}, il devrait être vendu avant le {{ product.date_wish|date:"d/m/Y" }}. Il a été acheté a {{ product.price_primary }}$.
+                    </p>
+                    <div class="feats">
+                        {% for feat in product.features.all %}<span class="feat">{{ feat }}</span>{% endfor %}
+                    </div>
+                    <div class="bottom">
+                        <div class="price">
+                            <span class="old"></span>
+                            <span class="new">{{ product.price }}$</span>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <a href="{% url 'gestion:edit_product' product.id %}"
+                               class="btn"
+                               style="text-decoration:none">Modifier produit</a>
+                            <!-- bouton supprimer : garde un <a> avec data-url + data-product-id -->
+                            <a href="{% url 'gestion:delete_product' product.id %}"
+                               class="btn btn-delete open-delete-modal"
+                               data-url="{% url 'gestion:delete_product' product.id %}"
+                               data-product-id="{{ product.id }}"
+                               style="text-decoration:none">
+                                <!-- ton svg -->
+                                <svg fill="#ffffff"
+                                     width="20px"
+                                     height="20px"
+                                     viewBox="0 0 24.00 24.00"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="icon line-color">
+                                    <path d="M16,7V4a1,1,0,0,0-1-1H9A1,1,0,0,0,8,4V7m4,4v6" style="fill: none; stroke: #2ca9bc; stroke-linecap: round; stroke-linejoin: round; stroke-width:2.352;">
+                                    </path>
+                                    <path d="M4,7H20M17.07,20.07,18,7H6l.93,13.07a1,1,0,0,0,1,.93h8.14A1,1,0,0,0,17.07,20.07Z" style="fill: none; stroke: #ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width:2.352;">
+                                    </path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="meta">
+                        <div class="rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= product.rating %}
+                                    <svg width="16"
+                                         height="16"
+                                         viewBox="0 0 24 24"
+                                         fill="#FFD700"
+                                         stroke="#FFD700"
+                                         stroke-width="0.5">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="rcount">{{ product.reviews }}</span>
+                        </div>
+                        <div class="stock">{{ product.date_wish }}</div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Aucun produit disponible.</p>
+        {% endfor %}
+    </div>
+    <div class="pagination">
+        <span class="btn">
+            {% if products.has_previous %}
+                <a class="btn" href="?page=1">&laquo; première</a>
+                <a class="btn" href="?page={{ products.previous_page_number }}">&lsaquo; précéden</a>
+            {% endif %}
+            <span class="current-page btn">Page {{ products.number }} sur {{ products.paginator.num_pages }}.</span>
+            {% if products.has_next %}
+                <a class="btn" href="?page={{ products.next_page_number }}">suivante &rsaquo;</a>
+                <a class="btn" href="?page={{ products.paginator.num_pages }}">dernière &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- MODAL: placé ici pour être disponible au chargement DOM -->
+    <div id="deleteModal"
+         class="modal-overlay"
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true">
+        <div class="modal-content"
+             role="document"
+             aria-labelledby="delete-modal-title">
+            <button class="close-modal" aria-label="Fermer la fenêtre">&times;</button>
+            <div id="deleteModalBody"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script>
+    (function(){
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("deleteModal");
+            if (!modal) return;
+            const modalBody = document.getElementById("deleteModalBody");
+            const closeModalBtn = modal.querySelector(".close-modal");
+            let lastFocusedButton = null;
+
+            function openLoader(triggerEl) {
+                modal.setAttribute("aria-hidden", "false");
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden";
+                modalBody.innerHTML = `
+                    <div style="text-align:center;padding:40px;">
+                        <div class="spinner"></div>
+                        <p style="margin-top:10px;color:#bbb;">Chargement…</p>
+                    </div>`;
+                if (triggerEl) {
+                    triggerEl.disabled = true;
+                    triggerEl.classList.add("loading");
+                }
+            }
+
+            function closeModal() {
+                modal.setAttribute("aria-hidden", "true");
+                modal.style.display = "none";
+                document.body.style.overflow = "";
+                modalBody.innerHTML = "";
+                if (lastFocusedButton) {
+                    try { lastFocusedButton.blur(); } catch(e){/*ignore*/}
+                    lastFocusedButton.disabled = false;
+                    lastFocusedButton.classList.remove("loading");
+                    lastFocusedButton = null;
+                }
+            }
+
+            // fermer par clique dehors
+            modal.addEventListener("click", function(e){
+                if (e.target === modal) closeModal();
+            });
+
+            if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+
+            // ouverture: on attache les handlers à tous les boutons
+            document.querySelectorAll(".open-delete-modal").forEach(function(btn){
+                btn.addEventListener("click", function(e){
+                    e.preventDefault();
+                    lastFocusedButton = btn;
+                    const url = btn.dataset.url;
+                    const pid = btn.dataset.productId || null;
+
+                    openLoader(btn);
+
+                    fetch(url, { headers: {'X-Requested-With': 'XMLHttpRequest'} })
+                        .then(function(res){
+                            if (!res.ok) throw new Error("Bad response");
+                            return res.text();
+                        })
+                        .then(function(html){
+                            // injecte le partial
+                            modalBody.innerHTML = html;
+
+                            // bouton annuler (partial doit avoir class .close-modal-btn)
+                            modalBody.querySelectorAll(".close-modal-btn").forEach(function(cbtn){
+                                cbtn.addEventListener("click", function(ev){
+                                    ev.preventDefault();
+                                    closeModal();
+                                });
+                            });
+
+                            // attacher handler au formulaire
+                            const form = modalBody.querySelector("form");
+                            if (form) {
+                                form.addEventListener("submit", function(ev){
+                                    ev.preventDefault();
+                                    const csrftoken = getCookie('csrftoken');
+                                    const fd = new FormData(form);
+
+                                    fetch(form.action, {
+                                        method: "POST",
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'X-CSRFToken': csrftoken
+                                        },
+                                        body: fd,
+                                        credentials: 'same-origin'
+                                    })
+                                    .then(function(resp){
+                                        // on essaye de parser JSON (on s'attend à {success:true})
+                                        return resp.json().catch(function(){
+                                            return { success: resp.ok };
+                                        });
+                                    })
+                                    .then(function(data){
+                                        if (data && data.success) {
+                                            // retirer la carte sans reload si possible
+                                            if (pid) {
+                                                const card = document.querySelector('.card[data-product-id="'+pid+'"]');
+                                                if (card) card.remove();
+                                                // message rapide puis fermer
+                                                modalBody.innerHTML = '<div style="text-align:center;padding:30px;">✅ Produit supprimé</div>';
+                                                setTimeout(closeModal, 600);
+                                                return;
+                                            }
+                                            // fallback
+                                            window.location.reload();
+                                        } else {
+                                            // si erreur serveur
+                                            console.error("Suppression: réponse inattendue", data);
+                                            window.location.reload();
+                                        }
+                                    })
+                                    .catch(function(err){
+                                        console.error("Erreur lors de la suppression:", err);
+                                        window.location.reload();
+                                    });
+                                });
+                            }
+                        })
+                        .catch(function(err){
+                            console.error("Erreur fetch modal:", err);
+                            modalBody.innerHTML = `<div style="padding:40px;text-align:center;color:#aaa;">Erreur de chargement. <br><small>${err.message}</small></div>`;
+                            if (btn) { btn.disabled = false; btn.classList.remove("loading"); }
+                        });
+                });
+            });
+        });
+    })();
+    </script>
+{% endblock %}

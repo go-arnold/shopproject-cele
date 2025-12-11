@@ -481,26 +481,42 @@
                                     <p class="text-white/60 p-4">Aucune conversation trouvée.</p>
                                 {% endif %}
                             </div>
-                            <!-- PAGINATION -->
-                            <div class="flex items-center justify-center py-6 mt-4">
-                                <a class="flex size-8 sm:size-10 items-center justify-center text-white/60 hover:text-white transition-colors"
-                                   href="#">
-                                    <span class="material-symbols-outlined text-lg sm:text-2xl">chevron_left</span>
-                                </a>
-                                <a class="text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] flex size-8 sm:size-10 items-center justify-center text-white rounded-full bg-primary"
-                                   href="#">1</a>
-                                <a class="text-xs sm:text-sm font-normal flex size-8 sm:size-10 items-center justify-center text-white/80 rounded-full hover:bg-white/10 transition-colors"
-                                   href="#">2</a>
-                                <a class="text-xs sm:text-sm font-normal flex size-8 sm:size-10 items-center justify-center text-white/80 rounded-full hover:bg-white/10 transition-colors"
-                                   href="#">3</a>
-                                <span class="text-xs sm:text-sm font-normal flex size-8 sm:size-10 items-center justify-center text-white/60 rounded-full">...</span>
-                                <a class="text-xs sm:text-sm font-normal flex size-8 sm:size-10 items-center justify-center text-white/80 rounded-full hover:bg-white/10 transition-colors"
-                                   href="#">10</a>
-                                <a class="flex size-8 sm:size-10 items-center justify-center text-white/60 hover:text-white transition-colors"
-                                   href="#">
-                                    <span class="material-symbols-outlined text-lg sm:text-2xl">chevron_right</span>
-                                </a>
-                            </div>
+                            <!-- Pagination -->
+                            {% if is_paginated %}
+                                <div aria-label="Pagination"
+                                     class="flex items-center justify-center py-6 mt-4">
+                                    {% if page_obj.has_previous %}
+                                        <a href="?page={{ page_obj.previous_page_number }}"
+                                           class="flex size-8 sm:size-10 items-center justify-center text-white/60 hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined text-lg sm:text-2xl">chevron_left</span>
+                                        </a>
+                                    {% else %}
+                                        <span class="flex size-8 sm:size-10 items-center justify-center text-white/60 transition-colors opacity-50">
+                                            <span class="material-symbols-outlined text-xl">chevron_left</span>
+                                        </span>
+                                    {% endif %}
+                                    {% for num in paginator.page_range %}
+                                        {% if num == page_obj.number %}
+                                            <a aria-current="page"
+                                               class="text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] flex size-8 sm:size-10 items-center justify-center text-white rounded-full bg-primary"
+                                               href="?page={{ num }}">{{ num }}</a>
+                                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                            <a class="text-xs sm:text-sm font-normal flex size-8 sm:size-10 items-center justify-center text-white/80 rounded-full hover:bg-white/10 transition-colors"
+                                               href="?page={{ num }}">{{ num }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if page_obj.has_next %}
+                                        <a href="?page={{ page_obj.next_page_number }}"
+                                           class="flex size-8 sm:size-10 items-center justify-center text-white/60 hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined text-xl">chevron_right</span>
+                                        </a>
+                                    {% else %}
+                                        <span class="flex size-8 sm:size-10 items-center justify-center text-white/60 transition-colors opacity-50">
+                                            <span class="material-symbols-outlined text-xl">chevron_right</span>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         </main>
                     </div>
                 </div>

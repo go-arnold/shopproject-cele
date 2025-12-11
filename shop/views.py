@@ -157,7 +157,6 @@ def allProducts(request):
         for p in products_qs:
             p.is_favorite = False
 
-    # Pagination: 12 produits par page (mêmes valeurs et noms que dans categoryVue)
     paginator = Paginator(products_qs, 12)
     page = request.GET.get('page')
     try:
@@ -509,44 +508,9 @@ def messages(request):
     return render(request, 'shop/conversations.html')
 
 
-"""
-def cart(request):
-    Rend la page du panier.
-    return render(request, 'shop/cart.html')"""
-
-
 def cart_view(request):
     cart = Cart(request)
     return render(request, "shop/cart.html", {"cart": cart})
-
-
-"""
-Ancienne vue de listing de produits (conservée en commentaire pour référence):
-def product_list(request):
-    products = Product.objects.prefetch_related('features').all()
-
-    # Convertir les produits en liste de dictionnaires
-    product_data = []
-    for p in products:
-        product_data.append({
-            "id": p.id,
-            "name": p.name,
-            "description": p.description,
-            "price": p.price,
-            "category": p.category,
-            "image": p.image.url if p.image else "",
-            "badge": p.badge,
-            "features": [f.name for f in p.features.all()],
-            "rating": p.rating,
-            "reviews": p.reviews
-        })
-
-    return render(request, 'shop/home.html', {
-        "products": products,
-        "product_data": product_data
-    })
-
-"""
 
 
 @login_required
@@ -697,7 +661,7 @@ def conversation_messages_json(request, conversation_id):
             "sender_id": m.sender.id,
             "sender_name": m.sender.username,
             "content": m.content,
-            "timestamp": m.timestamp.strftime("%H:%M"),
+            "timestamp": m.timestamp.isoformat(),
             "is_me": (m.sender == request.user),
         })
 
@@ -772,7 +736,7 @@ def send_message_ajax(request, conversation_id):
         "sender_id": msg.sender.id,
         "content": msg.content,
         "image_url": msg.image.url if msg.image else None,
-        "timestamp": msg.timestamp.strftime("%H:%M"),
+        "timestamp": msg.timestamp.isoformat(),
         "is_me": True,
     })
 
@@ -799,7 +763,7 @@ def fetch_new_messages_ajax(request, conversation_id):
             "sender_name": m.sender.username,
             "content": m.content,
             "image_url": m.image.url if m.image else None,
-            "timestamp": m.timestamp.strftime("%H:%M"),
+            "timestamp": m.timestamp.isoformat(),
             "is_me": (m.sender == request.user),
         })
 
@@ -824,17 +788,30 @@ def notifications_view(request):
             revendeurs = revendeur_group.user_set.all()
             mukubwa_group = Group.objects.get(name="mukubwa")
             mukubwas = mukubwa_group.user_set.all()
-            # superusers
+
             s_users = User.objects.filter(is_superuser=True)
         except Group.DoesNotExist:
             revendeurs = []
             mukubwas = []
-
+        paginator = Paginator(notifications, 10)
+        page = request.GET.get('page')
+        try:
+            page_obj = paginator.page(page)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
         return render(request, "shop/mukubwa_revendeur.html", {
-            "notifications": notifications,
+            "notifications": page_obj.object_list,
             "revendeurs": revendeurs,
             "mukubwas": mukubwas,
             "s_users": s_users,
+            'page_obj': page_obj,
+            'paginator': paginator,
+            'is_paginated': page_obj.has_other_pages(),
+            'start_index': page_obj.start_index(),
+            'end_index': page_obj.end_index(),
+            'total_count': paginator.count,
         })
 
 
@@ -965,9 +942,18 @@ def list_conversations(request):
     qs = Conversation.objects.filter(
         participants=request.user).order_by("-created_at")
 
+    paginator = Paginator(qs, 8)
+    page = request.GET.get('page')
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
     # Construire une liste simple d'objets dict pour le template.
     conversations_info = []
-    for conv in qs:
+    for conv in page_obj.object_list:
         # dernier message
         # last_msg = conv.message_set.order_by("-timestamp").first()
         last_msg = Message.objects.filter(
@@ -1015,6 +1001,12 @@ def list_conversations(request):
         "conversations_info": conversations_info,
         "query": q,
         "now": timezone.now(),
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'is_paginated': page_obj.has_other_pages(),
+        'start_index': page_obj.start_index(),
+        'end_index': page_obj.end_index(),
+        'total_count': paginator.count,
     }
     return render(request, "shop/list_discussions.html", context)
 

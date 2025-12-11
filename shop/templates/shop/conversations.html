@@ -771,275 +771,263 @@
         </nav>
         <!-- JS -->
         <script>
-        /* === TAB-BAR SCROLL HIDE === */
-        let lastScroll = 0;
-        const tabbar = document.getElementById("mobileTabbar");
+                /* === TAB-BAR SCROLL HIDE === */
+                let lastScroll = 0;
+                const tabbar = document.getElementById("mobileTabbar");
 
-        window.addEventListener("scroll", () => {
-            const current = window.scrollY;
-            if (current > lastScroll && current > 80) tabbar.classList.add("hide");
-            else tabbar.classList.remove("hide");
-            lastScroll = current;
-        });
+                window.addEventListener("scroll", () => {
+                    const current = window.scrollY;
+                    if (current > lastScroll && current > 80) tabbar.classList.add("hide");
+                    else tabbar.classList.remove("hide");
+                    lastScroll = current;
+                });
 
-        /* === MOBILE SEARCH - Twitter Style === */
-        const searchBtn = document.getElementById("mobileSearchBtn");
-        const searchContainer = document.getElementById("mobileSearchContainer");
-        const closeSearch = document.getElementById("closeSearch");
-        const mobileSearchInput = document.getElementById("mobileSearchInput");
+                /* === MOBILE SEARCH - Twitter Style === */
+                const searchBtn = document.getElementById("mobileSearchBtn");
+                const searchContainer = document.getElementById("mobileSearchContainer");
+                const closeSearch = document.getElementById("closeSearch");
+                const mobileSearchInput = document.getElementById("mobileSearchInput");
 
-        searchBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            searchContainer.classList.add("active");
-            document.body.style.overflow = "hidden";
-            setTimeout(() => {
-                mobileSearchInput.focus();
-            }, 100);
-        });
+                searchBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    searchContainer.classList.add("active");
+                    document.body.style.overflow = "hidden";
+                    setTimeout(() => {
+                        mobileSearchInput.focus();
+                    }, 100);
+                });
 
-        closeSearch.addEventListener("click", () => {
-            searchContainer.classList.remove("active");
-            document.body.style.overflow = "";
-            mobileSearchInput.value = "";
-        });
+                closeSearch.addEventListener("click", () => {
+                    searchContainer.classList.remove("active");
+                    document.body.style.overflow = "";
+                    mobileSearchInput.value = "";
+                });
 
-        /* === MOBILE SIDEBAR === */
-        const menuBurger = document.getElementById("menuBurger");
-        const mobileSidebar = document.getElementById("mobileSidebar");
-        const sidebarOverlay = document.getElementById("sidebarOverlay");
-        const closeSidebar = document.getElementById("closeSidebar");
+                /* === MOBILE SIDEBAR === */
+                const menuBurger = document.getElementById("menuBurger");
+                const mobileSidebar = document.getElementById("mobileSidebar");
+                const sidebarOverlay = document.getElementById("sidebarOverlay");
+                const closeSidebar = document.getElementById("closeSidebar");
 
-        function openSidebar() {
-            mobileSidebar.classList.add("active");
-            sidebarOverlay.classList.add("active");
-            document.body.style.overflow = "hidden";
-        }
-
-        function closeSidebarFn() {
-            mobileSidebar.classList.remove("active");
-            sidebarOverlay.classList.remove("active");
-            document.body.style.overflow = "";
-        }
-
-        menuBurger.addEventListener("click", openSidebar);
-        closeSidebar.addEventListener("click", closeSidebarFn);
-        sidebarOverlay.addEventListener("click", closeSidebarFn);
-
-        /* === AUTO SCROLL TO BOTTOM === */
-        const messagesContainer = document.querySelector('.chat-messages');
-        if (messagesContainer) {
-            setTimeout(() => {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 100);
-        }
-
-        /* === ENTER TO SEND === 
-        const messageInput = document.querySelector('footer input[type="text"]');
-        const sendButton = document.querySelector('footer button:last-child');
-
-        if (messageInput && sendButton) {
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendButton.click();
+                function openSidebar() {
+                    mobileSidebar.classList.add("active");
+                    sidebarOverlay.classList.add("active");
+                    document.body.style.overflow = "hidden";
                 }
-            });
-        }*/
+
+                function closeSidebarFn() {
+                    mobileSidebar.classList.remove("active");
+                    sidebarOverlay.classList.remove("active");
+                    document.body.style.overflow = "";
+                }
+
+                menuBurger.addEventListener("click", openSidebar);
+                closeSidebar.addEventListener("click", closeSidebarFn);
+                sidebarOverlay.addEventListener("click", closeSidebarFn);
+
+                /* === AUTO SCROLL TO BOTTOM === */
+                const messagesContainer = document.querySelector('.chat-messages');
+                if (messagesContainer) {
+                    setTimeout(() => {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }, 100);
+                }
+
         </script>
         <script src="{% static 'script/cart.js' %}"></script>
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
+                    document.addEventListener("DOMContentLoaded", function () {
 
-                const root = document.getElementById("conversation-root");
-                const conversationId = root.dataset.conversationId;
+                        const root = document.getElementById("conversation-root");
+                        const conversationId = root.dataset.conversationId;
 
-                const messagesDiv = document.getElementById("messages");
+                        const messagesDiv = document.getElementById("messages");
 
-                // MOBILE
-                const inputMobile = document.getElementById("messageInputMobile");
-                const sendMobile = document.getElementById("sendBtnMobile");
-                const attachMobile = document.getElementById("attachBtnMobile");
+                        // MOBILE
+                        const inputMobile = document.getElementById("messageInputMobile");
+                        const sendMobile = document.getElementById("sendBtnMobile");
+                        const attachMobile = document.getElementById("attachBtnMobile");
 
-                // DESKTOP
-                const inputDesktop = document.getElementById("messageInputDesktop");
-                const sendDesktop = document.getElementById("sendBtnDesktop");
-                const attachDesktop = document.getElementById("attachBtnDesktop");
+                        // DESKTOP
+                        const inputDesktop = document.getElementById("messageInputDesktop");
+                        const sendDesktop = document.getElementById("sendBtnDesktop");
+                        const attachDesktop = document.getElementById("attachBtnDesktop");
 
-                // Shared hidden input for image upload
-                const imageInput = document.createElement("input");
-                imageInput.type = "file";
-                imageInput.accept = "image/*";
-                imageInput.id = "image-input";
-                imageInput.classList.add("hidden");
-                document.body.appendChild(imageInput);
+                        // Shared hidden input for image upload
+                        const imageInput = document.createElement("input");
+                        imageInput.type = "file";
+                        imageInput.accept = "image/*";
+                        imageInput.id = "image-input";
+                        imageInput.classList.add("hidden");
+                        document.body.appendChild(imageInput);
 
-                const previewZone = document.getElementById("preview");
+                        const previewZone = document.getElementById("preview");
 
-                imageInput.addEventListener("change", function () {
-                    previewZone.innerHTML = "";
+                        imageInput.addEventListener("change", function () {
+                            previewZone.innerHTML = "";
 
-                    if (this.files && this.files[0]) {
-                        const imgURL = URL.createObjectURL(this.files[0]);
-                        previewZone.innerHTML = `
-                            <img src="${imgURL}" class="max-w-[200px] rounded-lg mb-2">
-                        `;
-                    }
-                });
-
-                function getLastId() {
-                    const bubbles = messagesDiv.querySelectorAll("[data-id]");
-                    if (bubbles.length === 0) return 0;
-                    return Number(bubbles[bubbles.length - 1].dataset.id);
-                }
-
-                let lastMessageId = getLastId();
-
-
-                function scrollBottom() {
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                }
-                scrollBottom();
-
-
-                function getMessageText() {
-                    return inputMobile.value.trim() || inputDesktop.value.trim();
-                }
-
-                function resetInputs() {
-                    inputMobile.value = "";
-                    inputDesktop.value = "";
-                    imageInput.value = "";
-                }
-
-
-                // Render message
-                function renderMessage(msg, animate = false) {
-
-                    let html = "";
-
-                    if (msg.is_me) {
-                        html = `
-                        <div class="flex flex-row-reverse items-end gap-2 md:gap-3 self-end message-bubble" data-id="${msg.id}">
-                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-7 md:size-8 shrink-0" style='background-image: url("{{ request.user.profile.image.url }}")'></div>
-
-                            <div class="flex flex-col gap-1 items-end min-w-0">
-                                <div class="rounded-2xl rounded-br-md bg-primary text-white px-3 md:px-4 py-2 md:py-3 shadow-sm">
-                                    ${msg.content ? `<p class="text-sm md:text-base">${msg.content.replace(/\n/g, "<br>")}</p>` : ""}
-                                    ${msg.image_url ? `<img src="${msg.image_url}" class="mt-2 rounded-lg max-w-[200px]">` : ""}
-                                </div>
-                                <span class="text-xs text-slate-500 mr-1">${msg.timestamp}</span>
-                            </div>
-                        </div>
-                        `;
-                    } else {
-                        html = `
-                        <div class="flex items-end gap-2 md:gap-3 message-bubble" data-id="${msg.id}">
-                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-7 md:size-8 shrink-0" style='background-image: url("{{ request.user.profile.image.url }}")'></div>
-
-                            <div class="flex flex-col gap-1 min-w-0">
-                                <div class="rounded-2xl rounded-bl-md bg-slate-200 dark:bg-slate-800 px-3 md:px-4 py-2 md:py-3 shadow-sm">
-                                    ${msg.content ? `<p class="text-sm md:text-base">${msg.content.replace(/\n/g, "<br>")}</p>` : ""}
-                                    ${msg.image_url ? `<img src="${msg.image_url}" class="mt-2 rounded-lg max-w-[200px]">` : ""}
-                                </div>
-                                <span class="text-xs text-slate-500 ml-1">${msg.timestamp}</span>
-                            </div>
-                        </div>
-                        `;
-                    }
-
-                    messagesDiv.insertAdjacentHTML("beforeend", html);
-                    if (animate) scrollBottom();
-                }
-
-
-                function sendMessage() {
-                    const text = getMessageText();
-                    const image = imageInput.files[0];
-
-                    if (!text && !image) return;
-
-                    // 1) Show immediately
-                    const tempId = "tmp-" + Math.random();
-                    renderMessage({
-                        id: tempId,
-                        is_me: true,
-                        content: text,
-                        image_url: image ? URL.createObjectURL(image) : null,
-                        timestamp: "•••"
-                    }, true);
-
-                    resetInputs();
-
-                    // 2) Send to backend
-                    let formData = new FormData();
-                    if (text) formData.append("content", text);
-                    if (image) formData.append("image", image);
-
-                    fetch(`/conversation/${conversationId}/send/`, {
-                        method: "POST",
-                        body: formData,
-                        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        const tempEl = messagesDiv.querySelector(`[data-id="${tempId}"]`);
-                        if (tempEl) tempEl.remove();
-
-                        renderMessage(data, true);
-                        lastMessageId = data.id;
-                    });
-                }
-
-
-                // EVENTS
-
-                sendMobile.addEventListener("click", sendMessage);
-                sendDesktop.addEventListener("click", sendMessage);
-
-                inputMobile.addEventListener("keydown", e => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
-
-                inputDesktop.addEventListener("keydown", e => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
-
-                attachMobile.addEventListener("click", () => imageInput.click());
-                attachDesktop.addEventListener("click", () => imageInput.click());
-
-
-                // POLLING (no flicker)
-                setInterval(() => {
-                    fetch(`/conversation/${conversationId}/fetch/?last_id=${lastMessageId}`)
-                        .then(r => r.json())
-                        .then(data => {
-                            data.messages.forEach(msg => {
-                                renderMessage(msg, true);
-                                lastMessageId = msg.id;
-                            });
+                            if (this.files && this.files[0]) {
+                                const imgURL = URL.createObjectURL(this.files[0]);
+                                previewZone.innerHTML = `
+                                    <img src="${imgURL}" class="max-w-[200px] rounded-lg mb-2">
+                                `;
+                            }
                         });
-                }, 3000);
 
-            });
+                        function getLastId() {
+                            const bubbles = messagesDiv.querySelectorAll("[data-id]");
+                            if (bubbles.length === 0) return 0;
+                            return Number(bubbles[bubbles.length - 1].dataset.id);
+                        }
 
-            // ===== Messages counter  =====
-        document.addEventListener("DOMContentLoaded", () => {
-            const count = {{msg_count}} * 1; 
-            const badge = document.getElementById("messagesCounter");
+                        let lastMessageId = getLastId();
 
-            if (count > 0) {
-                badge.textContent = count;
-                badge.classList.remove("hidden");
-            } else {
-                badge.classList.add("hidden");
-            }
-        });
+
+                        function scrollBottom() {
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        }
+                        scrollBottom();
+
+
+                        function getMessageText() {
+                            return inputMobile.value.trim() || inputDesktop.value.trim();
+                        }
+
+                        function resetInputs() {
+                            inputMobile.value = "";
+                            inputDesktop.value = "";
+                            imageInput.value = "";
+                        }
+
+
+                        // Render message
+                        function renderMessage(msg, animate = false) {
+
+                            let html = "";
+
+                            if (msg.is_me) {
+                                html = `
+                                <div class="flex flex-row-reverse items-end gap-2 md:gap-3 self-end message-bubble" data-id="${msg.id}">
+                                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-7 md:size-8 shrink-0" style='background-image: url("{{ request.user.profile.image.url }}")'></div>
+
+                                    <div class="flex flex-col gap-1 items-end min-w-0">
+                                        <div class="rounded-2xl rounded-br-md bg-primary text-white px-3 md:px-4 py-2 md:py-3 shadow-sm">
+                                            ${msg.content ? `<p class="text-sm md:text-base">${msg.content.replace(/\n/g, "<br>")}</p>` : ""}
+                                            ${msg.image_url ? `<img src="${msg.image_url}" class="mt-2 rounded-lg max-w-[200px]">` : ""}
+                                        </div>
+                                        <span class="text-xs text-slate-500 mr-1">${msg.timestamp}</span>
+                                    </div>
+                                </div>
+                                `;
+                            } else {
+                                html = `
+                                <div class="flex items-end gap-2 md:gap-3 message-bubble" data-id="${msg.id}">
+                                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-7 md:size-8 shrink-0" style='background-image: url("{{ request.user.profile.image.url }}")'></div>
+
+                                    <div class="flex flex-col gap-1 min-w-0">
+                                        <div class="rounded-2xl rounded-bl-md bg-slate-200 dark:bg-slate-800 px-3 md:px-4 py-2 md:py-3 shadow-sm">
+                                            ${msg.content ? `<p class="text-sm md:text-base">${msg.content.replace(/\n/g, "<br>")}</p>` : ""}
+                                            ${msg.image_url ? `<img src="${msg.image_url}" class="mt-2 rounded-lg max-w-[200px]">` : ""}
+                                        </div>
+                                        <span class="text-xs text-slate-500 ml-1">${msg.timestamp}</span>
+                                    </div>
+                                </div>
+                                `;
+                            }
+
+                            messagesDiv.insertAdjacentHTML("beforeend", html);
+                            if (animate) scrollBottom();
+                        }
+
+
+                        function sendMessage() {
+                            const text = getMessageText();
+                            const image = imageInput.files[0];
+
+                            if (!text && !image) return;
+
+                            // 1) Show immediately
+                            const tempId = "tmp-" + Math.random();
+                            renderMessage({
+                                id: tempId,
+                                is_me: true,
+                                content: text,
+                                image_url: image ? URL.createObjectURL(image) : null,
+                                timestamp: "•••"
+                            }, true);
+
+                            resetInputs();
+
+                            // 2) Send to backend
+                            let formData = new FormData();
+                            if (text) formData.append("content", text);
+                            if (image) formData.append("image", image);
+
+                            fetch(`/conversation/${conversationId}/send/`, {
+                                method: "POST",
+                                body: formData,
+                                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                const tempEl = messagesDiv.querySelector(`[data-id="${tempId}"]`);
+                                if (tempEl) tempEl.remove();
+
+                                renderMessage(data, true);
+                                lastMessageId = data.id;
+                            });
+                        }
+
+
+                        // EVENTS
+
+                        sendMobile.addEventListener("click", sendMessage);
+                        sendDesktop.addEventListener("click", sendMessage);
+
+                        inputMobile.addEventListener("keydown", e => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+
+                        inputDesktop.addEventListener("keydown", e => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+
+                        attachMobile.addEventListener("click", () => imageInput.click());
+                        attachDesktop.addEventListener("click", () => imageInput.click());
+
+
+                        // POLLING (no flicker)
+                        setInterval(() => {
+                            fetch(`/conversation/${conversationId}/fetch/?last_id=${lastMessageId}`)
+                                .then(r => r.json())
+                                .then(data => {
+                                    data.messages.forEach(msg => {
+                                        renderMessage(msg, true);
+                                        lastMessageId = msg.id;
+                                    });
+                                });
+                        }, 3000);
+
+                    });
+
+                    // ===== Messages counter  =====
+                document.addEventListener("DOMContentLoaded", () => {
+                    const count = {{msg_count}} * 1; 
+                    const badge = document.getElementById("messagesCounter");
+
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove("hidden");
+                    } else {
+                        badge.classList.add("hidden");
+                    }
+                });
         </script>
     </body>
 </html>

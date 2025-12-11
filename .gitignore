@@ -6,3 +6,4 @@ Dockerfile
 
 .env
 
+db.sqlite3

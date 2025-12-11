@@ -1,0 +1,286 @@
+{% extends 'base_cele.html' %}
+{% block title %}Dashboard - CELEBOBO{% endblock %}
+{% block content %}
+    <div class="flex flex-col gap-6 sm:gap-8">
+        <!-- Statistics Section -->
+        <section>
+            <h3 class="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Dashboard Overview</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                <!-- Stat Card 1 -->
+                <div class="bg-white/5 dark:bg-black/20 p-4 sm:p-6 rounded-xl flex items-start gap-3 sm:gap-4 border border-white/10">
+                    <div class="bg-primary/20 text-primary p-2 sm:p-3 rounded-lg flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl sm:text-3xl">trending_up</span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs sm:text-sm text-gray-400">Croissance potentielle</p>
+                        {% if croissance_pourcentage %}
+                            <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ croissance_pourcentage }}%</p>
+                        {% else %}
+                            <p class="text-xl sm:text-2xl font-bold text-white truncate">0%</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Stat Card 2 -->
+                <div class="bg-white/5 dark:bg-black/20 p-4 sm:p-6 rounded-xl flex items-start gap-3 sm:gap-4 border border-white/10">
+                    <div class="bg-primary/20 text-primary p-2 sm:p-3 rounded-lg flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl sm:text-3xl">payments</span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs sm:text-sm text-gray-400">Revenu mensuel attendu</p>
+                        {% if revenu_mensuel %}
+                            <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ revenu_mensuel }}$</p>
+                        {% else %}
+                            <p class="text-xl sm:text-2xl font-bold text-white truncate">0$</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Stat Card 3 -->
+                <div class="bg-white/5 dark:bg-black/20 p-4 sm:p-6 rounded-xl flex items-start gap-3 sm:gap-4 border border-white/10">
+                    <div class="bg-primary/20 text-primary p-2 sm:p-3 rounded-lg flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl sm:text-3xl">today</span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs sm:text-sm text-gray-400">Revenu quotidien attendu</p>
+                        <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ revenu_quotidien }}$</p>
+                    </div>
+                </div>
+                <!-- Stat Card 4 -->
+                <div class="bg-white/5 dark:bg-black/20 p-4 sm:p-6 rounded-xl flex items-start gap-3 sm:gap-4 border border-white/10">
+                    <div class="bg-primary/20 text-primary p-2 sm:p-3 rounded-lg flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl sm:text-3xl">checkroom</span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs sm:text-sm text-gray-400">Revenu dans l'habillement</p>
+                        <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ revenu_habits }}$</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+            <!-- Messages & Notifications Column -->
+            <div class="flex flex-col gap-6 sm:gap-8">
+                <!-- Messages Table -->
+                <div class="bg-white/5 dark:bg-black/20 p-3 sm:p-4 rounded-xl border border-white/10">
+                    <h3 class="text-base sm:text-lg font-semibold text-white px-2 pb-2 sm:pb-3">
+                        Messages recents (<a class="underline" href="{% url 'list_conversations' %}">Voir tous les messages</a>)
+                    </h3>
+                    <div class="overflow-x-auto -mx-3 sm:mx-0">
+                        <table class="w-full min-w-[500px] sm:min-w-0">
+                            <thead>
+                                <tr class="border-b border-b-white/10">
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">
+                                        Expediteur
+                                    </th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">Contenu</th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">Depuis</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if conversations_info %}
+                                    {% for info in conversations_info %}
+                                        <tr class="border-t border-t-white/10 hover:bg-white/5 transition-colors">
+                                            <td class="px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm">
+                                                {% if info.other %}
+                                                    {{ info.other.username }}
+                                                {% else %}
+                                                    Utilisateur supprimé
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-3 sm:px-4 py-2 sm:py-3 text-gray-400 text-xs sm:text-sm">
+                                                <a href="{% url 'conversation_detail' info.conversation.id %}">{{ info.last_content|default:"(Pas de message)" }}...</a>
+                                            </td>
+                                            <td class="px-3 sm:px-4 py-2 sm:py-3 text-gray-400 text-xs sm:text-sm">
+                                                {% if info.last_timestamp %}
+                                                    {{ info.last_timestamp|timesince }}
+                                                {% else %}
+                                                    Aucun message
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3"
+                                            class="px-3 sm:px-4 py-2 sm:py-3 text-center text-gray-400 text-xs sm:text-sm">
+                                            Aucun message récent
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if is_paginated_sms %}
+                        <div class="flex items-center justify-center pt-2 gap-1">
+                            {% if page_obj_sms.has_previous %}
+                                <a class="flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white"
+                                   href="?page_sms={{ page_obj_sms.previous_page_number }}{% if page_notif %}&page_notif={{ page_notif }}{% endif %}{% if page_order %}&page_order={{ page_order }}{% endif %}">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                                </a>
+                            {% else %}
+                                <span class="flex size-7 sm:size-8 items-center justify-center text-gray-400 opacity-50">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                                </span>
+                            {% endif %}
+                            {% for num in paginator_sms.page_range %}
+                                {% if num == page_obj_sms.number %}
+                                    <span class="text-xs font-bold flex size-7 sm:size-8 items-center justify-center text-white rounded-full bg-primary">{{ num }}</span>
+                                {% elif num > page_obj_sms.number|add:'-3' and num < page_obj_sms.number|add:'3' %}
+                                    <a class="text-xs font-bold flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-primary/50"
+                                       href="?page_sms={{ num }}{% if page_notif %}&page_notif={{ page_notif }}{% endif %}{% if page_order %}&page_order={{ page_order }}{% endif %}">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj_sms.has_next %}
+                                <a class="flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white"
+                                   href="?page_sms={{ page_obj_sms.next_page_number }}{% if page_notif %}&page_notif={{ page_notif }}{% endif %}{% if page_order %}&page_order={{ page_order }}{% endif %}">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                                </a>
+                            {% else %}
+                                <span class="flex size-7 sm:size-8 items-center justify-center text-gray-400 opacity-50">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Notifications Table -->
+                <div class="bg-white/5 dark:bg-black/20 p-3 sm:p-4 rounded-xl border border-white/10">
+                    <h3 class="text-base sm:text-lg font-semibold text-white px-2 pb-2 sm:pb-3">
+                        Notifications (<a class="underline" href="{% url 'notifications' %}">Voir toutes les notifications</a>)
+                    </h3>
+                    <div class="overflow-x-auto -mx-3 sm:mx-0">
+                        <table class="w-full min-w-[500px] sm:min-w-0">
+                            <thead>
+                                <tr class="border-b border-b-white/10">
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">
+                                        Notification
+                                    </th>
+                                    <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if page_obj_notif.object_list %}
+                                    {% for notif in page_obj_notif.object_list %}
+                                        <tr class="border-t border-t-white/10 hover:bg-white/5 transition-colors">
+                                            <td class="px-3 sm:px-4 py-2 sm:py-3 text-gray-400 text-xs sm:text-sm">{{ notif.title }}</td>
+                                            <td class="px-3 sm:px-4 py-2 sm:py-3 text-gray-400 text-xs sm:text-sm">{{ notif.created_at|timesince }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2"
+                                            class="px-3 sm:px-4 py-2 sm:py-3 text-center text-gray-400 text-xs sm:text-sm">
+                                            Aucune notification
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if is_paginated_notif %}
+                        <div class="flex items-center justify-center pt-2 gap-1">
+                            {% if page_obj_notif.has_previous %}
+                                <a class="flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white"
+                                   href="?page_notif={{ page_obj_notif.previous_page_number }}{% if page_sms %}&page_sms={{ page_sms }}{% endif %}{% if page_order %}&page_order={{ page_order }}{% endif %}">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                                </a>
+                            {% else %}
+                                <span class="flex size-7 sm:size-8 items-center justify-center text-gray-400 opacity-50">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                                </span>
+                            {% endif %}
+                            {% for num in paginator_notif.page_range %}
+                                {% if num == page_obj_notif.number %}
+                                    <span class="text-xs font-bold flex size-7 sm:size-8 items-center justify-center text-white rounded-full bg-primary">{{ num }}</span>
+                                {% elif num > page_obj_notif.number|add:'-3' and num < page_obj_notif.number|add:'3' %}
+                                    <a class="text-xs font-bold flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-primary/50"
+                                       href="?page_notif={{ num }}{% if page_sms %}&page_sms={{ page_sms }}{% endif %}{% if page_order %}&page_order={{ page_order }}{% endif %}">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj_notif.has_next %}
+                                <a class="flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white"
+                                   href="?page_notif={{ page_obj_notif.next_page_number }}{% if page_sms %}&page_sms={{ page_sms }}{% endif %}{% if page_order %}&page_order={{ page_order }}{% endif %}">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                                </a>
+                            {% else %}
+                                <span class="flex size-7 sm:size-8 items-center justify-center text-gray-400 opacity-50">
+                                    <span class="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Orders Table -->
+            <div class="bg-white/5 dark:bg-black/20 p-3 sm:p-4 rounded-xl border border-white/10 lg:col-span-1">
+                <h3 class="text-base sm:text-lg font-semibold text-white px-2 pb-2 sm:pb-3">Recent Orders</h3>
+                <div class="overflow-x-auto -mx-3 sm:mx-0">
+                    <table class="w-full min-w-[600px] sm:min-w-0">
+                        <thead>
+                            <tr class="border-b border-b-white/10">
+                                <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">
+                                    ID de la commande
+                                </th>
+                                <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">Client</th>
+                                <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">Status</th>
+                                <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-gray-400 text-xs font-medium uppercase tracking-wider">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if page_obj_order.object_list %}
+                                {% for order in page_obj_order.object_list %}
+                                    <tr class="border-t border-t-white/10 hover:bg-white/5 transition-colors">
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-white text-xs sm:text-sm font-semibold">#{{ order.id }}CELE</td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-gray-400 text-xs sm:text-sm">{{ order.user.username }}</td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
+                                            <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap">{{ order.status }}</span>
+                                        </td>
+                                        <td class="px-3 sm:px-4 py-2 sm:py-3 text-gray-400 text-xs sm:text-sm">{{ order.total_price }}$</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4"
+                                        class="px-3 sm:px-4 py-2 sm:py-3 text-center text-gray-400 text-xs sm:text-sm">
+                                        Aucune commande récente
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if is_paginated_order %}
+                    <div class="flex items-center justify-center pt-2 gap-1">
+                        {% if page_obj_order.has_previous %}
+                            <a class="flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white"
+                               href="?page_order={{ page_obj_order.previous_page_number }}{% if page_sms %}&page_sms={{ page_sms }}{% endif %}{% if page_notif %}&page_notif={{ page_notif }}{% endif %}">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                            </a>
+                        {% else %}
+                            <span class="flex size-7 sm:size-8 items-center justify-center text-gray-400 opacity-50">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">chevron_left</span>
+                            </span>
+                        {% endif %}
+                        {% for num in paginator_order.page_range %}
+                            {% if num == page_obj_order.number %}
+                                <span class="text-xs font-bold flex size-7 sm:size-8 items-center justify-center text-white rounded-full bg-primary">{{ num }}</span>
+                            {% elif num > page_obj_order.number|add:'-3' and num < page_obj_order.number|add:'3' %}
+                                <a class="text-xs font-bold flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-primary/50"
+                                   href="?page_order={{ num }}{% if page_sms %}&page_sms={{ page_sms }}{% endif %}{% if page_notif %}&page_notif={{ page_notif }}{% endif %}">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page_obj_order.has_next %}
+                            <a class="flex size-7 sm:size-8 items-center justify-center text-gray-400 hover:text-white"
+                               href="?page_order={{ page_obj_order.next_page_number }}{% if page_sms %}&page_sms={{ page_sms }}{% endif %}{% if page_notif %}&page_notif={{ page_notif }}{% endif %}">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                            </a>
+                        {% else %}
+                            <span class="flex size-7 sm:size-8 items-center justify-center text-gray-400 opacity-50">
+                                <span class="material-symbols-outlined text-lg sm:text-xl">chevron_right</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -322,6 +322,20 @@
             </form>
             <!-- MAIN (-->
             <main class="px-4 sm:px-10 lg:px-20 py-8 relative z-20 mt-8">
+                {% if messages %}
+                    <div class="space-y-3 mb-6">
+                        {% for message in messages %}
+                            <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+                                <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+                                <button type="button"
+                                        onclick="this.parentElement.remove()"
+                                        class="text-xl leading-none opacity-70 hover:opacity-100 select-none">
+                                    &times;
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="max-w-7xl mx-auto">
                     <!-- Fil d'Ariane -->
                     <div class="flex flex-wrap gap-2 py-4 text-sm">
@@ -393,7 +407,9 @@
                             </div>
                             <div class="flex items-center gap-2 lg:gap-3">
                                 <p class="text-white text-xl lg:text-2xl font-bold">{{ product.price }} $</p>
-                                <p class="text-white/50 text-sm lg:text-base line-through">{{ product.price }} $</p>
+                                {% if product.solde_percent %}
+                                    <p class="text-white/50 text-sm lg:text-base line-through">{{ product.solde_percent }} $</p>
+                                {% endif %}
                             </div>
                             <div class="w-full h-px bg-white/10 my-1"></div>
                             <!-- Size selector -->
@@ -407,26 +423,6 @@
                                     {% endfor %}
                                     <button class="size-btn flex items-center justify-center rounded-md h-8 lg:h-9 min-w-[48px] px-3 bg-primary text-white text-xs lg:text-sm"
                                             data-active>M</button>
-                                </div>
-                            </div>
-                            <!-- Quantity -->
-                            <div>
-                                <p class="text-white text-xs lg:text-sm font-semibold mb-1.5">Quantité</p>
-                                <div class="inline-flex items-center rounded-md bg-secondary-dark">
-                                    <button id="qtyMinus"
-                                            class="px-2.5 py-1.5 text-white/60 hover:text-white transition text-sm lg:text-base">
-                                        -
-                                    </button>
-                                    <input id="qtyInput"
-                                           class="w-12 h-8 lg:h-9 bg-transparent border-0 text-white text-center text-sm lg:text-base"
-                                           type="text"
-                                           inputmode="numeric"
-                                           value="1"
-                                           aria-label="Quantity" />
-                                    <button id="qtyPlus"
-                                            class="px-2.5 py-1.5 text-white/60 hover:text-white transition text-sm lg:text-base">
-                                        +
-                                    </button>
                                 </div>
                             </div>
                             <!-- Actions -->

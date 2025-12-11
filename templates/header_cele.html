@@ -1,0 +1,47 @@
+<header class="sticky top-0 z-10 flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 dark:border-white/10 bg-background-dark/80 backdrop-blur-sm px-3 sm:px-6 lg:px-8 py-3">
+    <div class="flex items-center gap-3 sm:gap-6 lg:gap-8 flex-1">
+        <!-- Menu hamburger (mobile uniquement) -->
+        <button id="menuBtn"
+                class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <!-- Barre de recherche -->
+        <label class="flex-1 max-w-xs sm:max-w-md lg:max-w-lg">
+            <div class="flex w-full items-stretch rounded-lg h-9 sm:h-10">
+                <div class="text-gray-400 flex bg-white/5 dark:bg-black/20 items-center justify-center pl-3 sm:pl-4 rounded-l-lg border-r-0">
+                    <span class="material-symbols-outlined text-xl sm:text-2xl">search</span>
+                </div>
+                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary border-none bg-white/5 dark:bg-black/20 h-full placeholder:text-gray-400 px-3 sm:px-4 text-sm sm:text-base font-normal"
+                       placeholder="Rechercher..."
+                       value="" />
+            </div>
+        </label>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Bouton Notifications -->
+        <button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 w-9 sm:h-10 sm:w-10 bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
+            <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-full w-full bg-primary"></span>
+            </span>
+        </button>
+        <!-- Bouton Messages -->
+        <button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 w-9 sm:h-10 sm:w-10 bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-xl sm:text-2xl">chat</span>
+            <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+                <span class="relative inline-flex rounded-full h-full w-full bg-primary"></span>
+            </span>
+        </button>
+        <!-- Profile User (caché sur très petit mobile) -->
+        <div class="hidden sm:flex items-center gap-2 sm:gap-3 pl-2">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 sm:size-10"
+                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCE8Ie2a0Y5YylktSiRjudGxE-oxta3dLopK0DB6G8FNgZGqWP1x7fGUYo_tHGjZ11NLIGdn6yEbLfqd9MI2ffXE6bfsoau5PF4abnCfL1CFaAZZcsyeK4SS5SrZKnFC_kMIZw5BJg2JYmB0jpBRTVjinXDczMYjRLGgqQuul2G1YsXZ2xlUR0_JzLrN36MKLmmJbcyyLTYGriLGEJYT413nZLYnFK3KJNv5j9SsFxcwhmnY3KOS1oWTQL2eW2Q36a6l8VoAGgchB4")'>
+            </div>
+            <div class="hidden lg:flex flex-col text-right">
+                <h1 class="text-white text-sm font-medium">{{ request.user.get_full_name|default:request.user.username }}</h1>
+                <p class="text-gray-400 text-xs">Administrateur</p>
+            </div>
+        </div>
+    </div>
+</header>

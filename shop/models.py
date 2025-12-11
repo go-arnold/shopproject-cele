@@ -78,8 +78,8 @@ class Product(models.Model):
 
     image = models.ImageField(upload_to="produits/", blank=True, null=True)
     badge = models.CharField(max_length=100, blank=True, null=True)
-    rating = models.FloatField()
-    reviews = models.PositiveIntegerField()
+    rating = models.FloatField(blank=True, null=True)
+    reviews = models.PositiveIntegerField(blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_wish = models.DateField(null=True, blank=True)
     price_solde = models.DecimalField(
@@ -144,7 +144,7 @@ class Product(models.Model):
                 return 'Nouveauté'
         except Exception:
             pass
-        # Si on veut utiliser la valeur de la base si elle existe
+
         return self.badge or ''
 
     @property

@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models.functions import TruncMonth, TruncDay
 import json
@@ -18,7 +19,7 @@ from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from gestion.decorators import admin_required
 from django.http import JsonResponse
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.db.models import Sum, F, DecimalField
 from django.utils.timezone import now
 from django.db.models.functions import Coalesce
@@ -106,16 +107,46 @@ def dashboard(request):
 
     # Récupération des 5 dernières ventes
     recent_ventes = ventes.order_by('-date_achat')[:5]
-
+    orders = Order.objects.select_related(
+        'user').prefetch_related('items__product')
     qs = Conversation.objects.filter(
         participants=request.user).order_by("-created_at")
+    paginator_sms = Paginator(qs, 5)
+    paginator_notif = Paginator(notifications, 5)
+    paginator_order = Paginator(orders, 10)
+
+    page_sms = request.GET.get('page_sms')
+    page_notif = request.GET.get('page_notif')
+    page_order = request.GET.get('page_order')
+
+    try:
+        page_obj_sms = paginator_sms.page(page_sms)
+    except PageNotAnInteger:
+        page_obj_sms = paginator_sms.page(1)
+    except EmptyPage:
+        page_obj_sms = paginator_sms.page(paginator_sms.num_pages)
+
+    try:
+        page_obj_order = paginator_order.page(page_order)
+    except PageNotAnInteger:
+        page_obj_order = paginator_order.page(1)
+    except EmptyPage:
+        page_obj_order = paginator_order.page(paginator_order.num_pages)
+
+    try:
+        page_obj_notif = paginator_notif.page(page_notif)
+    except PageNotAnInteger:
+        page_obj_notif = paginator_notif.page(1)
+    except EmptyPage:
+        page_obj_notif = paginator_notif.page(paginator_notif.num_pages)
 
     conversations_info = []
-    for conv in qs:
+
+    for conv in page_obj_sms.object_list:
 
         last_msg = Message.objects.filter(
             conversation=conv).order_by("-timestamp").first()
-        last_content = last_msg.content if last_msg else ""
+        last_content = last_msg.content[:40] if last_msg else ""
         last_sender = last_msg.sender if last_msg else None
         last_timestamp = last_msg.timestamp if last_msg else None
 
@@ -130,7 +161,6 @@ def dashboard(request):
             "last_timestamp": last_timestamp,
         })
 
-    # Contexte pour le template
     context = {
         'croissance_potentielle': round(profit_actuel, 2),
         'croissance_pourcentage': round(croissance_pourcentage, 2),
@@ -145,12 +175,28 @@ def dashboard(request):
         'methods_labels': methods_labels,
         'methods_data': methods_data,
         'notif_count': notif_count,
-        'notifications': notifications,
-        'orders': Order.objects.select_related('user').prefetch_related('items__product'),
-        'conversations_info': conversations_info
-    }
 
-    return render(request, "gestion/dashboard1.html", context)
+
+        'page_obj_notif': page_obj_notif,
+        'page_obj_order': page_obj_order,
+        'page_obj_sms': page_obj_sms,
+
+        'conversations_info': conversations_info,
+
+
+        'paginator_sms': paginator_sms,
+        'page_sms': page_sms,
+        'is_paginated_sms': page_obj_sms.has_other_pages(),
+
+        'paginator_notif': paginator_notif,
+        'page_notif': page_notif,
+        'is_paginated_notif': page_obj_notif.has_other_pages(),
+
+        'paginator_order': paginator_order,
+        'page_order': page_order,
+        'is_paginated_order': page_obj_order.has_other_pages(),
+    }
+    return render(request, "gestion/dash.html", context)
 
 
 @admin_required
@@ -185,27 +231,42 @@ def add_product(request):
     """Ajouter un nouveau produit"""
     if request.method == 'POST':
         try:
+            # Récupération de la catégorie
             category_id = request.POST.get('category')
             category = Category.objects.filter(id=category_id).first()
 
+            # Création du produit
             product = Product(
                 name=request.POST.get('name'),
                 description=request.POST.get('description'),
+                long_description=request.POST.get('long_description'),
+                chara_entretien=request.POST.get('chara_entretien'),
+                delivery_policy_phase1=request.POST.get(
+                    'delivery_policy_phase1'),
+                delivery_policy_phase2=request.POST.get(
+                    'delivery_policy_phase2'),
                 price=request.POST.get('price'),
                 price_primary=request.POST.get('price_primary') or None,
+                price_solde=request.POST.get('price_solde') or None,
                 category_fk=category,
-                badge=request.POST.get('badge'),
-                rating=request.POST.get('rating', 0),
-                reviews=request.POST.get('reviews', 0),
                 date_wish=request.POST.get('date_wish'),
             )
 
+            # Gestion des images
             if 'image' in request.FILES:
                 product.image = request.FILES['image']
+            if 'image_one' in request.FILES:
+                product.image_one = request.FILES['image_one']
+            if 'image_two' in request.FILES:
+                product.image_two = request.FILES['image_two']
+            if 'image_three' in request.FILES:
+                product.image_three = request.FILES['image_three']
 
+            # Validation et sauvegarde
             product.full_clean()
             product.save()
 
+            # Gestion des features dynamiques
             features = request.POST.getlist('features[]')
             for feature_name in features:
                 if feature_name.strip():
@@ -220,6 +281,7 @@ def add_product(request):
             messages.error(
                 request, f'Erreur lors de l\'ajout du produit : {str(e)}')
 
+    # Contexte pour le template
     context = {
         'categories': Category.objects.all(),
     }
@@ -233,24 +295,41 @@ def edit_product(request, product_id):
 
     if request.method == 'POST':
         try:
+            # Récupération de la catégorie
             category_id = request.POST.get('category')
             category = Category.objects.filter(id=category_id).first()
 
+            # Mise à jour des champs
             product.name = request.POST.get('name')
+            product.badge = request.POST.get('badge')
             product.description = request.POST.get('description')
+            product.long_description = request.POST.get('long_description')
+            product.chara_entretien = request.POST.get('chara_entretien')
+            product.delivery_policy_phase1 = request.POST.get(
+                'delivery_policy_phase1')
+            product.delivery_policy_phase2 = request.POST.get(
+                'delivery_policy_phase2')
             product.price = request.POST.get('price')
             product.price_primary = request.POST.get('price_primary') or None
+            product.price_solde = request.POST.get('price_solde') or None
             product.category_fk = category
-            product.badge = request.POST.get('badge')
-            product.rating = request.POST.get('rating', 0)
-            product.reviews = request.POST.get('reviews', 0)
+            product.date_wish = request.POST.get('date_wish')
 
+            # Gestion des images
             if 'image' in request.FILES:
                 product.image = request.FILES['image']
+            if 'image_one' in request.FILES:
+                product.image_one = request.FILES['image_one']
+            if 'image_two' in request.FILES:
+                product.image_two = request.FILES['image_two']
+            if 'image_three' in request.FILES:
+                product.image_three = request.FILES['image_three']
 
+            # Validation et sauvegarde
             product.full_clean()
             product.save()
 
+            # Features dynamiques
             product.features.all().delete()
             features = request.POST.getlist('features[]')
             for feature_name in features:
@@ -368,7 +447,7 @@ def liste_ventes(request):
         ventes_list = Vente.objects.filter(utilisateur=utilisateur).select_related(
             'produit', 'utilisateur').order_by('-date_achat')
 
-    paginator = Paginator(ventes_list, 15)
+    paginator = Paginator(ventes_list, 7)
     page_number = request.GET.get('page')
     ventes = paginator.get_page(page_number)
 
@@ -432,6 +511,8 @@ def liste_ventes_rev(request):
             'produit', 'utilisateur').order_by('-date_achat')
 
     filtre = request.GET.get('filtre')
+    date_achat_search = request.GET.get('date_achat')
+    date_enregistrement_search = request.GET.get('date_enregistrement')
     maintenant = timezone.now()
 
     if filtre == "2":
@@ -447,8 +528,25 @@ def liste_ventes_rev(request):
         ventes_list = ventes_list.filter(
             date_achat__gte=maintenant - timedelta(days=90))
 
+    # Recherche par date_achat
+    if date_achat_search:
+        try:
+            date_obj = datetime.strptime(date_achat_search, "%Y-%m-%d")
+            ventes_list = ventes_list.filter(date_achat__date=date_obj)
+        except ValueError:
+            pass
+
+    # Recherche par date_enregistrement
+    if date_enregistrement_search:
+        try:
+            date_obj = datetime.strptime(
+                date_enregistrement_search, "%Y-%m-%d")
+            ventes_list = ventes_list.filter(
+                date_enregistrement__date=date_obj)
+        except ValueError:
+            pass
     # ---- Pagination ----
-    paginator = Paginator(ventes_list, 4)
+    paginator = Paginator(ventes_list, 7)
     page_number = request.GET.get('page')
     ventes = paginator.get_page(page_number)
 
@@ -769,4 +867,4 @@ def dashboard_ventes(request):
         "ventes_habillement": json.dumps(ventes_habillement),
     }
 
-    return render(request, "gestion/graphiques1.html", context)
+    return render(request, "gestion/graphs.html", context)

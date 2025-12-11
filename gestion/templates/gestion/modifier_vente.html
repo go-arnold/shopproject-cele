@@ -1,77 +1,107 @@
-{% extends 'gestion/base.html' %}
+{% extends 'base_cele.html' %}
 {% load static %}
 {% block title %}Modifier une vente - Cele Admin{% endblock %}
-
 {% block content %}
-<div class="row">
-  <div class="col-12 grid-margin">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Modification d'une vente</h4>
-        <form class="form-sample" method="post">
-          {% csrf_token %}
-          <p class="card-description">1. Détails de la vente</p>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="produit">Produit vendu :</label>
-                <div class="col-sm-9">
-                  <input type="text" class="form-control" list="produits" name="produit_id" id="produit"
-                         value="{{ vente.produit.id }}" required>
-                </div>
-                <datalist id="produits">
-                  {% for produit in produits %}
-                  <option value="{{ produit.id }}">{{ produit.name }}</option>
-                  {% endfor %}
-                </datalist>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="date_achat">Date d'achat :</label>
-                <div class="col-sm-9">
-                  <input type="date" class="form-control" name="date_achat" id="date_achat" 
-                         value="{{ vente.date_achat|date:'Y-m-d' }}" required>
-                </div>
-              </div>
-            </div>
+  <div class="mx-auto max-w-4xl px-2 sm:px-4">
+    <!-- Titre -->
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-text-dark-primary">
+        Modification d'une vente
+      </h1>
+    </div>
+    {% if messages %}
+      <div class="space-y-3 mb-6">
+        {% for message in messages %}
+          <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+            <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+            <button type="button"
+                    onclick="this.parentElement.remove()"
+                    class="text-xl leading-none opacity-70 hover:opacity-100 select-none">&times;</button>
           </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="price_final">Prix final :</label>
-                <div class="col-sm-9">
-                  <input type="number" step="0.01" class="form-control" name="price_final" id="price_final"
-                         value="{{ vente.price_final|default:vente.produit.price }}">
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label" for="payment_method">Méthode de paiement :</label>
-                <div class="col-sm-9">
-                  <select class="form-control" id="payment_method" name="method">
-                    {% for value, label in methods %}
-                      <option value="{{ value }}" {% if vente.method == value %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <p class="card-description text-warning">⚠️ Vérifiez bien les informations avant d’enregistrer les modifications.</p>
-
-          <button type="submit" class="btn btn-primary mt-3">Enregistrer les modifications</button>
-          <a href="{% url 'gestion:liste_ventes' %}" class="btn btn-light mt-3">Annuler</a>
-          <a href="{% url 'gestion:supprimer_vente' vente.id %}" class="btn btn-danger mt-3 ">Supprimer la vente</a>
-        </form>
+        {% endfor %}
       </div>
+    {% endif %}
+    <!-- Card -->
+    <div class="flex flex-col gap-4 sm:gap-6 rounded-xl bg-component-dark p-3 sm:p-6 shadow-lg">
+      <form method="post">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+          <!-- Produit -->
+          <div class="md:col-span-2">
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Produit vendu</span>
+              <input type="text"
+                     list="produits"
+                     name="produit_id"
+                     id="produit"
+                     value="{{ vente.produit.id }}"
+                     required
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+              <datalist id="produits">
+                {% for produit in produits %}<option value="{{ produit.id }}">{{ produit.name }}</option>{% endfor %}
+              </datalist>
+            </label>
+          </div>
+          <!-- Date achat -->
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Date d'achat</span>
+              <input type="date"
+                     name="date_achat"
+                     id="date_achat"
+                     value="{{ vente.date_achat|date:'Y-m-d' }}"
+                     required
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
+          <!-- Prix final -->
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix final ($)</span>
+              <input type="number"
+                     step="0.01"
+                     name="price_final"
+                     id="price_final"
+                     value="{{ vente.price_final|default:vente.produit.price }}"
+                     class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            </label>
+          </div>
+          <!-- Méthode -->
+          <div>
+            <label class="flex flex-col">
+              <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Méthode de paiement</span>
+              <select id="payment_method"
+                      name="method"
+                      class="form-select h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+                {% for value, label in methods %}
+                  <option value="{{ value }}" {% if vente.method == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+        </div>
+        <!-- Warning text -->
+        <div class="my-6 border-t border-border-dark pt-4 sm:pt-6">
+          <p class="text-xs sm:text-sm text-text-dark-secondary leading-relaxed">
+            ⚠️ Veuillez vérifier les informations avant d’enregistrer les modifications.
+          </p>
+        </div>
+        <!-- Actions -->
+        <div class="flex flex-col-reverse sm:flex-row-reverse gap-2 sm:gap-3">
+          <button type="submit"
+                  class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-primary px-4 sm:px-6 text-sm md:text-base font-bold text-white hover:bg-primary/90 sm:w-auto">
+            Enregistrer les modifications
+          </button>
+          <a href="{% url 'gestion:liste_ventes' %}"
+             class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-transparent px-4 sm:px-6 text-sm md:text-base font-medium text-text-dark-secondary hover:bg-white/10 sm:w-auto">
+            Annuler
+          </a>
+          <a href="{% url 'gestion:supprimer_vente' vente.id %}"
+             class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-red-600/80 px-4 sm:px-6 text-sm md:text-base font-bold text-white hover:bg-red-700 sm:w-auto">
+            Supprimer la vente
+          </a>
+        </div>
+      </form>
     </div>
   </div>
-</div>
 {% endblock %}

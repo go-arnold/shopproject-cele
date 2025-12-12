@@ -601,7 +601,6 @@ def export_ventes_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="ventes.pdf"'
     return response
 
-
 @csrf_exempt
 def dashboard_pdf(request):
     if request.method == "POST":
@@ -611,56 +610,60 @@ def dashboard_pdf(request):
             static('static-img/logo-white.png'))
 
         html_content = f"""
-        <html >
-        <head >
-           <style >
+        <html>
+        <head>
+           <style>
               @page {{
-                   size: A4
-                    margin: 20mm
-                   background-color:  
-                   }}
-               body {{
-                    font-family: Arial, sans-serif
-                    background-color:  
-                    color: white
-                    text-align: center;
-                }}
-                .logo {{
-                    width: 130px
-                    margin-bottom: 10px
-                }}
+                   size: A4;
+                   margin: 20mm;
+                   background-color: #0d0817;
+              }}
+              body {{
+                   font-family: Arial, sans-serif;
+                   background: linear-gradient(135deg, #0d0817 0%, #1a0f2e 100%);
+                   color: #e8e0f0;
+                   text-align: center;
+              }}
+              .logo {{
+                   width: 130px;
+                   margin-bottom: 10px;
+                   filter: drop-shadow(0 0 15px rgba(100, 13, 95, 0.6));
+              }}
 
-                h1 {{
-                    text-align: center
-                    color:  
-                    margin-bottom: 40px
-                    font-size: 26px;
-                }}
+              h1 {{
+                   text-align: center;
+                   color: #d896d0;
+                   margin-bottom: 40px;
+                   font-size: 26px;
+                   text-shadow: 0 0 20px rgba(100, 13, 95, 0.5);
+              }}
 
-                h2 {{
-                    color:  
-                    margin-top: 40px
-                    margin-bottom: 10px
-                    font-size: 20px;
-                }}
+              h2 {{
+                   color: #c77dbf;
+                   margin-top: 40px;
+                   margin-bottom: 10px;
+                   font-size: 20px;
+                   text-shadow: 0 0 10px rgba(100, 13, 95, 0.3);
+              }}
 
-                .chart-container {{
-                    margin-bottom: 40px
-                    text-align: center
-                }}
+              .chart-container {{
+                   margin-bottom: 40px;
+                   text-align: center;
+              }}
 
-                img.chart {{
-                    width: 100 %
-                    border: 1px solid  
-                    border-radius: 8px
-                     / * background-color: white; pour éviter que le fond bleu nuit altere les images * /
-                }}
-            </style >
-        </head >
-        <body >
+              img.chart {{
+                   width: 100%;
+                   border: 2px solid #640D5F;
+                   border-radius: 8px;
+                   box-shadow: 0 4px 20px rgba(100, 13, 95, 0.4);
+                   /* background-color: white; pour éviter que le fond altère les images */
+              }}
+           </style>
+        </head>
+        <body>
 
-            <img src = "{logo_url}" class="logo" />
-            <h1 > Dashboard des Ventes</h1>
+            <img src="{logo_url}" class="logo" />
+            <h1>Dashboard des Ventes</h1>
         """
         titles = [
             "Ventes des 7 derniers jours",
@@ -674,15 +677,15 @@ def dashboard_pdf(request):
 
         for index, img in enumerate(images):
             html_content += f"""
-                <div class = "chart-container">
-                    <h2 > {titles[index]}</h2>
-                    <img class = "chart" src="{img}" />
-                </div >
+                <div class="chart-container">
+                    <h2>{titles[index]}</h2>
+                    <img class="chart" src="{img}" />
+                </div>
             """
 
         html_content += """
-        </body >
-        </html >
+        </body>
+        </html>
         """
 
         html = HTML(string=html_content)
@@ -694,7 +697,6 @@ def dashboard_pdf(request):
         return HttpResponse(pdf_data, content_type="application/pdf")
 
     return HttpResponse(status=405)
-
 
 @admin_required
 def dashboard_ventes(request):

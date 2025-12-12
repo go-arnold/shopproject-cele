@@ -270,8 +270,8 @@ class Conversation(models.Model):
     @property
     def display_name(self):
         if self.is_from_cart and self.related_order:
-            return f"Discussion exclusivement sur la commande 
-        return f"Discussion 
+            return f"Discussion exclusivement sur la commande" 
+        return f"Discussion" 
 
     def __str__(self):
         return f"Conversation {self.id} — {self.created_at.strftime('%Y-%m-%d')}"

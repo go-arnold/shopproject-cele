@@ -6,14 +6,6 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon"
-              type="image/x-icon"
-              sizes="16x16"
-              href="{% static 'favicon.ico' %}">
-        <link rel="icon"
-              type="image/png"
-              sizes="32x32"
-              href="{% static 'static-img/sicon-32.png' %}">
-        <link rel="icon"
               type="image/png"
               sizes="16x16"
               href="{% static 'static-img/sicon-16.png' %}">
@@ -258,18 +250,14 @@
     <body class="bg-background-light dark:bg-background-dark font-display text-white">
         <canvas id="particles" aria-hidden="true"></canvas>
         <div class="relative flex min-h-screen flex-col">
-            
             <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
-                
                 <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
                     <a class="hover:text-white transition-colors" href="#">Aide</a>
                     <a class="hover:text-white transition-colors"
                        href="{% url 'about_us' %}">À propos</a>
                     <a class="hover:text-white transition-colors" href="#">Articles</a>
                 </div>
-                
                 <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
-                    
                     <div class="flex items-center gap-2.5">
                         <a href="{% url 'home' %}">
                             <img src="{% static 'static-img/logo-white.png' %}"
@@ -277,7 +265,6 @@
                                  class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
                         </a>
                     </div>
-                    
                     <form method="GET"
                           action="{% url 'results' %}"
                           class="flex-1 max-w-2xl mx-auto hidden md:block">
@@ -289,15 +276,12 @@
                                    type="search" />
                         </div>
                     </form>
-                    
                     <div class="flex items-center gap-1 sm:gap-4 ml-auto">
-                        
                         <button id="mobileSearchBtn"
                                 class="md:hidden flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
                             <span class="material-symbols-outlined text-xl">search</span>
                         </button>
                         {% if not user.is_authenticated %}
-                            
                             <a href="{% url 'account_login' %}">
                                 <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
                                     S'inscrire / Se connecter
@@ -305,13 +289,11 @@
                             </a>
                         {% endif %}
                         {% if user.is_authenticated %}
-                            
                             <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'favorites_list' %}">
                                     <span class="material-symbols-outlined text-xl">favorite</span>
                                 </a>
                             </button>
-                            
                             <a href="{% url 'list_conversations' %}">
                                 <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                     <span class="material-symbols-outlined text-xl">mail</span>
@@ -319,7 +301,6 @@
                                 </button>
                             </a>
                         {% endif %}
-                        
                         <a href="{% url 'cart' %}">
                             <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <span class="material-symbols-outlined text-xl">shopping_cart</span>
@@ -327,7 +308,6 @@
                             </button>
                         </a>
                         {% if user.is_authenticated %}
-                            
                             <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'profile' %}">
                                     <span class="material-symbols-outlined text-xl">person</span>
@@ -346,7 +326,6 @@
                                     </button>
                                 </a>
                             {% endif %}
-                            
                             <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'account_logout' %}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +339,6 @@
                                 </a>
                             </button>
                         {% endif %}
-                        
                         {% if not user.is_authenticated %}
                             <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
                                 <a href="{% url 'account_login' %}">
@@ -371,7 +349,6 @@
                     </div>
                 </div>
             </header>
-            
             <form method="GET"
                   action="{% url 'results' %}"
                   id="mobileSearchContainer"
@@ -384,10 +361,8 @@
                            type="search" />
                 </div>
             </form>
-            
             <main class="flex-1">
                 <div class="container mx-auto px-4 py-8">
-                    
                     <h2 class="text-2xl font-bold mb-4">Mes produits Favoris</h2>
                     <section class=" hidden relative h-80 w-full overflow-hidden rounded-xl fade-in">
                         <div class="absolute inset-0 bg-cover bg-center"
@@ -408,10 +383,8 @@
                         </div>
                     </section>
                     <div class="mt-8 grid grid-cols-1 gap-x-8 gap-y-12 lg:grid-cols-4">
-                        
                         <aside class="lg:col-span-1">
                             <div class="sticky top-24 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-lg">
-                                
                                 <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
                                     <h3 class="text-sm lg:text-base font-bold text-text-dark-primary dark:text-text-light-primary">Filtres</h3>
                                     <a id="clearFilters"
@@ -420,7 +393,6 @@
                                     </a>
                                 </div>
                                 <div class="mt-3 flex flex-col">
-                                    
                                     <details class="py-1 group" open>
                                         <summary class="flex cursor-pointer list-none items-center justify-between py-1">
                                             <p class="font-semibold text-xs lg:text-sm text-text-dark-primary dark:text-text-light-primary">Prix maximum</p>
@@ -444,7 +416,6 @@
                                             </div>
                                         </div>
                                     </details>
-                                    
                                     <div class="mt-3 text-center">
                                         <button id="applyFilters"
                                                 class="w-full bg-primary text-white rounded-full text-xs lg:text-sm px-3 py-1.5 font-semibold hover:bg-primary/90">
@@ -454,7 +425,6 @@
                                 </div>
                             </div>
                         </aside>
-                        
                         <div class="lg:col-span-3">
                             <div class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between rounded-xl bg-surface-light dark:bg-surface-dark p-4 shadow-lg">
                                 <p class="text-sm text-text-dark-secondary dark:text-text-light-secondary">
@@ -482,13 +452,11 @@
                                          data-date="{{ product.date_added|date:'Y-m-d' }}">
                                         <a class="absolute inset-0 z-0 pointer-events-none"
                                            href="{% url 'product_detail' product.pk %}"></a>
-                                        
                                         <div class="relative">
                                             <a href="{% url 'product_detail' product.pk %}">
                                                 <div class="aspect-square w-full bg-cover bg-center"
                                                      style="background-image: url('{{ product.image.url }}')"></div>
                                             </a>
-                                            
                                             <div class="absolute top-1 right-1 z-10 bg-primary text-white text-[8px] px-1.5 py-0.5 font-semibold rounded-full shadow-md sm:text-[10px] sm:px-2 sm:py-0.5 md:text-xs md:px-3 md:py-1">
                                                 {{ product.price }}$
                                             </div>
@@ -520,7 +488,6 @@
                                                 <span class="material-symbols-outlined text-base">shopping_cart</span>
                                             </button>
                                         </div>
-                                        
                                         <div class="flex flex-1 flex-col px-4 pt-4 pb-1">
                                             <h3 class="text-lg font-bold text-text-dark-primary dark:text-text-light-primary">{{ product.name }}</h3>
                                             <p class="mt-1 text-sm text-text-dark-secondary dark:text-text-light-secondary line-clamp-2 description-text">
@@ -543,7 +510,6 @@
                                 {% endfor %}
                             </div>
                             <p id="noResults" class="hidden mt-6 text-center text-gray-400 text-lg">🛒 Aucun produit trouvé</p>
-                            
                             {% if is_paginated %}
                                 <nav aria-label="Pagination"
                                      class="mt-12 flex items-center justify-center space-x-2">
@@ -583,10 +549,8 @@
                     </div>
                 </div>
             </main>
-            
             <footer class="bg-black/20 mt-8 lg:mt-12">
                 <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
-                    
                     <div class="md:hidden mb-4">
                         <h3 class="text-white font-bold text-sm">Restez informé</h3>
                         <p class="text-[#888888] mt-1 text-xs">
@@ -601,9 +565,7 @@
                                     type="submit">S'abonner</button>
                         </form>
                     </div>
-                    
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
-                        
                         <div class="hidden md:block col-span-1 lg:col-span-2">
                             <h3 class="text-white font-bold text-base">Restez informé</h3>
                             <p class="text-[#888888] mt-2 text-sm">
@@ -656,7 +618,6 @@
                                 </li>
                             </ul>
                         </div>
-                        
                         <div class="hidden md:block col-span-1">
                             <h4 class="font-bold text-white text-base">Suivez-nous</h4>
                             <div class="flex space-x-4 mt-3">
@@ -690,7 +651,6 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="md:hidden mt-4">
                         <h4 class="font-bold text-white text-sm">Suivez-nous</h4>
                         <div class="flex space-x-3 mt-2">
@@ -729,7 +689,6 @@
                 </div>
             </footer>
         </div>
-        
         <nav id="mobileTabbar"
              class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
             <a href="{% url 'home' %}">
@@ -767,7 +726,6 @@
                 </button>
             </a>
         </nav>
-        
         <script>
         /* ===== Particles ===== */
         const canvas = document.getElementById('particles');

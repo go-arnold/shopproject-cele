@@ -812,10 +812,10 @@ def assign_revendeur(request, notification_id):
         conversation=conversation,
         type="order",
         title="Assignation de commande",
-        body=f"Vous avez été assigné à la commande 
+        body=f"Vous avez été assigné à la commande" 
     )
     subject = "[CELEBOBO-BUSINESS] NOUVELLE ASSIGNATION- UNE COMMANDE"
-    text_content = f"Vous avez été assigné à la commande 
+    text_content = f"Vous avez été assigné à la commande"
     if revendeur.email:
         send_html_email(subject, [revendeur.email], "shop/assign_rev_email.html",
                         text_content, {"conversation": conversation, })

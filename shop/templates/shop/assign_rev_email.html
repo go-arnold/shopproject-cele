@@ -4,142 +4,186 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-      @page {
-        size: A4;
-        margin: 20mm;
-        background-color: #0a0f24;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
       body {
-        font-family: "DejaVu Sans", sans-serif;
-        background-color: #0a0f24;
-        color: white;
-        text-align: center;
+        font-family: "DejaVu Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background-color: #ffffff;
         margin: 0;
+        padding: 20px;
+      }
+
+      .email-wrapper {
+        background-color: #ffffff;
         padding: 0;
+        margin: 0;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #0d0817 0%, #1a0f2e 100%);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(100, 13, 95, 0.4);
+      }
+
+      .email-header {
+        background: linear-gradient(135deg, #640D5F 0%, #7a1173 100%);
+        padding: 40px 20px;
+        text-align: center;
+        border-bottom: 3px solid #d896d0;
       }
 
       .logo {
         width: 150px;
-        margin: 20px 0;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
       }
 
       h1 {
-        color: #30a5f3ff;
-        margin-bottom: 30px;
-        font-size: 32px;
+        color: #ffffff;
+        margin: 0;
+        font-size: 28px;
         font-weight: 600;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        text-transform: uppercase;
       }
 
-      h2 {
-        text-align: left;
-        margin-top: 20px;
-        color: #66c2ff;
-        font-size: 22px;
-        font-weight: 500;
+      .email-body {
+        padding: 40px 30px;
+        background: linear-gradient(135deg, #0d0817 0%, #1a0f2e 100%);
       }
 
-      p {
-        text-align: left;
-        margin-top: 20px;
-        color: #66c2ff;
-        font-size: 22px;
-        font-weight: 500;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
+      .urgent-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #640D5F 0%, #7a1173 100%);
+        color: #ffffff;
+        padding: 12px 30px;
+        border-radius: 25px;
         font-size: 14px;
-        text-align: center;
+        font-weight: 700;
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(100, 13, 95, 0.5);
       }
 
-      th,
-      td {
-        border: 1px solid #2e3a55;
-        padding: 12px 15px;
+      .message-box {
+        background: rgba(100, 13, 95, 0.2);
+        border: 2px solid rgba(216, 150, 208, 0.5);
+        border-radius: 12px;
+        padding: 30px;
+        margin: 20px 0;
         text-align: center;
+        box-shadow: 0 4px 20px rgba(100, 13, 95, 0.3);
       }
 
-      th {
-        background-color: #132046;
-        color: #b3d1ff;
+      .message-box p {
+        color: #f5e6f2;
+        font-size: 16px;
+        line-height: 1.8;
+        margin: 0;
+      }
+
+      .message-box strong {
+        color: #d896d0;
+        font-weight: 700;
+        font-size: 18px;
+      }
+
+      .email-footer {
+        background: linear-gradient(135deg, #640D5F 0%, #7a1173 100%);
+        padding: 30px;
+        text-align: center;
+        border-top: 3px solid #d896d0;
+      }
+
+      .footer-text {
+        color: #ffffff;
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+
+      .brand-text {
+        color: #ffffff;
         font-size: 16px;
         font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
       }
 
-      tr:nth-child(even) {
-        background-color: #0f1a33;
-      }
-
-      tr:nth-child(odd) {
-        background-color: #0c1529;
-      }
-
-      .total-row {
-        font-size: 16px;
-        font-weight: 700;
-        background-color: #132046;
-        color: #4da6ff;
-      }
-
-      .total {
-        font-size: 20px;
-        font-weight: 700;
-        color: #4da6ff;
-        background-color: #132046;
-        padding: 10px 20px;
-        margin-top: 20px;
-        border-radius: 5px;
-        text-align: center;
-      }
-
-      .footer {
-        margin-top: 50px;
-        font-size: 12px;
-        color: #132046;
+      .divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent 0%, #d896d0 50%, transparent 100%);
+        margin: 20px 0;
       }
     </style>
   </head>
   {% if not is_simple %}
-  <body>
-    
-    <img src="{{ logo_url }}" class="logo" alt="Logo" />
-    
-    <h1>Assignation de Commande</h1>
-    
-    <p>
-      Vous avez été assigné à la commande #{{ conversation.related_order.id }}
-      <br />
-      La conversation sera du type Commande, Agissez vite s'il vous plait !
-    </p>
-    
-    <div class="total">CELEBOBO Business Automated Email</div>
-    
-    <div class="footer">
-      <p>Merci de vite satisfaire le client !</p>
-    </div>
-  </body>
+    <body>
+      <div class="email-wrapper">
+        <div class="email-container">
+          <div class="email-header">
+            <img src="{{ logo_url }}" class="logo" alt="Logo CELEBOBO" />
+            <h1>Assignation de Commande</h1>
+          </div>
+          <div class="email-body">
+            <center>
+              <div class="urgent-badge">Action Requise</div>
+            </center>
+            <div class="message-box">
+              <p>
+                Vous avez été assigné à la commande <strong>#{{ conversation.related_order.id }}</strong>
+              </p>
+              <div class="divider"></div>
+              <p>
+                Type de conversation : <strong>Commande</strong>
+                <br />
+                Agissez vite s'il vous plaît
+              </p>
+            </div>
+          </div>
+          <div class="email-footer">
+            <p class="footer-text">Merci de vite satisfaire le client</p>
+            <p class="brand-text">CELEBOBO Business Automated Email</p>
+          </div>
+        </div>
+      </div>
+    </body>
   {% else %}
-  <body>
-    
-    <img src="{{ logo_url }}" class="logo" alt="Logo" />
-    
-    <h1>Assignation de la Discussion</h1>
-    
-    <p>
-      Vous avez été assigné à une nouvelle discussion avec le client
-      <br />
-      La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait
-      pour la satisafaction du client!
-    </p>
-    
-    <div class="total">CELEBOBO Business Automated Email</div>
-    
-    <div class="footer">
-      <p>Merci de vite satisfaire le client !</p>
-    </div>
-  </body>
+    <body>
+      <div class="email-wrapper">
+        <div class="email-container">
+          <div class="email-header">
+            <img src="{{ logo_url }}" class="logo" alt="Logo CELEBOBO" />
+            <h1>Assignation de Discussion</h1>
+          </div>
+          <div class="email-body">
+            <center>
+              <div class="urgent-badge">Action Requise</div>
+            </center>
+            <div class="message-box">
+              <p>Vous avez été assigné à une nouvelle discussion avec le client</p>
+              <div class="divider"></div>
+              <p>
+                Type de conversation : <strong>Discussion-Chat</strong>
+                <br />
+                Agissez vite s'il vous plaît pour la satisfaction du client
+              </p>
+            </div>
+          </div>
+          <div class="email-footer">
+            <p class="footer-text">Merci de vite satisfaire le client</p>
+            <p class="brand-text">CELEBOBO Business Automated Email</p>
+          </div>
+        </div>
+      </div>
+    </body>
   {% endif %}
 </html>

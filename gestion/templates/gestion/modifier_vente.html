@@ -1,9 +1,8 @@
 {% extends 'base_cele.html' %}
 {% load static %}
-{% block title %}Modifier une vente - Cele Admin{% endblock %}
+{% block title %}Modifier une vente - CELEBOBO ADMIN{% endblock %}
 {% block content %}
   <div class="mx-auto max-w-4xl px-2 sm:px-4">
-    <!-- Titre -->
     <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
       <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-text-dark-primary">
         Modification d'une vente
@@ -21,12 +20,10 @@
         {% endfor %}
       </div>
     {% endif %}
-    <!-- Card -->
     <div class="flex flex-col gap-4 sm:gap-6 rounded-xl bg-component-dark p-3 sm:p-6 shadow-lg">
       <form method="post">
         {% csrf_token %}
         <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
-          <!-- Produit -->
           <div class="md:col-span-2">
             <label class="flex flex-col">
               <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Produit vendu</span>
@@ -42,7 +39,6 @@
               </datalist>
             </label>
           </div>
-          <!-- Date achat -->
           <div>
             <label class="flex flex-col">
               <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Date d'achat</span>
@@ -54,7 +50,6 @@
                      class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
             </label>
           </div>
-          <!-- Prix final -->
           <div>
             <label class="flex flex-col">
               <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Prix final ($)</span>
@@ -66,7 +61,6 @@
                      class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
             </label>
           </div>
-          <!-- Méthode -->
           <div>
             <label class="flex flex-col">
               <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Méthode de paiement</span>
@@ -80,13 +74,11 @@
             </label>
           </div>
         </div>
-        <!-- Warning text -->
         <div class="my-6 border-t border-border-dark pt-4 sm:pt-6">
           <p class="text-xs sm:text-sm text-text-dark-secondary leading-relaxed">
             ⚠️ Veuillez vérifier les informations avant d’enregistrer les modifications.
           </p>
         </div>
-        <!-- Actions -->
         <div class="flex flex-col-reverse sm:flex-row-reverse gap-2 sm:gap-3">
           <button type="submit"
                   class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-primary px-4 sm:px-6 text-sm md:text-base font-bold text-white hover:bg-primary/90 sm:w-auto">

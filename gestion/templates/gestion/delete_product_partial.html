@@ -1,34 +1,38 @@
-{# delete_product_partial.html — contenu injecté dans la modale via AJAX #}
 <div class="card-container">
-    
-<!--
-    <div class="warning-text">
-        ⚠️ Vous êtes sur le point de <strong>supprimer définitivement</strong> ce produit. Cette action est <u>irréversible</u>.
-    </div>
-    
-    <div class="product-preview">
-        {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-        {% else %}
-            <div class="placeholder-icon">📦</div>
-        {% endif %}
-        <div class="product-details">
-            <h3>{{ product.name }}</h3>
-            <p><strong>Catégorie :</strong> {{ product.category }}</p>
-            <p><strong>Prix :</strong> ${{ product.price }}</p>
-            <p><strong>Description :</strong> {{ product.description }}</p>
-            <p><strong>Note :</strong> ⭐ {{ product.rating }} ({{ product.reviews }} avis)</p>
-        </div>
-    </div>-->
-
     <form method="post" action="{% url 'gestion:delete_product' product.id %}">
         {% csrf_token %}
-        <p class="confirmation-text" style="text-align: center; font-size: 14px; color: #6c7293; margin-bottom: 20px;">
+        <p class="confirmation-text"
+           style="text-align: center;
+                  font-size: 14px;
+                  color: #6c7293;
+                  margin-bottom: 20px">
             Êtes-vous sûr de vouloir supprimer <strong>"{{ product.name }}"</strong> ? Cette action est irréversible.
         </p>
         <div class="button-group">
-            <button type="submit" class="aaa" style="background-color: #640D5F; color:#6c7293; padding: 8px 15px; border-radius: 6px; font-size: 14px; cursor: pointer; text-decoration: none; transition: background 0.2s ease; display: inline-block; border: none;">Oui, supprimer</button>
-            <button type="button" class="close-modal-btn" style="background-color: #F4F4F5; color:#6c7293; padding: 8px 15px; border-radius: 6px; font-size: 14px; cursor: pointer; text-decoration: none; transition: background 0.2s ease; display: inline-block; border: none;">Annuler</button>
+            <button type="submit"
+                    class="aaa"
+                    style="background-color: #640D5F;
+                           color:#6c7293;
+                           padding: 8px 15px;
+                           border-radius: 6px;
+                           font-size: 14px;
+                           cursor: pointer;
+                           text-decoration: none;
+                           transition: background 0.2s ease;
+                           display: inline-block;
+                           border: none">Oui, supprimer</button>
+            <button type="button"
+                    class="close-modal-btn"
+                    style="background-color: #F4F4F5;
+                           color:#6c7293;
+                           padding: 8px 15px;
+                           border-radius: 6px;
+                           font-size: 14px;
+                           cursor: pointer;
+                           text-decoration: none;
+                           transition: background 0.2s ease;
+                           display: inline-block;
+                           border: none">Annuler</button>
         </div>
     </form>
 </div>
@@ -41,17 +45,17 @@
         padding: 0;
     }
     
-/*
-    .card-container {
-        max-width: 600px;
-        margin: 60px auto;
-        background-color: #1f222d;
-        padding: 30px;*/
-        /* border-radius: 12px; */
-        /* box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); */
-        /* border: 1px solid #2c2f3a; 
-    }
-*/
+    /*
+        .card-container {
+            max-width: 600px;
+            margin: 60px auto;
+            background-color: #1f222d;
+            padding: 30px;*/
+            /* border-radius: 12px; */
+            /* box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); */
+            /* border: 1px solid #2c2f3a; 
+        }
+    */
     .card-header {
         text-align: center;
         margin-bottom: 25px;

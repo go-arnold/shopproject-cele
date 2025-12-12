@@ -126,3 +126,7 @@ django-admin makemessages -l <language_code>
 ```
 
 django-admin compilemessages
+
+"[html][django-html][handlebars][hbs][mustache][jinja][jinja-html][nj][njk][nunjucks][twig]": {
+        "editor.defaultFormatter": "monosans.djlint"
+    },

@@ -1,5 +1,5 @@
 {% extends 'base_cele.html' %}
-{% block title %}CELEBOBO - Admin Products{% endblock %}
+{% block title %}Enregistrer une vente - CELEBOBO ADMIN{% endblock %}
 {% block content %}
     <div class="mx-auto max-w-4xl px-2 sm:px-4">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
@@ -109,56 +109,56 @@
         </div>
     </div>
     <style>
-.input-wrapper { position: relative; }
+        .input-wrapper { position: relative; }
 
-.spinner {
-  position: absolute;
-  top: 65%;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(204,198,198,0.3);
-  border-top-color: rgb(204,198,198);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  animation: spin 0.8s linear infinite;
-  display: none;
-}
+        .spinner {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        width: 18px;
+        height: 18px;
+        border: 3px solid rgba(204,198,198,0.3);
+        border-top-color: rgb(204,198,198);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: spin 0.8s linear infinite;
+        display: none;
+        }
 
-@keyframes spin {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
-}
+        @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
 
-.auto-field[readonly] { cursor: not-allowed; }
+        .auto-field[readonly] { cursor: not-allowed; }
     </style>
 {% endblock %}
 {% block extra_js %}
     <script>
-document.getElementById('produit').addEventListener('change', async function() {
-  const productId = this.value;
-  if (!productId) return;
+        document.getElementById('produit').addEventListener('change', async function() {
+        const productId = this.value;
+        if (!productId) return;
 
-  document.querySelectorAll('.spinner').forEach(sp => sp.style.display = 'block');
-  document.querySelectorAll('.auto-field').forEach(f => f.value = '');
+        document.querySelectorAll('.spinner').forEach(sp => sp.style.display = 'block');
+        document.querySelectorAll('.auto-field').forEach(f => f.value = '');
 
-  try {
-    const response = await fetch(`/cele-admin/produit/${productId}/details/`);
-    const data = await response.json();
+        try {
+            const response = await fetch(`/cele-admin/produit/${productId}/details/`);
+            const data = await response.json();
 
-    if (data.error) {
-      alert(data.error);
-      return;
-    }
+            if (data.error) {
+            alert(data.error);
+            return;
+            }
 
-    document.getElementById('product_name').value = data.name || '';
-    document.getElementById('normal_price').value = data.price || '';
-    document.getElementById('purchase_price').value = data.price_primary || '';
-    document.getElementById('category').value = data.category || '';
-  } catch (error) {
-    console.error("Erreur :", error);
-  } finally {
-    document.querySelectorAll('.spinner').forEach(sp => sp.style.display = 'none');
-  }
-});
+            document.getElementById('product_name').value = data.name || '';
+            document.getElementById('normal_price').value = data.price || '';
+            document.getElementById('purchase_price').value = data.price_primary || '';
+            document.getElementById('category').value = data.category || '';
+        } catch (error) {
+            console.error("Erreur :", error);
+        } finally {
+            document.querySelectorAll('.spinner').forEach(sp => sp.style.display = 'none');
+        }
+        });
     </script>
 {% endblock %}

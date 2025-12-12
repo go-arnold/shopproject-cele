@@ -6,31 +6,34 @@
         @page {
             size: A4;
             margin: 20mm;
-            background-color: #0a0f24;
+            background-color: #0d0817;
         }
 
         body {
             font-family: "DejaVu Sans", sans-serif;
-            background-color: #0a0f24;
-            color: white;
+            background: linear-gradient(135deg, #0d0817 0%, #1a0f2e 100%);
+            color: #e8e0f0;
             text-align: center;
+            min-height: 100vh;
         }
 
         .logo {
             width: 130px;
             margin-bottom: 10px;
+            filter: drop-shadow(0 0 15px rgba(100, 13, 95, 0.6));
         }
 
         h1 {
-            color: #4da6ff;
+            color: #d896d0;
             margin-bottom: 30px;
             font-size: 28px;
+            text-shadow: 0 0 20px rgba(100, 13, 95, 0.5);
         }
 
         h2 {
             text-align: left;
             margin-top: 20px;
-            color: #66c2ff;
+            color: #c77dbf;
             font-size: 20px;
         }
 
@@ -39,25 +42,38 @@
             border-collapse: collapse;
             margin-top: 15px;
             font-size: 13px;
+            box-shadow: 0 4px 20px rgba(100, 13, 95, 0.3);
         }
 
         th, td {
-            border: 1px solid #2e3a55;
+            border: 1px solid #3d1f3a;
             padding: 8px;
             text-align: left;
         }
 
         th {
-            background-color: #132046;
-            color: #b3d1ff;
+            background: linear-gradient(135deg, #640D5F 0%, #7a1173 100%);
+            color: #f5e6f2;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         tr:nth-child(even) {
-            background-color: #0f1a33;
+            background-color: #1a0f2e;
         }
 
         tr:nth-child(odd) {
-            background-color: #0c1529;
+            background-color: #140a24;
+        }
+
+        tr:hover {
+            background-color: #2d1942;
+            transition: background-color 0.3s ease;
+        }
+
+        td {
+            color: #d4c5dd;
         }
         </style>
     </head>

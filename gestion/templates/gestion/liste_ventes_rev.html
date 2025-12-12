@@ -1,6 +1,6 @@
 {% extends 'base_cele.html' %}
 {% load static %}
-{% block title %}Liste des ventes - Cele Admin{% endblock %}
+{% block title %}Liste des ventes - CELEBOBO ADMIN{% endblock %}
 {% block content %}
     <div class="max-w-7xl mx-auto px-2 sm:px-4 py-4">
         <div class="bg-component-dark rounded-xl shadow-md">
@@ -21,7 +21,6 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-                <!-- Export -->
                 <div class="flex flex-wrap gap-2 mb-4">
                     <a href="{% url 'gestion:export_ventes_excel' %}"
                        class="rounded-lg border border-yellow-500 text-yellow-500 px-3 py-1.5 text-xs sm:text-sm hover:bg-yellow-500 hover:text-black transition">
@@ -32,7 +31,6 @@
                         Exportez en PDF
                     </a>
                 </div>
-                <!-- Filtres -->
                 <p class="text-xs sm:text-sm text-text-dark-secondary mb-2">Filtrer par période :</p>
                 <div class="flex flex-wrap gap-2 mb-6">
                     <a href="?filtre=2"
@@ -46,7 +44,6 @@
                     <a href="?"
                        class="border border-green-500 text-green-500 px-3 py-1.5 rounded-lg text-xs sm:text-sm hover:bg-green-500 hover:text-black">Tout</a>
                 </div>
-                <!-- Recherche par date -->
                 <form method="get" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
                         <label class="block text-xs sm:text-sm text-text-dark-secondary mb-1">Rechercher par date d'achat</label>
@@ -73,7 +70,6 @@
                         </a>
                     </div>
                 </form>
-                <!-- Table -->
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse">
                         <thead>
@@ -113,7 +109,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- Pagination -->
                 {% if ventes.has_other_pages %}
                     <nav class="mt-4 flex justify-center">
                         <ul class="flex gap-1 text-xs sm:text-sm">

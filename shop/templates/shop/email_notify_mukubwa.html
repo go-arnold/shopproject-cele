@@ -121,11 +121,11 @@
     </head>
     {% if not yes %}
         <body>
-            <!-- Logo centré -->
+            
             <img src="{{ logo_url }}" class="logo" alt="Logo">
-            <!-- Titre principal -->
+            
             <h1>Liste des produits en Commande</h1>
-            <!-- -->
+            
             <table>
                 <thead>
                     <tr>
@@ -146,35 +146,35 @@
                             <td>{{ item.subtotal }} $usd</td>
                         </tr>
                     {% endfor %}
-                    <!-- Ligne total -->
+                    
                     <tr class="total-row">
                         <td colspan="4">Total Général</td>
                         <td>{{ total }} USD</td>
                     </tr>
                 </tbody>
             </table>
-            <!-- Total affiché en grand -->
+            
             <div class="total">Total à Payer : {{ total }} USD</div>
-            <!-- Footer -->
+            
             <div class="footer">
                 <p>Merci pour votre achat !</p>
             </div>
         </body>
     {% else %}
         <body>
-            <!-- Logo centré -->
+            
             <img src="{{ logo_url }}" class="logo" alt="Logo">
-            <!-- Titre principal -->
+            
             <h1>Vous avez ete sollicite par un client</h1>
-            <!-- -->
+            
             <p class="total">
                 Vous avez été appelé à avoir une nouvelle discussion avec un client
                 <br>
                 La conversation sera du type Discussion-Chat, Agissez vite s'il vous plait pour la satisafaction du client!
             </p>
-            <!-- Total affiché en grand -->
+            
             <div class="total">CELEBOBO Business Automated Email</div>
-            <!-- Footer -->
+            
             <div class="footer">
                 <p>Merci de vite satisfaire le client !</p>
             </div>

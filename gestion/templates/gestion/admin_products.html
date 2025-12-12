@@ -1,5 +1,5 @@
 {% extends 'base_cele.html' %}
-{% block title %}CELEBOBO - Admin Products{% endblock %}
+{% block title %}Gerer les produits - CELEBOBO ADMIN{% endblock %}
 {% block extra_css %}
     <style>
         .modal-overlay {
@@ -43,8 +43,7 @@
             border: none;
         }
         .close-modal:hover { color: #fff; }
-
-        /* loader spinner */
+       
         #deleteModalBody .spinner {
             display: inline-block;
             width: 30px;
@@ -73,7 +72,6 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <!-- PageHeading -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="text-2xl sm:text-3xl font-bold text-black dark:text-white">Gestion de produits</h1>
             <button class="flex h-10 min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg bg-primary px-5 text-sm font-bold text-white">
@@ -81,7 +79,6 @@
                 <span class="truncate"> <a href="{% url 'gestion:add_product' %}">Ajouter un produit</a></span>
             </button>
         </div>
-        <!-- Controls: SearchBar and Chips -->
         <div class="flex flex-wrap items-center gap-4 rounded-xl bg-background-light dark:bg-[#1E1E2D] p-4">
             <div class="flex-grow min-w-64">
                 <label class="flex h-10 w-full flex-col">
@@ -97,7 +94,6 @@
                 </label>
             </div>
         </div>
-        <!-- Product Grid -->
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {% for product in products %}
                 <div class="group flex flex-col overflow-hidden rounded-xl bg-background-light dark:bg-[#1E1E2D] shadow-md transition-all hover:shadow-lg hover:-translate-y-1"
@@ -137,7 +133,6 @@
                 </div>
             {% endfor %}
         </div>
-        <!-- Pagination -->
         <div class="flex flex-wrap items-center justify-between gap-4 pt-4">
             <p class="text-sm text-[#888B93]">
                 Montrant jusqu'a <span class="font-semibold text-black dark:text-white"></span><span class="font-semibold text-black dark:text-white">{{ products.paginator.count }}</span> produits
@@ -180,148 +175,148 @@
 {% endblock %}
 {% block extra_js %}
     <script>
-    (function(){
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+        (function(){
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const modal = document.getElementById("deleteModal");
-            if (!modal) return;
-            const modalBody = document.getElementById("deleteModalBody");
-            const closeModalBtn = modal.querySelector(".close-modal");
-            let lastFocusedButton = null;
+            document.addEventListener("DOMContentLoaded", function () {
+                const modal = document.getElementById("deleteModal");
+                if (!modal) return;
+                const modalBody = document.getElementById("deleteModalBody");
+                const closeModalBtn = modal.querySelector(".close-modal");
+                let lastFocusedButton = null;
 
-            function openLoader(triggerEl) {
-                modal.setAttribute("aria-hidden", "false");
-                modal.style.display = "flex";
-                document.body.style.overflow = "hidden";
-                modalBody.innerHTML = `
-                    <div style="text-align:center;padding:40px;">
-                        <div class="spinner"></div>
-                        <p style="margin-top:10px;color:#bbb;">Chargement…</p>
-                    </div>`;
-                if (triggerEl) {
-                    triggerEl.disabled = true;
-                    triggerEl.classList.add("loading");
+                function openLoader(triggerEl) {
+                    modal.setAttribute("aria-hidden", "false");
+                    modal.style.display = "flex";
+                    document.body.style.overflow = "hidden";
+                    modalBody.innerHTML = `
+                        <div style="text-align:center;padding:40px;">
+                            <div class="spinner"></div>
+                            <p style="margin-top:10px;color:#bbb;">Chargement…</p>
+                        </div>`;
+                    if (triggerEl) {
+                        triggerEl.disabled = true;
+                        triggerEl.classList.add("loading");
+                    }
                 }
-            }
 
-            function closeModal() {
-                modal.setAttribute("aria-hidden", "true");
-                modal.style.display = "none";
-                document.body.style.overflow = "";
-                modalBody.innerHTML = "";
-                if (lastFocusedButton) {
-                    try { lastFocusedButton.blur(); } catch(e){/*ignore*/}
-                    lastFocusedButton.disabled = false;
-                    lastFocusedButton.classList.remove("loading");
-                    lastFocusedButton = null;
+                function closeModal() {
+                    modal.setAttribute("aria-hidden", "true");
+                    modal.style.display = "none";
+                    document.body.style.overflow = "";
+                    modalBody.innerHTML = "";
+                    if (lastFocusedButton) {
+                        try { lastFocusedButton.blur(); } catch(e){/*ignore*/}
+                        lastFocusedButton.disabled = false;
+                        lastFocusedButton.classList.remove("loading");
+                        lastFocusedButton = null;
+                    }
                 }
-            }
 
-            // fermer par clique dehors
-            modal.addEventListener("click", function(e){
-                if (e.target === modal) closeModal();
-            });
+                
+                modal.addEventListener("click", function(e){
+                    if (e.target === modal) closeModal();
+                });
 
-            if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+                if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
 
-            // ouverture: on attache les handlers à tous les boutons
-            document.querySelectorAll(".open-delete-modal").forEach(function(btn){
-                btn.addEventListener("click", function(e){
-                    e.preventDefault();
-                    lastFocusedButton = btn;
-                    const url = btn.dataset.url;
-                    const pid = btn.dataset.productId || null;
+                
+                document.querySelectorAll(".open-delete-modal").forEach(function(btn){
+                    btn.addEventListener("click", function(e){
+                        e.preventDefault();
+                        lastFocusedButton = btn;
+                        const url = btn.dataset.url;
+                        const pid = btn.dataset.productId || null;
 
-                    openLoader(btn);
+                        openLoader(btn);
 
-                    fetch(url, { headers: {'X-Requested-With': 'XMLHttpRequest'} })
-                        .then(function(res){
-                            if (!res.ok) throw new Error("Bad response");
-                            return res.text();
-                        })
-                        .then(function(html){
-                            // injecte le partial
-                            modalBody.innerHTML = html;
+                        fetch(url, { headers: {'X-Requested-With': 'XMLHttpRequest'} })
+                            .then(function(res){
+                                if (!res.ok) throw new Error("Bad response");
+                                return res.text();
+                            })
+                            .then(function(html){
+                                
+                                modalBody.innerHTML = html;
 
-                            // bouton annuler (partial doit avoir class .close-modal-btn)
-                            modalBody.querySelectorAll(".close-modal-btn").forEach(function(cbtn){
-                                cbtn.addEventListener("click", function(ev){
-                                    ev.preventDefault();
-                                    closeModal();
-                                });
-                            });
-
-                            // attacher handler au formulaire
-                            const form = modalBody.querySelector("form");
-                            if (form) {
-                                form.addEventListener("submit", function(ev){
-                                    ev.preventDefault();
-                                    const csrftoken = getCookie('csrftoken');
-                                    const fd = new FormData(form);
-
-                                    fetch(form.action, {
-                                        method: "POST",
-                                        headers: {
-                                            'X-Requested-With': 'XMLHttpRequest',
-                                            'X-CSRFToken': csrftoken
-                                        },
-                                        body: fd,
-                                        credentials: 'same-origin'
-                                    })
-                                    .then(function(resp){
-                                        // on essaye de parser JSON (on s'attend à {success:true})
-                                        return resp.json().catch(function(){
-                                            return { success: resp.ok };
-                                        });
-                                    })
-                                    .then(function(data){
-                                        if (data && data.success) {
-                                            // retirer la carte sans reload si possible
-                                            if (pid) {
-                                                const card = document.querySelector('.card[data-product-id="'+pid+'"]');
-                                                if (card) card.remove();
-                                                // message rapide puis fermer
-                                                modalBody.innerHTML = '<div style="text-align:center;padding:30px;">✅ Produit supprimé</div>';
-                                                setTimeout(closeModal, 600);
-                                                return;
-                                            }
-                                            // fallback
-                                            window.location.reload();
-                                        } else {
-                                            // si erreur serveur
-                                            console.error("Suppression: réponse inattendue", data);
-                                            window.location.reload();
-                                        }
-                                    })
-                                    .catch(function(err){
-                                        console.error("Erreur lors de la suppression:", err);
-                                        window.location.reload();
+                                
+                                modalBody.querySelectorAll(".close-modal-btn").forEach(function(cbtn){
+                                    cbtn.addEventListener("click", function(ev){
+                                        ev.preventDefault();
+                                        closeModal();
                                     });
                                 });
-                            }
-                        })
-                        .catch(function(err){
-                            console.error("Erreur fetch modal:", err);
-                            modalBody.innerHTML = `<div style="padding:40px;text-align:center;color:#aaa;">Erreur de chargement. <br><small>${err.message}</small></div>`;
-                            if (btn) { btn.disabled = false; btn.classList.remove("loading"); }
-                        });
+
+                              
+                                const form = modalBody.querySelector("form");
+                                if (form) {
+                                    form.addEventListener("submit", function(ev){
+                                        ev.preventDefault();
+                                        const csrftoken = getCookie('csrftoken');
+                                        const fd = new FormData(form);
+
+                                        fetch(form.action, {
+                                            method: "POST",
+                                            headers: {
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'X-CSRFToken': csrftoken
+                                            },
+                                            body: fd,
+                                            credentials: 'same-origin'
+                                        })
+                                        .then(function(resp){
+                                            
+                                            return resp.json().catch(function(){
+                                                return { success: resp.ok };
+                                            });
+                                        })
+                                        .then(function(data){
+                                            if (data && data.success) {
+                                               
+                                                if (pid) {
+                                                    const card = document.querySelector('.card[data-product-id="'+pid+'"]');
+                                                    if (card) card.remove();
+                                                    
+                                                    modalBody.innerHTML = '<div style="text-align:center;padding:30px;">✅ Produit supprimé</div>';
+                                                    setTimeout(closeModal, 600);
+                                                    return;
+                                                }
+                                                
+                                                window.location.reload();
+                                            } else {
+                                               
+                                                console.error("Suppression: réponse inattendue", data);
+                                                window.location.reload();
+                                            }
+                                        })
+                                        .catch(function(err){
+                                            console.error("Erreur lors de la suppression:", err);
+                                            window.location.reload();
+                                        });
+                                    });
+                                }
+                            })
+                            .catch(function(err){
+                                console.error("Erreur fetch modal:", err);
+                                modalBody.innerHTML = `<div style="padding:40px;text-align:center;color:#aaa;">Erreur de chargement. <br><small>${err.message}</small></div>`;
+                                if (btn) { btn.disabled = false; btn.classList.remove("loading"); }
+                            });
+                    });
                 });
             });
-        });
-    })();
+        })();
     </script>
 {% endblock %}

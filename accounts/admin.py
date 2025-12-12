@@ -31,7 +31,6 @@ class ProfileAdmin(admin.ModelAdmin):
     image_preview.short_description = 'Photo'
 
 
-# Remplacer l'admin User pour inclure l'inline Profile
 try:
     admin.site.unregister(User)
 except Exception:
@@ -43,7 +42,6 @@ class UserAdmin(BaseUserAdmin):
     inlines = (ProfileInline,)
 
     def get_inline_instances(self, request, obj=None):
-        # n'afficher l'inline que si on édite un utilisateur existant
         if not obj:
             return []
         return super().get_inline_instances(request, obj)

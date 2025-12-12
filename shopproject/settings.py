@@ -14,6 +14,29 @@ from pathlib import Path
 import os
 import cloudinary
 from dotenv import load_dotenv
+import psycopg2
+
+load_dotenv()
+
+try:
+    connection = psycopg2.connect(
+        user=os.getenv("user"),
+        password=os.getenv("password"),
+        host=os.getenv("host"),
+        port=os.getenv("port"),
+        dbname=os.getenv("dbname")
+    )
+    print("Connection successful!")
+    cursor = connection.cursor()
+    cursor.execute("SELECT NOW();")
+    result = cursor.fetchone()
+    print("Current Time:", result)
+    cursor.close()
+    connection.close()
+    print("Connection closed.")
+
+except Exception as e:
+    print(f"Failed to connect: {e}")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -121,7 +144,7 @@ WSGI_APPLICATION = 'shopproject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defaultdb',
@@ -130,7 +153,31 @@ DATABASES = {
         'HOST': 'mt-base-cikuruspaces.c.aivencloud.com',
         'PORT': '17101',
     }
+}"""
+
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'matabardb',
+        'USER': 'matabar',
+        'PASSWORD': 'LeNouveauPassword1@AllAccounts',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}"""
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("dbname"),
+        'USER': os.getenv("user"),
+        'PASSWORD': os.getenv("password"),
+        'HOST': os.getenv("host"),
+        'PORT': os.getenv("port"),
+    }
+
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

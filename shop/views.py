@@ -24,11 +24,7 @@ User = get_user_model()
 
 
 def homeVue(request):
-    """Récupère toutes les catégories et rend `shop/homepage.html`.
-
-    Contexte retourné:
-    - `categories`: QuerySet de `Category.objects.all()`
-    """
+    
     categories = Category.objects.all()
     new_products = Product.objects.order_by('-date_added')[:9]
     single_product_test = Product.objects.first()
@@ -57,17 +53,7 @@ def homeVue(request):
 
 
 def categoryVue(request, pk):
-    """Affiche une catégorie et ses produits.
-
-    Args:
-        request: HttpRequest
-        pk: primary key (id) de la Category
-
-    Contexte retourné:
-    - `category`: instance de Category
-    - `products`: QuerySet des produits rattachés
-    - `categories`: liste de toutes les catégories (pour navigation)
-    """
+    
     category = get_object_or_404(Category, pk=pk)
     products_qs = category.products.select_related(
         'category_fk').prefetch_related('features').all().order_by('-id')
@@ -86,7 +72,7 @@ def categoryVue(request, pk):
         for p in products_qs:
             p.is_favorite = False
 
-    # Pagination: 12 produits par page
+    
     paginator = Paginator(products_qs, 12)
     page = request.GET.get('page')
     try:
@@ -98,11 +84,11 @@ def categoryVue(request, pk):
 
     categories = Category.objects.all()
 
-    # Prix le plus élevé pour cette catégorie
+    
     agg = products_qs.aggregate(max_price=Max('price'))
     most_expensive_price = agg.get('max_price')
 
-    # Catégories similaires: choisir jusqu'à 2 autres catégories
+    
     similar_qs = (
         Category.objects
         .exclude(pk=category.pk)
@@ -136,15 +122,9 @@ def categoryVue(request, pk):
 
 
 def allProducts(request):
-    """Affiche tous les produits avec la même pagination que `categoryVue`.
-
-    Contexte retourné (noms identiques à `categoryVue` pour compatibilité):
-    - `products`: liste de produits pour la page courante
-    - `page_obj`, `paginator`, `is_paginated`, `start_index`, `end_index`, `total_count`
-    - `categories`: toutes les catégories (utile pour la navigation)
-    """
+    
     products_qs = Product.objects.select_related('category_fk').prefetch_related(
-        'features').all()  # .order_by("name")
+        'features').all()  
 
     if request.user.is_authenticated:
         for p in products_qs:
@@ -265,10 +245,10 @@ def productVue(request, pk):
         sampled_pks = random.sample(similar_pks, sample_count)
         similar_products = list(Product.objects.filter(pk__in=sampled_pks))
 
-    # If we don't have 4 similar products from the same category, fill the rest
-    # with random products from the rest of the catalogue (excluding current and
-    # already selected products). This ensures `similar_products` contains up to
-    # 6 items whenever possible.
+    
+    
+    
+    
     if len(similar_products) < 6:
         needed = 6 - len(similar_products)
         other_qs = Product.objects.exclude(pk=product.pk)
@@ -296,12 +276,7 @@ def productVue(request, pk):
 
 @login_required
 def add_testimony(request, pk):
-    """Reçoit un POST depuis le formulaire produit et crée un `Testimony`.
-
-    - Requiert une session utilisateur (redirige vers login si non connecté).
-    - Attend `rating` et `message` dans `request.POST`.
-    - Redirige vers la page produit après création.
-    """
+    
     product = get_object_or_404(Product, pk=pk)
     if request.method != 'POST':
         return redirect('product_detail', pk=product.pk)
@@ -334,7 +309,7 @@ def add_testimony(request, pk):
 def results(request):
     query = request.GET.get("q", "").strip()
 
-    # Preselect all products
+    
     products = Product.objects.all()
 
     if request.user.is_authenticated:
@@ -345,7 +320,7 @@ def results(request):
     else:
         favorite_ids = set()
 
-    # Handle search query
+    
     if query:
         keywords = query.split()
         q_object = Q()
@@ -361,7 +336,7 @@ def results(request):
 
         products = products.filter(q_object).distinct()
 
-    # Pagination
+    
     paginator = Paginator(products, 12)
     page_num = request.GET.get("page")
 
@@ -407,7 +382,7 @@ def remove_favorite(request, product_id):
 
 @login_required
 def toggle_favorite(request, product_id):
-    """Un seul endpoint : s'il est favori → enlever. Sinon → ajouter."""
+    
     if request.method != "POST":
         return HttpResponseBadRequest("Méthode invalide")
 
@@ -466,7 +441,7 @@ def favorites_list(request):
 
 
 def aboutUs(request):
-    """Rend la page 'À propos'."""
+    
     return render(request, 'shop/about.html')
 
 
@@ -515,23 +490,20 @@ def cart_view(request):
 
 @login_required
 def start_conversation_from_cart(request):
-    """
-    Convertit le panier en Order, crée une Conversation,
-    envoie un message automatique + notification à tous les 'mukubwa'.
-    """
+    
 
     cart = Cart(request)
 
     if len(cart) == 0:
         raise Http404("Votre panier est vide.")
 
-    # 1. CRÉER LA COMMANDE
+    
     order = Order.objects.create(
         user=request.user,
         total_price=cart.get_total_price(),
     )
 
-    # 2. CRÉER LES ORDER ITEMS
+    
     for item in cart:
         OrderItem.objects.create(
             order=order,
@@ -540,14 +512,14 @@ def start_conversation_from_cart(request):
             unit_price=item["price"],
         )
 
-    # 3. CRÉER LA CONVERSATION
+    
     conversation = Conversation.objects.create(
         is_from_cart=True,
         related_order=order
     )
     conversation.participants.add(request.user)
 
-    # 4. MESSAGE AUTOMATIQUE FORMATÉ
+    
     lines = []
     lines.append("Bonjour, je voudrais passer cette commande :\n")
     total = 0
@@ -573,7 +545,7 @@ def start_conversation_from_cart(request):
         metadata={"generated_from_cart": True},
     )
 
-    # 5. NOTIFICATION AUX MUKUBWA
+    
     try:
         mukubwa_group = Group.objects.get(name="mukubwa")
         mukubwa_users = mukubwa_group.user_set.all()
@@ -592,7 +564,7 @@ def start_conversation_from_cart(request):
             conversation=conversation
         )
 
-    # 5.1 ENVOYER LES EMAILS AUX MUKUBWA AUSSI
+    
 
     subject = "[ CELEBOBO-BUSINESS ] Nouvelle Commande Client"
     template_name = "shop/email_notify_mukubwa.html"
@@ -612,21 +584,19 @@ def start_conversation_from_cart(request):
     except Exception as e:
         print(f"Erreur lors de l'envoi de l'email : {e}")
 
-    # 6. VIDER PANIER APRÈS ENVOI
+    
     cart.clear()
 
-    # 7. REDIRIGER VERS LA CONVERSATION
+    
     return redirect("conversation_detail", conversation_id=conversation.id)
 
 
 @login_required
 def conversation_detail(request, conversation_id):
-    """
-    Affiche une conversation existante + liste des messages.
-    """
+    
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
-    # Vérifier que l'utilisateur fait partie de la conversation
+    
     if request.user not in conversation.participants.all():
         conversation.participants.add(request.user)
 
@@ -643,9 +613,7 @@ def conversation_detail(request, conversation_id):
 
 @login_required
 def conversation_messages_json(request, conversation_id):
-    """
-    Retourne les messages sous forme JSON (pour AJAX polling).
-    """
+    
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
     if request.user not in conversation.participants.all():
@@ -675,7 +643,7 @@ def send_message_ajax(request, conversation_id):
 
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
-    # Vérif participant
+    
     if request.user not in conversation.participants.all():
         return JsonResponse({"error": "Access denied"}, status=403)
 
@@ -778,7 +746,7 @@ def notifications_view(request):
     if user not in rev and user not in muk:
         raise PermissionDenied()
     else:
-        # Récupérer les notifs du user
+        
         notifications = Notification.objects.filter(
             user=user).order_by("-created_at")
         notif_count = int(notifications.count())
@@ -844,10 +812,10 @@ def assign_revendeur(request, notification_id):
         conversation=conversation,
         type="order",
         title="Assignation de commande",
-        body=f"Vous avez été assigné à la commande #{conversation.related_order.id}",
+        body=f"Vous avez été assigné à la commande 
     )
     subject = "[CELEBOBO-BUSINESS] NOUVELLE ASSIGNATION- UNE COMMANDE"
-    text_content = f"Vous avez été assigné à la commande #{conversation.related_order.id}\n\n La conversation sera du type Commande, Agissez vite s'il vous plait !"
+    text_content = f"Vous avez été assigné à la commande 
     if revendeur.email:
         send_html_email(subject, [revendeur.email], "shop/assign_rev_email.html",
                         text_content, {"conversation": conversation, })
@@ -928,17 +896,10 @@ def revendeur_reply(request, notification_id):
 
 @login_required
 def list_conversations(request):
-    """
-    Liste simple des conversations de l'utilisateur.
-    Recherche server-side sur:
-      - contenu du dernier message
-      - nom des autres participants
-      - id de la commande (related_order.id) si présent
-    Aucun JS : tout via paramètre GET 'q'.
-    """
+    
     q = request.GET.get("q", "").strip()
 
-    # Conversations dont l'utilisateur est participant
+    
     qs = Conversation.objects.filter(
         participants=request.user).order_by("-created_at")
 
@@ -951,18 +912,18 @@ def list_conversations(request):
     except EmptyPage:
         page_obj = paginator.page(paginator.num_pages)
 
-    # Construire une liste simple d'objets dict pour le template.
+    
     conversations_info = []
     for conv in page_obj.object_list:
-        # dernier message
-        # last_msg = conv.message_set.order_by("-timestamp").first()
+        
+        
         last_msg = Message.objects.filter(
             conversation=conv).order_by("-timestamp").first()
         last_content = last_msg.content if last_msg else ""
         last_sender = last_msg.sender if last_msg else None
         last_timestamp = last_msg.timestamp if last_msg else None
 
-        # autre participant (pour affichage)
+        
         others = conv.participants.exclude(id=request.user.id)
         other = others.first() if others.exists() else None
 

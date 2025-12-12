@@ -1,10 +1,9 @@
 {% extends 'base_cele.html' %}
-{% block title %}Modifier un produit - Cele Admin{% endblock %}
+{% block title %}Modifier un produit - CELEBOBO ADMIN{% endblock %}
 {% block content %}
   <div class="max-w-5xl mx-auto p-6">
     <div class="shadow-lg rounded-xl p-6">
       <h2 class="text-2xl font-bold text-text-dark-primary mb-4">Modifier un produit</h2>
-      <!-- Afficher les messages d'erreur -->
       {% if messages %}
         <div class="space-y-3 mb-6">
           {% for message in messages %}
@@ -19,7 +18,6 @@
       {% endif %}
       <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
-        <!-- Nom du produit -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-1" for="name">Nom du produit</label>
           <input type="text"
@@ -29,7 +27,6 @@
                  required
                  class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none" />
         </div>
-        <!-- Description courte -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-1"
                  for="description">Description</label>
@@ -39,7 +36,6 @@
                     maxlength="255"
                     class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.description }}</textarea>
         </div>
-        <!-- Description longue -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-1"
                  for="long_description">Description longue</label>
@@ -48,7 +44,6 @@
                     rows="4"
                     class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.long_description }}</textarea>
         </div>
-        <!-- Caractéristiques / entretien -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-1"
                  for="chara_entretien">Caractéristiques / Entretien</label>
@@ -57,7 +52,6 @@
                     rows="3"
                     class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.chara_entretien }}</textarea>
         </div>
-        <!-- Politique de livraison -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-text-gray-400-1"
@@ -76,7 +70,6 @@
                       class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">{{ product.delivery_policy_phase2 }}</textarea>
           </div>
         </div>
-        <!-- Prix -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label class="block text-sm font-medium text-text-gray-400-1"
@@ -117,7 +110,6 @@
                    class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
           </div>
         </div>
-        <!-- Catégorie -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-1" for="category">Catégorie</label>
           <select id="category"
@@ -131,7 +123,6 @@
             {% endfor %}
           </select>
         </div>
-        <!-- Date limite -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-1"
                  for="date_wish">Devrait être vendu avant le</label>
@@ -141,7 +132,6 @@
                  value="{{ product.date_wish|date:'Y-m-d' }}"
                  class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
         </div>
-        <!-- Images -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label class="block text-sm font-medium text-text-gray-400-1" for="image">Image principale</label>
@@ -179,7 +169,6 @@
                    class="w-full border border-gray-300 rounded-lg px-4 py-2">
           </div>
         </div>
-        <!-- Features dynamiques -->
         <div>
           <label class="block text-sm font-medium text-text-gray-400-2">Caractéristiques du produit</label>
           <div id="features-container" class="space-y-2">
@@ -208,7 +197,6 @@
                   id="add-feature"
                   class="mt-2 bg-green-500 text-white px-4 py-2 rounded">Ajouter une caractéristique</button>
         </div>
-        <!-- Boutons -->
         <div class="flex flex-wrap gap-4 mt-4">
           <button type="submit"
                   class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition">
@@ -223,37 +211,37 @@
 {% endblock %}
 {% block extra_js %}
   <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const addFeatureBtn = document.getElementById('add-feature');
-    const featuresContainer = document.getElementById('features-container');
+    document.addEventListener('DOMContentLoaded', function() {
+        const addFeatureBtn = document.getElementById('add-feature');
+        const featuresContainer = document.getElementById('features-container');
 
-    addFeatureBtn.addEventListener('click', function() {
-        const featureItem = document.createElement('div');
-        featureItem.className = 'flex items-center gap-2';
-        featureItem.innerHTML = `
-            <input type="text" name="features[]" placeholder="Ex: Batterie 5000mAh" class="w-full border border-gray-300 rounded-lg px-3 py-2">
-            <button type="button" class="remove-feature bg-red-500 text-white px-3 py-1 rounded">Supprimer</button>
-        `;
-        featuresContainer.appendChild(featureItem);
+        addFeatureBtn.addEventListener('click', function() {
+            const featureItem = document.createElement('div');
+            featureItem.className = 'flex items-center gap-2';
+            featureItem.innerHTML = `
+                <input type="text" name="features[]" placeholder="Ex: Batterie 5000mAh" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                <button type="button" class="remove-feature bg-red-500 text-white px-3 py-1 rounded">Supprimer</button>
+            `;
+            featuresContainer.appendChild(featureItem);
+            updateRemoveButtons();
+        });
+
+        featuresContainer.addEventListener('click', function(e) {
+            if(e.target.classList.contains('remove-feature')){
+                e.target.closest('div').remove();
+                updateRemoveButtons();
+            }
+        });
+
+        function updateRemoveButtons(){
+            const featureItems = featuresContainer.querySelectorAll('div');
+            featureItems.forEach((item, index) => {
+                const btn = item.querySelector('.remove-feature');
+                btn.style.display = featureItems.length > 1 ? 'block' : 'none';
+            });
+        }
+
         updateRemoveButtons();
     });
-
-    featuresContainer.addEventListener('click', function(e) {
-        if(e.target.classList.contains('remove-feature')){
-            e.target.closest('div').remove();
-            updateRemoveButtons();
-        }
-    });
-
-    function updateRemoveButtons(){
-        const featureItems = featuresContainer.querySelectorAll('div');
-        featureItems.forEach((item, index) => {
-            const btn = item.querySelector('.remove-feature');
-            btn.style.display = featureItems.length > 1 ? 'block' : 'none';
-        });
-    }
-
-    updateRemoveButtons();
-});
   </script>
 {% endblock %}

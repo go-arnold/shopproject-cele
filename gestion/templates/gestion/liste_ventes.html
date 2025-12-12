@@ -1,6 +1,6 @@
 {% extends 'base_cele.html' %}
 {% load static %}
-{% block title %}Liste des ventes - Cele Admin{% endblock %}
+{% block title %}Liste des ventes - CELEBOBO ADMIN{% endblock %}
 {% block content %}
     <div class="max-w-7xl mx-auto px-2 sm:px-4 py-4">
         <div class="bg-component-dark rounded-xl shadow-md">
@@ -54,7 +54,6 @@
                     </table>
                 </div>
                 {% if ventes.has_other_pages %}
-                    <!-- Pagination -->
                     <nav aria-label="Pagination des ventes" class="mt-4 flex justify-center">
                         <ul class="flex flex-wrap items-center gap-1 text-xs sm:text-sm">
                             {% if ventes.has_previous %}

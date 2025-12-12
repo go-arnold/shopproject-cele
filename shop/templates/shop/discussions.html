@@ -333,8 +333,7 @@
                   <span class="material-symbols-outlined text-xl">person</span>
                 </a>
               </button>
-              {% if request.user.groups.all.0.name == "mukubwa" or
-                request.user.groups.all.0.name == "revendeur" %}
+              {% if request.user.groups.all.0.name == "mukubwa" or  request.user.groups.all.0.name == "revendeur" %}
                 <a href="{% url 'notifications' %}">
                   <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                     <span class="material-symbols-outlined text-xl">notification_add</span>

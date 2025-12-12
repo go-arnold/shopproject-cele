@@ -7,15 +7,15 @@
     <link rel="icon"
           type="image/x-icon"
           sizes="16x16"
-          href="{% static 'favicon.ico' %}" />
+          href="{% static 'favicon.ico' %}">
     <link rel="icon"
           type="image/png"
           sizes="32x32"
-          href="{% static 'static-img/sicon-32.png' %}" />
+          href="{% static 'static-img/sicon-32.png' %}">
     <link rel="icon"
           type="image/png"
           sizes="16x16"
-          href="{% static 'static-img/sicon-16.png' %}" />
+          href="{% static 'static-img/sicon-16.png' %}">
     <title>Titre - Discussions</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
@@ -23,266 +23,258 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
           rel="stylesheet" />
     <style>
-      .material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-      }
-
-      .range-slider {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 4px;
-        background: #374151;
-        outline: none;
-        border-radius: 2px;
-      }
-
-      .range-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 18px;
-        height: 18px;
-        background: #640d5f;
-        border-radius: 50%;
-        cursor: pointer;
-        border: 3px solid white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .range-slider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-        background: #640d5f;
-        border-radius: 50%;
-        cursor: pointer;
-        border: 3px solid white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      #particles {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-      }
-
-      main {
-        position: relative;
-        z-index: 20;
-      }
-
-      .fade-in {
-        opacity: 0;
-        transform: translateY(18px);
-        transition: all 0.72s ease-out;
-      }
-
-      .fade-in.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* MOBILE: Tabbar fixe en bas */
-      .mobile-tabbar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 80;
-        backdrop-filter: blur(10px);
-        background: rgba(18, 18, 28, 0.95);
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        transition: transform 0.28s ease-in-out;
-      }
-
-      /* MOBILE: Input fixe au-dessus du tabbar */
-      .mobile-input {
-        position: fixed;
-        bottom: 3.5rem;
-        left: 0;
-        right: 0;
-        z-index: 79;
-        backdrop-filter: blur(10px);
-        background: rgba(18, 18, 28, 0.95);
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      /* MOBILE: Preview au-dessus de l'input */
-      .mobile-preview {
-        position: fixed;
-        bottom: 9rem;
-        left: 0;
-        right: 0;
-        z-index: 78;
-        backdrop-filter: blur(10px);
-        background: rgba(18, 18, 28, 0.95);
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      /* MOBILE: Messages container avec padding pour éviter chevauchement */
-      @media (max-width: 768px) {
-        .messages-scroll-container {
-          padding-bottom: 10rem !important; /* Espace pour input + tabbar + preview */
-        }
-      }
-
-      /* DESKTOP: Input fixe en bas du conteneur */
-      @media (min-width: 768px) {
-        .desktop-input {
-          position: sticky;
-          bottom: 0;
-          z-index: 30;
-          backdrop-filter: blur(10px);
-          background: rgba(18, 18, 28, 0.95);
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
-        .desktop-preview {
-          position: sticky;
-          bottom: 4.5rem;
-          z-index: 29;
-          backdrop-filter: blur(10px);
-          background: rgba(18, 18, 28, 0.95);
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #374151;
+            outline: none;
+            border-radius: 2px;
         }
-      }
 
-      /* Style pour les images preview */
-      #mobilePreview img,
-      #desktopPreview img {
-        max-width: 200px;
-        max-height: 200px;
-        border-radius: 12px;
-        object-fit: cover;
-      }
-
-      #mobileSearchContainer {
-        display: none;
-        position: fixed;
-        top: 4rem;
-        left: 0;
-        right: 0;
-        z-index: 40;
-        padding: 0.75rem 1rem;
-        backdrop-filter: blur(10px);
-        background-color: rgba(18, 18, 27, 0.95);
-        transform: translateY(-100%);
-        transition: transform 0.3s ease-in-out;
-      }
-
-      #mobileSearchContainer.active {
-        display: block;
-        transform: translateY(0);
-      }
-
-      /* Animation pour les messages optimistes */
-      .optimistic-message {
-        opacity: 0.6;
-        animation: pulseOpacity 1.5s ease-in-out infinite;
-      }
-
-      @keyframes pulseOpacity {
-        0%,
-        100% {
-          opacity: 0.6;
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #640D5F;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        50% {
-          opacity: 0.8;
+
+        .range-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #640D5F;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-      }
 
-      /* Image Zoom Modal */
-      #imageZoomModal {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: rgba(0, 0, 0, 0.95);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(10px);
-        animation: fadeIn 0.2s ease-out;
-      }
-
-      #imageZoomModal.active {
-        display: flex;
-      }
-
-      #imageZoomModal img {
-        max-width: 90vw;
-        max-height: 90vh;
-        object-fit: contain;
-        border-radius: 8px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        animation: zoomIn 0.3s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
         }
-        to {
-          opacity: 1;
-        }
-      }
 
-      @keyframes zoomIn {
-        from {
-          transform: scale(0.8);
-          opacity: 0;
+        main {
+            position: relative;
+            z-index: 20;
         }
-        to {
-          transform: scale(1);
-          opacity: 1;
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: all 0.72s ease-out;
         }
-      }
 
-      .message-image {
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-      .message-image:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(100, 13, 95, 0.3);
-      }
+        /* MOBILE: Tabbar fixe en bas */
+        .mobile-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 80;
+            backdrop-filter: blur(10px);
+            background: rgba(18, 18, 28, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform .28s ease-in-out;
+        }
+
+        /* MOBILE: Input fixe au-dessus du tabbar */
+        .mobile-input {
+            position: fixed;
+            bottom: 3.5rem;
+            left: 0;
+            right: 0;
+            z-index: 79;
+            backdrop-filter: blur(10px);
+            background: rgba(18, 18, 28, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* MOBILE: Preview au-dessus de l'input */
+        .mobile-preview {
+            position: fixed;
+            bottom: 9rem;
+            left: 0;
+            right: 0;
+            z-index: 78;
+            backdrop-filter: blur(10px);
+            background: rgba(18, 18, 28, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* MOBILE: Messages container avec padding pour éviter chevauchement */
+        @media (max-width: 768px) {
+            .messages-scroll-container {
+                padding-bottom: 10rem !important; /* Espace pour input + tabbar + preview */
+            }
+        }
+
+        /* DESKTOP: Input fixe en bas du conteneur */
+        @media (min-width: 768px) {
+            .desktop-input {
+                position: sticky;
+                bottom: 0;
+                z-index: 30;
+                backdrop-filter: blur(10px);
+                background: rgba(18, 18, 28, 0.95);
+            }
+
+            .desktop-preview {
+                position: sticky;
+                bottom: 4.5rem;
+                z-index: 29;
+                backdrop-filter: blur(10px);
+                background: rgba(18, 18, 28, 0.95);
+            }
+        }
+
+        /* Style pour les images preview */
+        #mobilePreview img, #desktopPreview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        #mobileSearchContainer {
+            display: none;
+            position: fixed;
+            top: 4rem;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding: 0.75rem 1rem;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 27, 0.95);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #mobileSearchContainer.active {
+            display: block;
+            transform: translateY(0);
+        }
+
+        /* Animation pour les messages optimistes */
+        .optimistic-message {
+            opacity: 0.6;
+            animation: pulseOpacity 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseOpacity {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Image Zoom Modal */
+        #imageZoomModal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        #imageZoomModal.active {
+            display: flex;
+        }
+
+        #imageZoomModal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { 
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .message-image {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .message-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(100, 13, 95, 0.3);
+        }
     </style>
     <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#640D5F",
-              "background-light": "#f8f6f8",
-              "background-dark": "#12121B",
-              "secondary-dark": "#2A2A3C",
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#640D5F",
+                        "background-light": "#f8f6f8",
+                        "background-dark": "#12121B",
+                        "secondary-dark": "#2A2A3C"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
             },
-            fontFamily: {
-              display: ["Inter", "sans-serif"],
-            },
-            borderRadius: {
-              DEFAULT: "0.5rem",
-              lg: "1rem",
-              xl: "1.5rem",
-              full: "9999px",
-            },
-          },
-        },
-      };
+        }
     </script>
   </head>
   <body class="bg-background-light dark:bg-background-dark font-display text-[#E0E0E0]">
     <div class="relative flex h-auto min-h-screen w-full flex-col">
       <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+        <!-- Top bar -->
         <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
           <a class="hover:text-white transition-colors" href="#">Aide</a>
           <a class="hover:text-white transition-colors"
              href="{% url 'about_us' %}">À propos</a>
           <a class="hover:text-white transition-colors" href="#">Articles</a>
         </div>
+        <!-- Main header -->
         <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
           <div class="flex items-center gap-2.5">
             <a href="{% url 'home' %}">
               <img src="{% static 'static-img/logo-white.png' %}"
                    alt="CELEBOBO"
-                   class="h-8 sm:h-12 lg:h-14 w-auto object-contain" />
+                   class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
             </a>
           </div>
           <form method="GET"
@@ -333,7 +325,7 @@
                   <span class="material-symbols-outlined text-xl">person</span>
                 </a>
               </button>
-              {% if request.user.groups.all.0.name == "mukubwa" or  request.user.groups.all.0.name == "revendeur" %}
+              {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
                 <a href="{% url 'notifications' %}">
                   <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                     <span class="material-symbols-outlined text-xl">notification_add</span>
@@ -401,16 +393,17 @@
             <div class="messages-scroll-container flex-1 p-3 sm:p-6 overflow-y-auto">
               <div id="messages-container" class="flex flex-col gap-3 sm:gap-6">
                 <div class="text-center my-1 sm:my-2">
-                  <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-background-dark px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">La conversation a commencé le {{ conversation.created_at
-                  }}</span>
+                  <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-background-dark px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">La conversation a commencé le {{ conversation.created_at }}</span>
                 </div>
                 {% for msg in messages %}
                   {% include "shop/message_bubble.html" with msg=msg %}
                 {% endfor %}
               </div>
             </div>
+            <!-- DESKTOP PREVIEW -->
             <div id="desktopPreview"
                  class="hidden md:block desktop-preview w-full px-4 pb-2"></div>
+            <!-- DESKTOP INPUT -->
             <div class="hidden md:block desktop-input p-4 border-t border-slate-300 dark:border-white/10 mt-auto">
               <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-2">
                 <input id="desktopMessageInput"
@@ -420,7 +413,7 @@
                         class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors">
                   <span class="material-symbols-outlined text-2xl">attach_file</span>
                 </button>
-                <input id="desktopFileInput" type="file" accept="image/*" class="hidden" />
+                <input id="desktopFileInput" type="file" accept="image/*" class="hidden">
                 <button id="desktopSendBtn"
                         class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
                   <span class="material-symbols-outlined text-2xl">send</span>
@@ -431,7 +424,9 @@
         </div>
       </main>
     </div>
+    <!-- MOBILE PREVIEW -->
     <div id="mobilePreview" class="mobile-preview md:hidden p-3"></div>
+    <!-- MOBILE INPUT -->
     <div class="mobile-input md:hidden p-3 border-t border-slate-300 dark:border-white/10">
       <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-1.5">
         <input id="mobileMessageInput"
@@ -441,13 +436,14 @@
                 class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors">
           <span class="material-symbols-outlined text-xl">attach_file</span>
         </button>
-        <input id="mobileFileInput" type="file" accept="image/*" class="hidden" />
+        <input id="mobileFileInput" type="file" accept="image/*" class="hidden">
         <button id="mobileSendBtn"
                 class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
           <span class="material-symbols-outlined text-xl">send</span>
         </button>
       </div>
     </div>
+    <!-- MOBILE TABBAR -->
     <nav id="mobileTabbar"
          class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
       <a href="{% url 'home' %}">
@@ -481,306 +477,327 @@
         </button>
       </a>
     </nav>
+    <!-- IMAGE ZOOM MODAL -->
     <div id="imageZoomModal"
          class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-200">
+      <!-- Close button -->
       <button id="closeZoomBtn"
               class="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full transition">
         <span class="material-symbols-outlined text-white text-2xl">close</span>
       </button>
+      <!-- Image -->
       <img id="zoomedImage"
            src=""
            alt="Image agrandie"
-           class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl transition-transform duration-200 scale-95 opacity-0" />
+           class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl transition-transform duration-200 scale-95 opacity-0">
     </div>
     <script src="{% static 'script/cart.js' %}"></script>
     <script>
-      const obs = new IntersectionObserver(entries => {
-          entries.forEach(e => {
-              if (e.isIntersecting) e.target.classList.add('visible');
-          });
-      }, { threshold: 0.15 });
+            const obs = new IntersectionObserver(entries => {
+                entries.forEach(e => { 
+                    if (e.isIntersecting) e.target.classList.add('visible'); 
+                });
+            }, { threshold: 0.15 });
+            
+            document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
-      document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+            const searchBtn = document.getElementById("mobileSearchBtn");
+            const searchContainer = document.getElementById("mobileSearchContainer");
 
-      const searchBtn = document.getElementById("mobileSearchBtn");
-      const searchContainer = document.getElementById("mobileSearchContainer");
+            searchBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                searchContainer.classList.toggle("active");
+                const input = searchContainer.querySelector("input");
+                if (searchContainer.classList.contains("active")) input.focus();
+            });
 
-      searchBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          searchContainer.classList.toggle("active");
-          const input = searchContainer.querySelector("input");
-          if (searchContainer.classList.contains("active")) input.focus();
-      });
+            document.addEventListener("click", (e) => {
+                if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
+                    searchContainer.classList.remove("active");
+                }
+            });
 
-      document.addEventListener("click", (e) => {
-          if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
-              searchContainer.classList.remove("active");
-          }
-      });
+            document.addEventListener("DOMContentLoaded", () => {
+                const count = {{msg_count}} * 1; 
+                const badge = document.getElementById("messagesCounter");
 
-      document.addEventListener("DOMContentLoaded", () => {
-          const count = {{msg_count}} * 1;
-          const badge = document.getElementById("messagesCounter");
-
-          if (count > 0) {
-              badge.textContent = count;
-              badge.classList.remove("hidden");
-          } else {
-              badge.classList.add("hidden");
-          }
-      });
+                if (count > 0) {
+                    badge.textContent = count;
+                    badge.classList.remove("hidden");
+                } else {
+                    badge.classList.add("hidden");
+                }
+            });
     </script>
     <script>
-      const messagesContainer = document.getElementById("messages-container");
-      const mobilePreviewBox = document.getElementById("mobilePreview");
-      mobilePreviewBox.style.display = "none"
-      const desktopPreviewBox = document.getElementById("desktopPreview");
+            const messagesContainer = document.getElementById("messages-container");
+            const mobilePreviewBox = document.getElementById("mobilePreview");
+            mobilePreviewBox.style.display = "none"
+            const desktopPreviewBox = document.getElementById("desktopPreview");
 
-      const desktopInput = document.getElementById("desktopMessageInput");
-      const desktopSendBtn = document.getElementById("desktopSendBtn");
-      const desktopFileBtn = document.getElementById("desktopFileBtn");
-      const desktopFileInput = document.getElementById("desktopFileInput");
+            const desktopInput = document.getElementById("desktopMessageInput");
+            const desktopSendBtn = document.getElementById("desktopSendBtn");
+            const desktopFileBtn = document.getElementById("desktopFileBtn");
+            const desktopFileInput = document.getElementById("desktopFileInput");
 
-      const mobileInput = document.getElementById("mobileMessageInput");
-      const mobileSendBtn = document.getElementById("mobileSendBtn");
-      const mobileFileBtn = document.getElementById("mobileFileBtn");
-      const mobileFileInput = document.getElementById("mobileFileInput");
+            const mobileInput = document.getElementById("mobileMessageInput");
+            const mobileSendBtn = document.getElementById("mobileSendBtn");
+            const mobileFileBtn = document.getElementById("mobileFileBtn");
+            const mobileFileInput = document.getElementById("mobileFileInput");
 
-      let attachedFile = null;
-      let lastMessageId = {{ messages.last.id|default:0 }};
-      const csrfToken = "{{ csrf_token }}";
-      const postMessageUrl = "{% url 'send_message_ajax' conversation.id %}";
-      const messageApiUrl = "{% url 'conversation_messages_json' conversation.id %}";
-      const isRevendeur = {% if request.user.groups.all.0.name == "revendeur" or request.user.groups.all.0.name == "mukubwa" %}true{% else %}false{% endif %};
+            let attachedFile = null;
+            let lastMessageId = {{ messages.last.id|default:0 }};
+            const csrfToken = "{{ csrf_token }}";
+            const postMessageUrl = "{% url 'send_message_ajax' conversation.id %}";
+            const messageApiUrl = "{% url 'conversation_messages_json' conversation.id %}";
+            const isRevendeur = {% if request.user.groups.all.0.name == "revendeur" or request.user.groups.all.0.name == "mukubwa" %}true{% else %}false{% endif %};
 
-      function formatLocalTime(utcString) {
-          if (!utcString) return "";
-          try {
+            // Fonction pour convertir UTC en heure locale formatée
+            function formatLocalTime(utcString) {
+                if (!utcString) return "";
+                try {
+                    
+                    const date = new Date(utcString);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
 
-              const date = new Date(utcString);
-              const now = new Date();
-              const diffMs = now - date;
-              const diffMins = Math.floor(diffMs / 60000);
-              const diffHours = Math.floor(diffMs / 3600000);
-              const diffDays = Math.floor(diffMs / 86400000);
+                    // Si c'est aujourd'hui
+                    if (diffDays === 0) {
+                        if (diffMins < 1) return "À l'instant";
+                        if (diffMins < 60) return `Il y a ${diffMins} min`;
+                        return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                    }
+                    // Si c'est hier
+                    if (diffDays === 1) {
+                        return `Hier ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+                    }
+                    // Si c'est dans la semaine
+                    if (diffDays < 7) {
+                        return date.toLocaleDateString('fr-FR', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+                    }
+                    // Date complète
+                    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+                } catch (e) {
+                    return utcString;
+                }
+            }
 
-              if (diffDays === 0) {
-                  if (diffMins < 1) return "À l'instant";
-                  if (diffMins < 60) return `Il y a ${diffMins} min`;
-                  return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-              }
-              if (diffDays === 1) {
-                  return `Hier ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
-              }
-              if (diffDays < 7) {
-                  return date.toLocaleDateString('fr-FR', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
-              }
-              return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-          } catch (e) {
-              return utcString;
-          }
-      }
+            function scrollToBottom() {
+                const container = messagesContainer.parentElement;
+                setTimeout(() => {
+                    container.scrollTop = container.scrollHeight + 500;
+                }, 100);
+            }
 
-      function scrollToBottom() {
-          const container = messagesContainer.parentElement;
-          setTimeout(() => {
-              container.scrollTop = container.scrollHeight + 500;
-          }, 100);
-      }
+            function renderMessage(msg, optimistic=false) {
+                let tempId = null;
+                if (optimistic) {
+                    tempId = `temp-${Date.now()}`;
+                }
 
-      function renderMessage(msg, optimistic=false) {
-          let tempId = null;
-          if (optimistic) {
-              tempId = `temp-${Date.now()}`;
-          }
+                const wrap = document.createElement("div");
+                wrap.dataset.id = msg.id || tempId;
+                wrap.className = `flex items-start gap-2 sm:gap-3 max-w-[90%] sm:max-w-2xl ${
+                    msg.is_me ? "self-end" : "self-start"
+                } ${optimistic ? "optimistic-message" : ""}`;
 
-          const wrap = document.createElement("div");
-          wrap.dataset.id = msg.id || tempId;
-          wrap.className = `flex items-start gap-2 sm:gap-3 max-w-[90%] sm:max-w-2xl ${
-              msg.is_me ? "self-end" : "self-start"
-          } ${optimistic ? "optimistic-message" : ""}`;
+                // Déterminer le nom d'affichage
+                let displayName = msg.is_me ? "Vous" : (msg.sender_name || "");
+                if (!msg.is_me && !isRevendeur) {
+                    displayName = "Agent Celebobo";
+                }
 
-          let displayName = msg.is_me ? "Vous" : (msg.sender_name || "");
-          if (!msg.is_me && !isRevendeur) {
-              displayName = "Agent Celebobo";
-          }
+                // Formater le timestamp
+                const formattedTime = formatLocalTime(msg.timestamp);
 
-          const formattedTime = formatLocalTime(msg.timestamp);
+                let html = `
+                    <div class="${msg.is_me ? "order-1 flex flex-col items-end" : "order-2 flex flex-col items-start"}">
+                        <div class="flex items-baseline gap-1.5 sm:gap-2">
+                            <p class="text-xs sm:text-sm font-bold ${msg.is_me ? 'text-white' : 'text-slate-200'}">${displayName}</p>
+                            <span class="text-[0.65rem] sm:text-xs text-slate-400">${formattedTime}</span>
+                        </div>
+                `;
 
-          let html = `
-              <div class="${msg.is_me ? "order-1 flex flex-col items-end" : "order-2 flex flex-col items-start"}">
-                  <div class="flex items-baseline gap-1.5 sm:gap-2">
-                      <p class="text-xs sm:text-sm font-bold ${msg.is_me ? 'text-white' : 'text-slate-200'}">${displayName}</p>
-                      <span class="text-[0.65rem] sm:text-xs text-slate-400">${formattedTime}</span>
-                  </div>
-          `;
+                if (msg.image) {
+                    html += `<img src="${msg.image}" class="message-image mt-1 max-w-[200px] rounded-lg shadow-md" onclick="openImageZoom('${msg.image}')">`;
+                }
 
-          if (msg.image) {
-              html += `<img src="${msg.image}" class="message-image mt-1 max-w-[200px] rounded-lg shadow-md" onclick="openImageZoom('${msg.image}')">`;
-          }
+                if (msg.content) {
+                    html += `
+                    <div class="mt-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg ${ msg.is_me ? "rounded-br-none bg-primary/20 text-white" : "rounded-bl-none bg-slate-200 dark:bg-slate-700 text-white" }">
+                        <p class="leading-relaxed text-xs sm:text-sm">${msg.content}</p>
+                    </div>`;
+                }
 
-          if (msg.content) {
-              html += `
-              <div class="mt-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg ${ msg.is_me ? "rounded-br-none bg-primary/20 text-white" : "rounded-bl-none bg-slate-200 dark:bg-slate-700 text-white" }">
-                  <p class="leading-relaxed text-xs sm:text-sm">${msg.content}</p>
-              </div>`;
-          }
+                html += "</div>";
+                wrap.innerHTML = html;
 
-          html += "</div>";
-          wrap.innerHTML = html;
+                messagesContainer.appendChild(wrap);
+                scrollToBottom();
+            }
 
-          messagesContainer.appendChild(wrap);
-          scrollToBottom();
-      }
+            function fetchMessages() {
+                fetch(messageApiUrl)
+                    .then(r => r.json())
+                    .then(json => {
+                        json.messages.forEach(msg => {
+                            if (msg.id > lastMessageId) {
+                                // Supprimer TOUS les messages optimistes
+                                document.querySelectorAll(`[data-id^="temp-"]`).forEach(temp => temp.remove());
+                                
+                                renderMessage(msg);
+                                lastMessageId = msg.id;
+                            }
+                        });
+                    })
+                    .catch(err => console.error("Erreur fetchMessages:", err));
+            }
+            setInterval(fetchMessages, 2000); // Polling plus rapide (2s)
 
-      function fetchMessages() {
-          fetch(messageApiUrl)
-              .then(r => r.json())
-              .then(json => {
-                  json.messages.forEach(msg => {
-                      if (msg.id > lastMessageId) {
-                          document.querySelectorAll(`[data-id^="temp-"]`).forEach(temp => temp.remove());
+            function sendMessage() {
+                const text = desktopInput.value.trim() || mobileInput.value.trim();
+                const file = attachedFile;
 
-                          renderMessage(msg);
-                          lastMessageId = msg.id;
-                      }
-                  });
-              })
-              .catch(err => console.error("Erreur fetchMessages:", err));
-      }
-      setInterval(fetchMessages, 2000);
+                if (!text && !file) return;
 
-      function sendMessage() {
-          const text = desktopInput.value.trim() || mobileInput.value.trim();
-          const file = attachedFile;
+                // Message optimiste avec image ET texte
+                renderMessage({
+                    id: null,
+                    is_me: true,
+                    content: text,
+                    image: file ? URL.createObjectURL(file) : null,
+                    timestamp: new Date().toISOString()
+                }, true);
 
-          if (!text && !file) return;
+                const form = new FormData();
+                form.append("csrfmiddlewaretoken", csrfToken);
+                form.append("content", text);
+                if (file) form.append("image", file);
 
-          renderMessage({
-              id: null,
-              is_me: true,
-              content: text,
-              image: file ? URL.createObjectURL(file) : null,
-              timestamp: new Date().toISOString()
-          }, true);
+                attachedFile = null;
+                clearPreview();
+                desktopInput.value = "";
+                mobileInput.value = "";
 
-          const form = new FormData();
-          form.append("csrfmiddlewaretoken", csrfToken);
-          form.append("content", text);
-          if (file) form.append("image", file);
+                fetch(postMessageUrl, {
+                    method: "POST",
+                    body: form
+                }).then(response => {
+                    if (!response.ok) throw new Error("Erreur serveur");
+                    return response.json();
+                }).then(() => {
+                    // Fetch immédiat après envoi réussi
+                    setTimeout(fetchMessages, 300);
+                }).catch(err => {
+                    console.error("Erreur envoi:", err);
+                    document.querySelectorAll(`[data-id^="temp-"]`).forEach(temp => temp.remove());
+                    alert("Erreur lors de l'envoi du message. Veuillez réessayer.");
+                });
+            }
 
-          attachedFile = null;
-          clearPreview();
-          desktopInput.value = "";
-          mobileInput.value = "";
+            desktopSendBtn.onclick = sendMessage;
+            mobileSendBtn.onclick = sendMessage;
 
-          fetch(postMessageUrl, {
-              method: "POST",
-              body: form
-          }).then(response => {
-              if (!response.ok) throw new Error("Erreur serveur");
-              return response.json();
-          }).then(() => {
-              // Fetch immédiat après envoi réussi
-              setTimeout(fetchMessages, 300);
-          }).catch(err => {
-              console.error("Erreur envoi:", err);
-              document.querySelectorAll(`[data-id^="temp-"]`).forEach(temp => temp.remove());
-              alert("Erreur lors de l'envoi du message. Veuillez réessayer.");
-          });
-      }
+            desktopInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+            mobileInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
 
-      desktopSendBtn.onclick = sendMessage;
-      mobileSendBtn.onclick = sendMessage;
+            function clearPreview() {
+                mobilePreviewBox.innerHTML = "";
+                mobilePreviewBox.style.display = "none";
+                desktopPreviewBox.innerHTML = "";
+                desktopPreviewBox.style.display = "none";
+            }
 
-      desktopInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
-      mobileInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+            function showPreview(file, isMobile) {
+                attachedFile = file;
+                const url = URL.createObjectURL(file);
+                const previewBox = isMobile ? mobilePreviewBox : desktopPreviewBox;
 
-      function clearPreview() {
-          mobilePreviewBox.innerHTML = "";
-          mobilePreviewBox.style.display = "none";
-          desktopPreviewBox.innerHTML = "";
-          desktopPreviewBox.style.display = "none";
-      }
+                previewBox.innerHTML = `
+                    <div class="flex items-center gap-3 p-2">
+                        <img src="${url}" class="max-w-[160px] max-h-[160px] rounded-lg shadow-md object-cover">
+                        <button id="cancelPreview" class="flex items-center justify-center bg-red-600 text-white rounded-full w-8 h-8 hover:bg-red-700 transition">
+                            <span class="material-symbols-outlined text-lg">close</span>
+                        </button>
+                    </div>
+                `;
+                previewBox.style.display = "block";
 
-      function showPreview(file, isMobile) {
-          attachedFile = file;
-          const url = URL.createObjectURL(file);
-          const previewBox = isMobile ? mobilePreviewBox : desktopPreviewBox;
+                document.getElementById("cancelPreview").onclick = () => {
+                    attachedFile = null;
+                    clearPreview();
+                };
+            }
 
-          previewBox.innerHTML = `
-              <div class="flex items-center gap-3 p-2">
-                  <img src="${url}" class="max-w-[160px] max-h-[160px] rounded-lg shadow-md object-cover">
-                  <button id="cancelPreview" class="flex items-center justify-center bg-red-600 text-white rounded-full w-8 h-8 hover:bg-red-700 transition">
-                      <span class="material-symbols-outlined text-lg">close</span>
-                  </button>
-              </div>
-          `;
-          previewBox.style.display = "block";
+            desktopFileBtn.onclick = () => desktopFileInput.click();
+            mobileFileBtn.onclick = () => mobileFileInput.click();
 
-          document.getElementById("cancelPreview").onclick = () => {
-              attachedFile = null;
-              clearPreview();
-          };
-      }
+            desktopFileInput.onchange = () => {
+                if (desktopFileInput.files[0]) showPreview(desktopFileInput.files[0], false);
+            };
+            mobileFileInput.onchange = () => {
+                if (mobileFileInput.files[0]) showPreview(mobileFileInput.files[0], true);
+            };
 
-      desktopFileBtn.onclick = () => desktopFileInput.click();
-      mobileFileBtn.onclick = () => mobileFileInput.click();
+            
 
-      desktopFileInput.onchange = () => {
-          if (desktopFileInput.files[0]) showPreview(desktopFileInput.files[0], false);
-      };
-      mobileFileInput.onchange = () => {
-          if (mobileFileInput.files[0]) showPreview(mobileFileInput.files[0], true);
-      };
-
-      scrollToBottom();
+            scrollToBottom();
     </script>
     <script>
-      const zoomModal = document.getElementById("imageZoomModal");
-      const zoomedImage = document.getElementById("zoomedImage");
-      const closeZoomBtn = document.getElementById("closeZoomBtn");
+    const zoomModal = document.getElementById('imageZoomModal');
+    const zoomedImage = document.getElementById('zoomedImage');
+    const closeZoomBtn = document.getElementById('closeZoomBtn');
 
-      window.openImageZoom = function (imageSrc) {
+    // Ouvrir l'image en zoom
+    window.openImageZoom = function(imageSrc) {
         zoomedImage.src = imageSrc;
 
+        // Rendre visible
         zoomModal.classList.remove("hidden");
         zoomModal.classList.add("flex");
 
+        // Petite animation
         setTimeout(() => {
-          zoomedImage.classList.remove("opacity-0", "scale-95");
-          zoomedImage.classList.add("opacity-100", "scale-100");
+            zoomedImage.classList.remove("opacity-0", "scale-95");
+            zoomedImage.classList.add("opacity-100", "scale-100");
         }, 20);
 
-        document.body.style.overflow = "hidden";
-      };
+        document.body.style.overflow = 'hidden';
+    };
 
-      function closeImageZoom() {
+    // Fermer
+    function closeImageZoom() {
+        // animation reverse
         zoomedImage.classList.remove("opacity-100", "scale-100");
         zoomedImage.classList.add("opacity-0", "scale-95");
 
         setTimeout(() => {
-          zoomModal.classList.add("hidden");
-          zoomModal.classList.remove("flex");
-          zoomedImage.src = "";
+            zoomModal.classList.add("hidden");
+            zoomModal.classList.remove("flex");
+            zoomedImage.src = "";
         }, 180);
 
         document.body.style.overflow = "";
-      }
+    }
 
-      closeZoomBtn.onclick = closeImageZoom;
+    closeZoomBtn.onclick = closeImageZoom;
 
-      zoomModal.onclick = function (e) {
+    // Fermer en cliquant hors de l'image
+    zoomModal.onclick = function(e) {
         if (e.target === zoomModal) {
-          closeImageZoom();
+            closeImageZoom();
         }
-      };
+    };
 
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && !zoomModal.classList.contains("hidden")) {
-          closeImageZoom();
+    // Fermer avec Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !zoomModal.classList.contains('hidden')) {
+            closeImageZoom();
         }
-      });
+    });
     </script>
   </body>
 </html>

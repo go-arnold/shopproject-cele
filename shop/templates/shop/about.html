@@ -29,130 +29,135 @@
         <link rel="stylesheet"
               href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=notification_add" />
         <script>
-            tailwind.config = {
-                darkMode: "class",
-                theme: {
-                    extend: {
-                        colors: {
-                            "primary": "#640D5F",
-                            "background-light": "#F5F5F5",
-                            "background-dark": "#0A0A1A",
-                        },
-                        fontFamily: {
-                            "display": ["Inter", "sans-serif"]
-                        },
-                        borderRadius: {
-                            "DEFAULT": "0.25rem",
-                            "lg": "0.5rem",
-                            "xl": "0.75rem",
-                            "full": "9999px"
-                        },
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#640D5F",
+                        "background-light": "#F5F5F5",
+                        "background-dark": "#0A0A1A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
                     },
                 },
-            }
+            },
+        }
         </script>
         <style>
-            .material-symbols-outlined {
-                font-variation-settings:
-                    'FILL' 0,
-                    'wght' 400,
-                    'GRAD' 0,
-                    'opsz' 24
-            }
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
 
-            #particles {
-                position: fixed;
-                inset: 0;
-                z-index: 0;
-                pointer-events: none;
-            }
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-            main {
-                position: relative;
-                z-index: 20;
-            }
+        main {
+            position: relative;
+            z-index: 20;
+        }
 
-            .fade-in {
-                opacity: 0;
-                transform: translateY(20px);
-                transition: all 0.8s ease-out;
-            }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
 
-            .fade-in.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-            .mobile-tabbar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 50;
-                backdrop-filter: blur(10px);
-                background-color: rgba(18, 18, 28, 0.85);
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                transition: transform 0.3s ease-in-out;
-            }
+        .mobile-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 28, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
 
-            .mobile-tabbar.hide {
-                transform: translateY(100%);
-            }
+        .mobile-tabbar.hide {
+            transform: translateY(100%);
+        }
         </style>
         <style>
-            .material-symbols-outlined {
-                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
 
-            /* Barre mobile masquée par défaut */
-            #mobileSearchContainer {
-                display: none;
-                position: fixed;
-                top: 4rem;
-                left: 0;
-                right: 0;
-                z-index: 40;
-                padding: 0.75rem 1rem;
-                backdrop-filter: blur(10px);
-                background-color: rgba(18, 18, 27, 0.95);
-                transform: translateY(-100%);
-                transition: transform 0.3s ease-in-out;
-            }
+        /* Barre mobile masquée par défaut */
+        #mobileSearchContainer {
+            display: none;
+            position: fixed;
+            top: 4rem;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding: 0.75rem 1rem;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 27, 0.95);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
 
-            #mobileSearchContainer.active {
-                display: block;
-                transform: translateY(0);
-            }
+        #mobileSearchContainer.active {
+            display: block;
+            transform: translateY(0);
+        }
 
-            /* Tab-bar */
-            .mobile-tabbar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 50;
-                backdrop-filter: blur(10px);
-                background-color: rgba(18, 18, 28, 0.85);
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                transition: transform 0.3s ease-in-out;
-            }
+        /* Tab-bar */
+        .mobile-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            background-color: rgba(18, 18, 28, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
 
-            .mobile-tabbar.hide {
-                transform: translateY(100%);
-            }
+        .mobile-tabbar.hide {
+            transform: translateY(100%);
+        }
         </style>
     </head>
     <body class="bg-background-light dark:bg-background-dark font-display text-white">
+        <!-- Canvas particules -->
         <canvas id="particles"></canvas>
         <div class="relative flex flex-col min-h-screen w-full">
+            <!-- HEADER -->
             <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+                <!-- Top bar - Caché sur mobile -->
                 <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
                     <a class="hover:text-white transition-colors" href="#">Aide</a>
                     <a class="hover:text-white transition-colors"
                        href="{% url 'about_us' %}">À propos</a>
                     <a class="hover:text-white transition-colors" href="#">Articles</a>
                 </div>
+                <!-- Main header -->
                 <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
+                    <!-- Logo -->
                     <div class="flex items-center gap-2.5">
                         <a href="{% url 'home' %}">
                             <img src="{% static 'static-img/logo-white.png' %}"
@@ -160,6 +165,7 @@
                                  class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
                         </a>
                     </div>
+                    <!-- Desktop Search -->
                     <form method="GET"
                           action="{% url 'results' %}"
                           class="flex-1 max-w-2xl mx-auto hidden md:block">
@@ -171,12 +177,15 @@
                                    type="search" />
                         </div>
                     </form>
+                    <!-- Icons -->
                     <div class="flex items-center gap-1 sm:gap-4 ml-auto">
+                        <!-- Mobile Search Button -->
                         <button id="mobileSearchBtn"
                                 class="md:hidden flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
                             <span class="material-symbols-outlined text-xl">search</span>
                         </button>
                         {% if not user.is_authenticated %}
+                            <!-- Desktop: Button S'inscrire -->
                             <a href="{% url 'account_login' %}">
                                 <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
                                     S'inscrire / Se connecter
@@ -184,11 +193,13 @@
                             </a>
                         {% endif %}
                         {% if user.is_authenticated %}
+                            <!-- Favoris -->
                             <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'favorites_list' %}">
                                     <span class="material-symbols-outlined text-xl">favorite</span>
                                 </a>
                             </button>
+                            <!-- Messages - Desktop only -->
                             <a href="{% url 'list_conversations' %}">
                                 <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                     <span class="material-symbols-outlined text-xl">mail</span>
@@ -196,6 +207,7 @@
                                 </button>
                             </a>
                         {% endif %}
+                        <!-- Panier -->
                         <a href="{% url 'cart' %}">
                             <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <span class="material-symbols-outlined text-xl">shopping_cart</span>
@@ -203,6 +215,7 @@
                             </button>
                         </a>
                         {% if user.is_authenticated %}
+                            <!-- Profile - Desktop only -->
                             <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'profile' %}">
                                     <span class="material-symbols-outlined text-xl">person</span>
@@ -221,6 +234,7 @@
                                     </button>
                                 </a>
                             {% endif %}
+                            <!-- Logout -->
                             <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                                 <a href="{% url 'account_logout' %}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -234,6 +248,7 @@
                                 </a>
                             </button>
                         {% endif %}
+                        <!-- Mobile: Icône de profil -->
                         {% if not user.is_authenticated %}
                             <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
                                 <a href="{% url 'account_login' %}">
@@ -244,6 +259,7 @@
                     </div>
                 </div>
             </header>
+            <!-- MOBILE SEARCH CONTAINER OPTIMISÉ -->
             <form method="GET"
                   action="{% url 'results' %}"
                   id="mobileSearchContainer"
@@ -256,7 +272,9 @@
                            type="search" />
                 </div>
             </form>
+            <!-- MAIN -->
             <main class="flex flex-col gap-4 sm:gap-8 lg:gap-20 py-10 sm:py-12 lg:py-16 aaaa flex-grow px-4 sm:px-10 lg:px-20 py-10  md:space-y-16">
+                <!-- HeroSection -->
                 <div class="@container">
                     <div class="@[480px]:p-3">
                         <div class="flex min-h-[32vh] md:min-h-[50vh] flex-col gap-3 @[480px]:gap-4 md:gap-7 @[480px]:rounded-lg items-center justify-center p-3 md:p-4 text-center bg-cover bg-center bg-no-repeat"
@@ -275,6 +293,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Mission/Vision/Values Section -->
                 <section>
                     <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-6 pt-5 text-center">
                         Notre Objectif
@@ -327,6 +346,7 @@
                         </div>
                     </div>
                 </section>
+                <!-- Company History/Timeline -->
                 <section>
                     <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
                         Notre Parcours
@@ -389,11 +409,13 @@
                         </div>
                     </div>
                 </section>
+                <!-- Team Member Cards -->
                 <section>
                     <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
                         Notre Grande Équipe
                     </h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <!-- Carte membre 1 -->
                         <div class="flex flex-col items-center text-center p-4 sm:p-6 bg-white/5 rounded-xl border border-white/10">
                             <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full mb-4 border-2 border-primary w-24 h-24 sm:w-32 sm:h-32"
                                  data-alt="Portrait of Celestin"
@@ -404,6 +426,7 @@
                                 Visionnaire derrière notre marque, Jane dirige avec passion et volonté d'innovation.
                             </p>
                         </div>
+                        <!-- Carte membre 2 -->
                         <div class="flex flex-col items-center text-center p-4 sm:p-6 bg-white/5 rounded-xl border border-white/10">
                             <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full mb-4 border-2 border-primary w-24 h-24 sm:w-32 sm:h-32"
                                  data-alt="Portrait de John Smith"
@@ -412,6 +435,7 @@
                             <p class="text-primary text-xs sm:text-sm font-medium">Directeur du Design</p>
                             <p class="text-white/70 text-xs sm:text-sm mt-2">Patrick est le génie créatif qui donne vie à nos styles uniques.</p>
                         </div>
+                        <!-- Carte membre 3 -->
                         <div class="flex flex-col items-center text-center p-4 sm:p-6 bg-white/5 rounded-xl border border-white/10">
                             <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full mb-4 border-2 border-primary w-24 h-24 sm:w-32 sm:h-32"
                                  data-alt="Portrait d'Emily White"
@@ -424,6 +448,7 @@
                         </div>
                     </div>
                 </section>
+                <!-- Press & Partnerships -->
                 <section>
                     <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
                         Comme Vu Dans
@@ -445,11 +470,13 @@
                              class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity"
                              src="https://upload.wikimedia.org/wikipedia/commons/5/54/Wiki,_wiki,_wiki,_wiki_logo.jpg">
                     </section>
+                    <!-- Contact Section -->
                     <section>
                         <h2 class="text-white text-xl sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-8 pt-5 text-center">
                             Contactez-Nous
                         </h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 bg-white/5 border border-white/10 rounded-xl p-6 sm:p-8 lg:p-12">
+                            <!-- Partie Contact -->
                             <div class="flex flex-col justify-start gap-6 text-left md:text-left">
                                 <div class="flex items-center justify-start gap-4">
                                     <span class="material-symbols-outlined text-primary text-2xl mt-1">location_on</span>
@@ -477,8 +504,10 @@
                                 <div class="pt-4 mt-4 border-t border-white/10 ">
                                     <h3 class="text-white  justify-start md:justify-start font-semibold mb-3">Suivez-Nous</h3>
                                     <div class="flex justify-start md:justify-start gap-4">
+                                        <!-- Icônes réseaux -->
                                         <a class="text-white/70 hover:text-primary transition-colors text-2xl"
                                            href="#">
+                                            <!-- Facebook -->
                                             <svg aria-hidden="true"
                                                  class="w-6 h-6"
                                                  fill="currentColor"
@@ -489,6 +518,7 @@
                                         </a>
                                         <a class="text-white/70 hover:text-primary transition-colors text-2xl"
                                            href="#">
+                                            <!-- Twitter -->
                                             <svg aria-hidden="true"
                                                  class="w-6 h-6"
                                                  fill="currentColor"
@@ -499,6 +529,7 @@
                                         </a>
                                         <a class="text-white/70 hover:text-primary transition-colors text-2xl"
                                            href="#">
+                                            <!-- Instagram -->
                                             <svg aria-hidden="true"
                                                  class="w-6 h-6"
                                                  fill="currentColor"
@@ -510,6 +541,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Partie Carte / Map -->
                             <div class="w-full h-64 md:h-full rounded-lg overflow-hidden">
                                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20712.988302704845!2d28.831891284928464!3d-2.5102360818534457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19c291ff3770a9ad%3A0xd46fd99ed32820cc!2sNyawera%20%2FBukavu%2F%20sud%20Kivu%2F%20rdc!5e0!3m2!1sfr!2srw!4v1763122882390!5m2!1sfr!2srw"
                                         width="100%"
@@ -522,8 +554,10 @@
                         </div>
                     </section>
                 </main>
+                <!-- FOOTER -->
                 <footer class="bg-black/20 mt-8 lg:mt-12">
                     <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+                        <!-- Mobile: Newsletter en haut -->
                         <div class="md:hidden mb-4">
                             <h3 class="text-white font-bold text-sm">Restez informé</h3>
                             <p class="text-[#888888] mt-1 text-xs">
@@ -538,7 +572,9 @@
                                         type="submit">S'abonner</button>
                             </form>
                         </div>
+                        <!-- Mobile: 2 colonnes Info + Service / Desktop: grille complète -->
                         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
+                            <!-- Desktop: Newsletter (caché sur mobile) -->
                             <div class="hidden md:block col-span-1 lg:col-span-2">
                                 <h3 class="text-white font-bold text-base">Restez informé</h3>
                                 <p class="text-[#888888] mt-2 text-sm">
@@ -591,6 +627,7 @@
                                     </li>
                                 </ul>
                             </div>
+                            <!-- Desktop: Suivez-nous dans la grille / Mobile: caché -->
                             <div class="hidden md:block col-span-1">
                                 <h4 class="font-bold text-white text-base">Suivez-nous</h4>
                                 <div class="flex space-x-4 mt-3">
@@ -624,6 +661,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Mobile: Suivez-nous en bas -->
                         <div class="md:hidden mt-4">
                             <h4 class="font-bold text-white text-sm">Suivez-nous</h4>
                             <div class="flex space-x-3 mt-2">
@@ -661,6 +699,7 @@
                         </div>
                     </div>
                 </footer>
+                <!-- Mobile Bottom Tab Bar -->
                 <nav id="mobileTabbar"
                      class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
                     <a href="{% url 'home' %}">
@@ -699,82 +738,88 @@
                     </a>
                 </nav>
             </div>
+            <!-- JS -->
             <script>
-                const canvas = document.getElementById('particles');
-                const ctx = canvas.getContext('2d');
-                let W, H, particles = [];
-                function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
-                function initParticles() {
-                    particles = [];
-                    const count = Math.round((W * H) / 90000);
-                    for (let i = 0; i < count; i++) {
-                        particles.push({
-                            x: Math.random() * W,
-                            y: Math.random() * H,
-                            r: Math.random() * 1.4 + 0.4,
-                            dx: (Math.random() - 0.5) * 0.15,
-                            dy: (Math.random() - 0.5) * 0.15,
-                            a: 0.08 + Math.random() * 0.18
-                        });
-                    }
-                }
-                function draw() {
-                    ctx.clearRect(0, 0, W, H);
-                    particles.forEach(p => {
-                        ctx.beginPath();
-                        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
-                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                        ctx.fill();
-                        p.x += p.dx; p.y += p.dy;
-                        if (p.x < 0 || p.x > W) p.dx *= -1;
-                        if (p.y < 0 || p.y > H) p.dy *= -1;
-                    });
-                    requestAnimationFrame(draw);
-                }
-                resize(); initParticles(); draw();
-                window.addEventListener('resize', () => { resize(); initParticles(); });
-                
-                let lastScroll = 0; const tab = document.getElementById('mobileTabbar');
-                window.addEventListener('scroll', () => {
-                    const y = scrollY;
-                    if (y > lastScroll && y > 100) tab.classList.add('hide');
-                    else tab.classList.remove('hide');
-                    lastScroll = y;
+        /* === Particules === */
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+        function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+        function initParticles() {
+            particles = [];
+            const count = Math.round((W * H) / 90000);
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    r: Math.random() * 1.4 + 0.4,
+                    dx: (Math.random() - 0.5) * 0.15,
+                    dy: (Math.random() - 0.5) * 0.15,
+                    a: 0.08 + Math.random() * 0.18
                 });
-                
-                const obs = new IntersectionObserver(entries => {
-                    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-                });
-                document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+            }
+        }
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0 || p.x > W) p.dx *= -1;
+                if (p.y < 0 || p.y > H) p.dy *= -1;
+            });
+            requestAnimationFrame(draw);
+        }
+        resize(); initParticles(); draw();
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+
+        /* === Tab-bar hide on scroll === */
+        let lastScroll = 0; const tab = document.getElementById('mobileTabbar');
+        window.addEventListener('scroll', () => {
+            const y = scrollY;
+            if (y > lastScroll && y > 100) tab.classList.add('hide');
+            else tab.classList.remove('hide');
+            lastScroll = y;
+        });
+
+        /* === Fade-in on scroll === */
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        });
+        document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
             </script>
+            <!-- JS -->
             <script>
-                const searchBtn = document.getElementById("mobileSearchBtn");
-                const searchContainer = document.getElementById("mobileSearchContainer");
+        // Mobile search open/close
+        const searchBtn = document.getElementById("mobileSearchBtn");
+        const searchContainer = document.getElementById("mobileSearchContainer");
 
-                searchBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    searchContainer.classList.toggle("active");
-                    const input = searchContainer.querySelector("input");
-                    if (searchContainer.classList.contains("active")) input.focus();
-                });
+        searchBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            searchContainer.classList.toggle("active");
+            const input = searchContainer.querySelector("input");
+            if (searchContainer.classList.contains("active")) input.focus();
+        });
 
-                document.addEventListener("click", (e) => {
-                    if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
-                        searchContainer.classList.remove("active");
-                    }
-                });
-                
-                document.addEventListener("DOMContentLoaded", () => {
-                    const count = {{msg_count}} * 1; 
-                    const badge = document.getElementById("messagesCounter");
+        document.addEventListener("click", (e) => {
+            if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
+                searchContainer.classList.remove("active");
+            }
+        });
+        // ===== Messages counter  =====
+        document.addEventListener("DOMContentLoaded", () => {
+            const count = {{msg_count}} * 1; 
+            const badge = document.getElementById("messagesCounter");
 
-                    if (count > 0) {
-                        badge.textContent = count;
-                        badge.classList.remove("hidden");
-                    } else {
-                        badge.classList.add("hidden");
-                    }
-                });
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        });
 
             </script>
             <script src="{% static 'script/cart.js' %}"></script>

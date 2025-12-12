@@ -27,7 +27,8 @@ def validate_description_length(value):
 
 
 def validate_long_description(value):
-
+    """Valide que `long_description` ne dépasse pas 3 phrases."""
+    # découpe élémentaire sur ., !, ?
     sentences = [s for s in re.split(r'[\.\!?]+', value) if s.strip()]
     if len(sentences) > 5:
         raise ValidationError(
@@ -102,17 +103,17 @@ class Product(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-
+        # Calcul automatique du pourcentage de solde si `price_solde` est renseigné
         if self.price_solde is not None and self.price is not None:
             try:
                 price = Decimal(self.price)
                 price_solde = Decimal(self.price_solde)
                 if price > 0:
                     percent = ((price - price_solde) / price) * Decimal(100)
-
+                    # éviter pourcentage négatif si price_solde > price
                     if percent < 0:
                         percent = Decimal('0.00')
-
+                    # arrondir à 2 décimales
                     self.solde_percent = percent.quantize(Decimal('0.01'))
                 else:
                     self.solde_percent = None
@@ -131,7 +132,10 @@ class Product(models.Model):
 
     @property
     def current_badge(self):
-
+        """
+        Badge automatique: renvoie 'Nouveauté' pendant les 20 premiers jours
+        après la date de création (`date_added`). Ne dépend pas des modifications.
+        """
         if not self.date_added:
             return self.badge or ''
         try:
@@ -145,7 +149,7 @@ class Product(models.Model):
 
     @property
     def chara_entretien_list(self):
-
+        """Retourne une liste préparée à partir de `chara_entretien` (split par nouvelle ligne ou ';')."""
         if not self.chara_entretien:
             return []
         items = re.split(r'[\n;]+', self.chara_entretien)
@@ -153,7 +157,10 @@ class Product(models.Model):
 
     @property
     def average_rating(self):
+        """Moyenne des notes provenant des témoignages liés au produit.
 
+        Retourne un float arrondi à 2 décimales ou `None` si pas d'avis.
+        """
         agg = self.testimonies.aggregate(avg=Avg('rating'))
         avg = agg.get('avg')
         if avg is None:
@@ -165,7 +172,7 @@ class Product(models.Model):
 
     @property
     def reviews_count(self):
-
+        """Nombre total de témoignages liés au produit."""
         return self.testimonies.count()
 
 
@@ -179,7 +186,15 @@ class Feature(models.Model):
 
 
 class Testimony(models.Model):
+    """Témoignage utilisateur lié à un `Product`.
 
+    Attributs principaux:
+    - `product`: produit concerné
+    - `utilisateur`: auteur (FK vers user)
+    - `rating`: note entière (1-5)
+    - `message`: texte du témoignage
+    - `date_created`: horodatage de création
+    """
     product = models.ForeignKey(
         Product, related_name='testimonies', on_delete=models.CASCADE)
     utilisateur = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -259,6 +274,12 @@ User = get_user_model()
 
 
 class Conversation(models.Model):
+    """
+    Une conversation entre 2 ou plusieurs utilisateurs :
+    - un client
+    - un revendeur
+    - un 'mukubwa'
+    """
 
     participants = models.ManyToManyField(User, related_name="conversations")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -270,8 +291,8 @@ class Conversation(models.Model):
     @property
     def display_name(self):
         if self.is_from_cart and self.related_order:
-            return f"Discussion exclusivement sur la commande" 
-        return f"Discussion" 
+            return f"Discussion exclusivement sur la commande #{self.related_order.id}"
+        return f"Discussion #{self.id} avec agent"
 
     def __str__(self):
         return f"Conversation {self.id} — {self.created_at.strftime('%Y-%m-%d')}"
@@ -323,8 +344,16 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notif to {self.user} — {self.title}"
 
+
+# =========================
+#   ORDER / ORDER ITEMS
+# =========================
+
 class Order(models.Model):
-    
+    """
+    Représente le contenu du panier à l'instant où le client clique sur
+    'Passer à la discussion'. Geler le panier est ESSENTIEL.
+    """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -344,7 +373,9 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    
+    """
+    Produit appartenant à une commande.
+    """
 
     order = models.ForeignKey(
         Order, related_name="items", on_delete=models.CASCADE

@@ -355,17 +355,20 @@ class Order(models.Model):
     'Passer à la discussion'. Geler le panier est ESSENTIEL.
     """
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="order_maker")
+    assigned_revendeur = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="order_executer")
     created_at = models.DateTimeField(auto_now_add=True)
 
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     STATUS_CHOICES = [
-        ('pending', 'En attente'),
-        ('processing', 'Traitement'),
-        ('done', 'Terminé')
+        ('attente', 'En attente'),
+        ('traitement', 'Traitement'),
+        ('terminé', 'Terminé')
     ]
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default='pending'
+        max_length=20, choices=STATUS_CHOICES, default='attente'
     )
 
     def __str__(self):

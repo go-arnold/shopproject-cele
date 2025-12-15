@@ -626,7 +626,6 @@ def conversation_detail(request, conversation_id):
     """
     conversation = get_object_or_404(Conversation, id=conversation_id)
 
-    # Vérifier que l'utilisateur fait partie de la conversation
     if request.user not in conversation.participants.all():
         conversation.participants.add(request.user)
 
@@ -820,7 +819,7 @@ def assign_revendeur(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
 
     if not request.user.groups.filter(name="mukubwa").exists():
-        return HttpResponseForbidden("Accès refusé")
+        raise PermissionDenied()
 
     revendeur_id = request.POST.get("revendeur_id")
 
@@ -829,7 +828,13 @@ def assign_revendeur(request, notification_id):
         return redirect(request.META.get("HTTP_REFERER", "/"))
 
     revendeur = get_object_or_404(User, id=revendeur_id)
-
+    try:
+        conve = notification.conversation
+        order = conve.related_order
+        order.assigned_revendeur = revendeur
+        order.save()
+    except Exception as e:
+        print(e)
     conversation = notification.conversation
     conversation.participants.add(revendeur)
 
@@ -860,7 +865,7 @@ def assign_revendeur_discussion(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
 
     if not request.user.groups.filter(name="mukubwa").exists():
-        return HttpResponseForbidden("Accès refusé")
+        raise PermissionDenied()
 
     revendeur_id = request.POST.get("revendeur_id")
 
@@ -901,7 +906,7 @@ def mukubwa_reply(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
 
     if not request.user.groups.filter(name="mukubwa").exists():
-        return HttpResponseForbidden("Accès refusé")
+        raise PermissionDenied()
 
     conversation = notification.conversation
     conversation.participants.add(request.user)
@@ -916,7 +921,7 @@ def revendeur_reply(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
 
     if not request.user.groups.filter(name="revendeur").exists():
-        return HttpResponseForbidden("Accès refusé")
+        raise PermissionDenied()
 
     conversation = notification.conversation
     conversation.participants.add(request.user)

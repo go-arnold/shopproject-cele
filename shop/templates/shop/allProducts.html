@@ -1067,7 +1067,6 @@
 
         </script>
         <script>
-            // ===== Messages counter  =====
             document.addEventListener("DOMContentLoaded", () => {
                 const count = {{msg_count}} * 1;  
                 const badge = document.getElementById("messagesCounter");
@@ -1081,23 +1080,23 @@
             });
         </script>
         <script>
-      document.addEventListener("DOMContentLoaded", () => {
-          const lazyBgs = document.querySelectorAll(".lazy-bg");
-          
+            document.addEventListener("DOMContentLoaded", () => {
+                const lazyBgs = document.querySelectorAll(".lazy-bg");
+                
 
-          const observer = new IntersectionObserver(entries => {
-              entries.forEach(entry => {
-                  if (entry.isIntersecting) {
-                      const el = entry.target;
-                      const bg = el.getAttribute("data-bg");
-                      el.style.backgroundImage = `
-                          linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
-                          url('${bg}')
-                      `;
-                      observer.unobserve(el);
-                  }
-              });
-          });
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const el = entry.target;
+                            const bg = el.getAttribute("data-bg");
+                            el.style.backgroundImage = `
+                                linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
+                                url('${bg}')
+                            `;
+                            observer.unobserve(el);
+                        }
+                    });
+                });
 
           const observer_bien = new IntersectionObserver(entries => {
               entries.forEach(entry => {
@@ -1115,7 +1114,7 @@
 
           lazyBgs.forEach(bg => observer.observe(bg));
           
-      });
+          });
         </script>
         <script src="{% static 'script/cart.js' %}"></script>
     </body>

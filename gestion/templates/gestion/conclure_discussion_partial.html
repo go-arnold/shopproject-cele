@@ -1,0 +1,176 @@
+<div class="card-container">
+    <form method="post"
+          action="{% url 'gestion:conclure_discussion' conversation.id %}">
+        {% csrf_token %}
+        <p class="confirmation-text"
+           style="text-align: center;
+                  font-size: 14px;
+                  color: #6c7293;
+                  margin-bottom: 20px">
+            Êtes-vous sûr de vouloir conclure cette conversation ? <strong>"{{ conversation.name }}"</strong> ? Cette action est irréversible.
+        </p>
+        <div class="button-group">
+            <button type="submit"
+                    class="aaa"
+                    style="background-color: #640D5F;
+                           color:#6c7293;
+                           padding: 8px 15px;
+                           border-radius: 6px;
+                           font-size: 14px;
+                           cursor: pointer;
+                           text-decoration: none;
+                           transition: background 0.2s ease;
+                           display: inline-block;
+                           border: none">Oui, supprimer</button>
+            <button type="button"
+                    class="close-modal-btn"
+                    style="background-color: #F4F4F5;
+                           color:#6c7293;
+                           padding: 8px 15px;
+                           border-radius: 6px;
+                           font-size: 14px;
+                           cursor: pointer;
+                           text-decoration: none;
+                           transition: background 0.2s ease;
+                           display: inline-block;
+                           border: none">Annuler</button>
+        </div>
+    </form>
+</div>
+<style>
+    body {
+        background-color: #191c24;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #f5f6fa;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /*
+        .card-container {
+            max-width: 600px;
+            margin: 60px auto;
+            background-color: #1f222d;
+            padding: 30px;*/
+            /* border-radius: 12px; */
+            /* box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); */
+            /* border: 1px solid #2c2f3a; 
+        }
+    */
+    .card-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .card-header h1 {
+        font-size: 1.8rem;
+        color: #ff6b6b;
+        margin: 0;
+    }
+
+    .warning-text {
+        background-color: #3d3a36;
+        border-left: 4px solid #701404;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #f5f6fa;
+    }
+
+    .product-preview {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .product-preview img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #2c2f3a;
+    }
+
+    .placeholder-icon {
+        width: 100px;
+        height: 100px;
+        background: #2c2f3a;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #999;
+        border: 1px dashed #444;
+    }
+
+    .product-details h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        color: #ffffff;
+    }
+
+    .product-details p {
+        margin: 4px 0;
+        font-size: 0.95rem;
+        color: #b0b3c0;
+    }
+
+    form {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .confirmation-text {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        color: #f5f6fa;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s ease;
+        display: inline-block;
+        border: none;
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+    }
+
+    .btn-secondary {
+        background-color: #2c2f3a;
+        color: #f5f6fa;
+        border: 1px solid #444;
+    }
+
+    .btn-secondary:hover {
+        background-color: #3b3f4a;
+    }
+
+    .close-modal-btn:hover {
+        color: #22C55E; 
+        background-color:#f1f1f1
+    }
+    .aaa:hover {
+        color: #640D5F; 
+        background-color:#6c7293
+    }
+</style>

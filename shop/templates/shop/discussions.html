@@ -232,6 +232,64 @@
             transform: scale(1.02);
             box-shadow: 0 4px 12px rgba(100, 13, 95, 0.3);
         }
+
+        
+    </style>
+    <style>
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            display: none;               
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            transition: opacity .18s ease;
+            opacity: 0;
+        }
+        .modal-overlay[aria-hidden="false"] {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1f222d;
+            color: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 650px;
+            padding: 20px;
+            position: relative;
+            border: 1px solid #2c2f3a;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #aaa;
+            background: none;
+            border: none;
+        }
+        .close-modal:hover { color: #fff; }
+       
+        #deleteModalBody .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #555;
+            border-top-color: #ff6b6b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading { opacity: 0.5; pointer-events: none; }
     </style>
     <script>
         tailwind.config = {
@@ -381,118 +439,187 @@
               <span class="material-symbols-outlined text-base sm:text-lg">arrow_back</span>
               <span>Toutes les discussions</span>
             </a>
-            <h1 class="text-slate-900 dark:text-white text-lg sm:text-2xl font-bold leading-tight tracking-[-0.015em] mt-1 sm:mt-2">
+            <h1 class="text-slate-900 dark:text-white text-lg sm:text-2xl font-bold leading-normal  mt-1 sm:mt-2">
               {{ conversation_name }}
             </h1>
-            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-0.5 sm:mt-1">
+            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-1 sm:mt-2 leading-normal">
               ID du ticket : TICKET-CELE{{ id_id }}
+              {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
+                {% if conversation.is_from_cart and conversation.related_order.status != "terminé" %}
+                  <button type="button"
+                          class="open-conclure-modal border border-gray-400 text-gray-300 px-3 py-1.5 mt-1 sm:mt-1 rounded-lg text-xs sm:text-sm hover:bg-gray-400 hover:text-black leading-normal tracking-[-0.015em] m-2"
+                          data-url="{% url 'gestion:conclure_discussion' conversation.id %}"
+                          data-conversation-id="{{ conversation.id }}">
+                    <span>Conclure la discussion</span>
+                  </button>
+                {% endif %}
+              {% endif %}
             </p>
-          </div>
-          <section class="bg-slate-100 dark:bg-secondary-dark/30 rounded-lg flex flex-col flex-1"
-                   style="min-height: 60vh">
-            <div class="messages-scroll-container flex-1 p-3 sm:p-6 overflow-y-auto">
-              <div id="messages-container" class="flex flex-col gap-3 sm:gap-6">
-                <div class="text-center my-1 sm:my-2">
-                  <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-background-dark px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">La conversation a commencé le {{ conversation.created_at }}</span>
+            <section class="bg-slate-100 dark:bg-secondary-dark/30 rounded-lg flex flex-col flex-1"
+                     style="min-height: 60vh">
+              <div class="messages-scroll-container flex-1 p-3 sm:p-6 overflow-y-auto">
+                <div id="messages-container" class="flex flex-col gap-3 sm:gap-6">
+                  <div class="text-center my-1 sm:my-2">
+                    <span class="text-[0.65rem] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-background-dark px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">La conversation a commencé le {{ conversation.created_at }}</span>
+                  </div>
+                  {% for msg in messages %}
+                    {% include "shop/message_bubble.html" with msg=msg %}
+                  {% endfor %}
                 </div>
-                {% for msg in messages %}
-                  {% include "shop/message_bubble.html" with msg=msg %}
-                {% endfor %}
               </div>
-            </div>
-            <!-- DESKTOP PREVIEW -->
-            <div id="desktopPreview"
-                 class="hidden md:block desktop-preview w-full px-4 pb-2"></div>
-            <!-- DESKTOP INPUT -->
-            <div class="hidden md:block desktop-input p-4 border-t border-slate-300 dark:border-white/10 mt-auto">
-              <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-2">
-                <input id="desktopMessageInput"
-                       class="flex-1 h-10 bg-white/5 border border-white/10 rounded-lg px-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                       placeholder="Tapez un message..." />
-                <button id="desktopFileBtn"
-                        class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors">
-                  <span class="material-symbols-outlined text-2xl">attach_file</span>
-                </button>
-                <input id="desktopFileInput" type="file" accept="image/*" class="hidden">
-                <button id="desktopSendBtn"
-                        class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
-                  <span class="material-symbols-outlined text-2xl">send</span>
-                </button>
-              </div>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
-    <!-- MOBILE PREVIEW -->
-    <div id="mobilePreview" class="mobile-preview md:hidden p-3"></div>
-    <!-- MOBILE INPUT -->
-    <div class="mobile-input md:hidden p-3 border-t border-slate-300 dark:border-white/10">
-      <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-1.5">
-        <input id="mobileMessageInput"
-               class="flex-1 h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-sm text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-               placeholder="Tapez un message..." />
-        <button id="mobileFileBtn"
-                class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors">
-          <span class="material-symbols-outlined text-xl">attach_file</span>
-        </button>
-        <input id="mobileFileInput" type="file" accept="image/*" class="hidden">
-        <button id="mobileSendBtn"
-                class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
-          <span class="material-symbols-outlined text-xl">send</span>
-        </button>
+              <!-- DESKTOP PREVIEW -->
+              <div id="desktopPreview"
+                   class="hidden md:block desktop-preview w-full px-4 pb-2"></div>
+              <!-- DESKTOP INPUT -->
+              {% if conversation.related_order.status != "terminé" %}
+                <div class="hidden md:block desktop-input p-4 border-t border-slate-300 dark:border-white/10 mt-auto">
+                  <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-2">
+                    <input id="desktopMessageInput"
+                           class="flex-1 h-10 bg-white/5 border border-white/10 rounded-lg px-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                           placeholder="Tapez un message..." />
+                    <button id="desktopFileBtn"
+                            class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors">
+                      <span class="material-symbols-outlined text-2xl">attach_file</span>
+                    </button>
+                    <input id="desktopFileInput" type="file" accept="image/*" class="hidden">
+                    <button id="desktopSendBtn"
+                            class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                      <span class="material-symbols-outlined text-2xl">send</span>
+                    </button>
+                  </div>
+                </div>
+              {% else %}
+                <div class="hidden md:block desktop-input p-4 border-t border-slate-300 dark:border-white/10 mt-auto">
+                  <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-2">
+                    <input id="desktopMessageInput"
+                           class="flex-1 h-10 bg-white/5 border border-white/10 rounded-lg px-4 text-black placeholder:text-black/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors disabled:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                           placeholder="Conversation conclue... :("
+                           disabled />
+                    <button id="desktopFileBtn"
+                            class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors disabled:text-slate-400 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+                      <span class="material-symbols-outlined text-2xl">attach_file</span>
+                    </button>
+                    <input id="desktopFileInput"
+                           type="file"
+                           accept="image/*"
+                           class="hidden"
+                           disabled />
+                    <button id="desktopSendBtn"
+                            class="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors disabled:bg-slate-400 disabled:text-slate-300 disabled:cursor-not-allowed disabled:hover:bg-primary">
+                      <span class="material-symbols-outlined text-2xl">send</span>
+                    </button>
+                  </div>
+                </div>
+              {% endif %}
+            </section>
+          </div>
+        </main>
       </div>
-    </div>
-    <!-- MOBILE TABBAR -->
-    <nav id="mobileTabbar"
-         class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
-      <a href="{% url 'home' %}">
-        <button class="flex flex-col items-center text-[0.65rem] gap-0.5"
-                aria-label="Accueil">
-          <span class="material-symbols-outlined text-xl">storefront</span>Shop
+      <!-- MOBILE PREVIEW -->
+      <div id="mobilePreview" class="mobile-preview md:hidden p-3"></div>
+      <!-- MOBILE INPUT -->
+      {% if conversation.related_order.status != "terminé" %}
+        <div class="mobile-input md:hidden p-3 border-t border-slate-300 dark:border-white/10">
+          <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-1.5">
+            <input id="mobileMessageInput"
+                   class="flex-1 h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-sm text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                   placeholder="Tapez un message..." />
+            <button id="mobileFileBtn"
+                    class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors">
+              <span class="material-symbols-outlined text-xl">attach_file</span>
+            </button>
+            <input id="mobileFileInput" type="file" accept="image/*" class="hidden">
+            <button id="mobileSendBtn"
+                    class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+              <span class="material-symbols-outlined text-xl">send</span>
+            </button>
+          </div>
+        </div>
+      {% else %}
+        <div class="mobile-input md:hidden p-3 border-t border-slate-300 dark:border-white/10">
+          <div class="flex items-center gap-2 bg-slate-200 dark:bg-background-dark rounded-lg p-1.5">
+            <input id="mobileMessageInput"
+                   class="flex-1 h-9 bg-white/5 border border-white/10 rounded-lg px-3 text-sm text-black placeholder:text-black/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors disabled:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                   placeholder="Conversation conclue... :("
+                   disabled />
+            <button id="mobileFileBtn"
+                    class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/10 transition-colors disabled:text-slate-400 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+              <span class="material-symbols-outlined text-xl">attach_file</span>
+            </button>
+            <input id="mobileFileInput"
+                   type="file"
+                   accept="image/*"
+                   class="hidden"
+                   disabled />
+            <button id="mobileSendBtn"
+                    class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors disabled:bg-slate-400 disabled:text-slate-300 disabled:cursor-not-allowed disabled:hover:bg-primary">
+              <span class="material-symbols-outlined text-xl">send</span>
+            </button>
+          </div>
+        </div>
+      {% endif %}
+      <!-- MOBILE TABBAR -->
+      <nav id="mobileTabbar"
+           class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
+        <a href="{% url 'home' %}">
+          <button class="flex flex-col items-center text-[0.65rem] gap-0.5"
+                  aria-label="Accueil">
+            <span class="material-symbols-outlined text-xl">storefront</span>Shop
+          </button>
+        </a>
+        <a href="{% url 'cart' %}">
+          <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5">
+            <span class="material-symbols-outlined text-xl">shopping_cart</span>Panier
+            <span class="cart-count absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white">{{ cart_count }}</span>
+          </button>
+        </a>
+        <a href="{% url 'assistant' %}">
+          <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
+            <span class="material-symbols-outlined text-xl">assistant</span>Assistant
+          </button>
+        </a>
+        <a href="{% url 'list_conversations' %}">
+          <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 text-primary">
+            <span class="material-symbols-outlined text-xl"
+                  style="font-variation-settings: 'FILL' 1">forum</span>Messages
+            <span id="messagesCounter"
+                  class="absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white hidden"></span>
+          </button>
+        </a>
+        <a href="{% url 'profile' %}">
+          <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
+            <span class="material-symbols-outlined text-xl">person</span>Profil
+          </button>
+        </a>
+      </nav>
+      <!-- IMAGE ZOOM MODAL -->
+      <div id="imageZoomModal"
+           class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-200">
+        <!-- Close button -->
+        <button id="closeZoomBtn"
+                class="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full transition">
+          <span class="material-symbols-outlined text-white text-2xl">close</span>
         </button>
-      </a>
-      <a href="{% url 'cart' %}">
-        <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5">
-          <span class="material-symbols-outlined text-xl">shopping_cart</span>Panier
-          <span class="cart-count absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white">{{ cart_count }}</span>
-        </button>
-      </a>
-      <a href="{% url 'assistant' %}">
-        <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
-          <span class="material-symbols-outlined text-xl">assistant</span>Assistant
-        </button>
-      </a>
-      <a href="{% url 'list_conversations' %}">
-        <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 text-primary">
-          <span class="material-symbols-outlined text-xl"
-                style="font-variation-settings: 'FILL' 1">forum</span>Messages
-          <span id="messagesCounter"
-                class="absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white hidden"></span>
-        </button>
-      </a>
-      <a href="{% url 'profile' %}">
-        <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
-          <span class="material-symbols-outlined text-xl">person</span>Profil
-        </button>
-      </a>
-    </nav>
-    <!-- IMAGE ZOOM MODAL -->
-    <div id="imageZoomModal"
-         class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity duration-200">
-      <!-- Close button -->
-      <button id="closeZoomBtn"
-              class="absolute top-4 right-4 z-10 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full transition">
-        <span class="material-symbols-outlined text-white text-2xl">close</span>
-      </button>
-      <!-- Image -->
-      <img id="zoomedImage"
-           src=""
-           alt="Image agrandie"
-           class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl transition-transform duration-200 scale-95 opacity-0">
-    </div>
-    <script src="{% static 'script/cart.js' %}"></script>
-    <script>
+        <!-- Image -->
+        <img id="zoomedImage"
+             src=""
+             alt="Image agrandie"
+             class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl transition-transform duration-200 scale-95 opacity-0">
+      </div>
+      <div id="conclureModal"
+           class="modal-overlay"
+           aria-hidden="true"
+           role="dialog"
+           aria-modal="true">
+        <div class="modal-content"
+             role="document"
+             aria-labelledby="conclure-modal-title">
+          <button class="close-modal" aria-label="Fermer la fenêtre">&times;</button>
+          <div id="conclureModalBody"></div>
+        </div>
+      </div>
+      <script src="{% static 'script/cart.js' %}"></script>
+      <script>
             const obs = new IntersectionObserver(entries => {
                 entries.forEach(e => { 
                     if (e.isIntersecting) e.target.classList.add('visible'); 
@@ -528,8 +655,8 @@
                     badge.classList.add("hidden");
                 }
             });
-    </script>
-    <script>
+      </script>
+      <script>
             const messagesContainer = document.getElementById("messages-container");
             const mobilePreviewBox = document.getElementById("mobilePreview");
             mobilePreviewBox.style.display = "none"
@@ -745,59 +872,200 @@
             
 
             scrollToBottom();
-    </script>
-    <script>
-    const zoomModal = document.getElementById('imageZoomModal');
-    const zoomedImage = document.getElementById('zoomedImage');
-    const closeZoomBtn = document.getElementById('closeZoomBtn');
+      </script>
+      <script>
+        const zoomModal = document.getElementById('imageZoomModal');
+        const zoomedImage = document.getElementById('zoomedImage');
+        const closeZoomBtn = document.getElementById('closeZoomBtn');
 
-    // Ouvrir l'image en zoom
-    window.openImageZoom = function(imageSrc) {
-        zoomedImage.src = imageSrc;
+        // Ouvrir l'image en zoom
+        window.openImageZoom = function(imageSrc) {
+            zoomedImage.src = imageSrc;
 
-        // Rendre visible
-        zoomModal.classList.remove("hidden");
-        zoomModal.classList.add("flex");
+            // Rendre visible
+            zoomModal.classList.remove("hidden");
+            zoomModal.classList.add("flex");
 
-        // Petite animation
-        setTimeout(() => {
-            zoomedImage.classList.remove("opacity-0", "scale-95");
-            zoomedImage.classList.add("opacity-100", "scale-100");
-        }, 20);
+            // Petite animation
+            setTimeout(() => {
+                zoomedImage.classList.remove("opacity-0", "scale-95");
+                zoomedImage.classList.add("opacity-100", "scale-100");
+            }, 20);
 
-        document.body.style.overflow = 'hidden';
-    };
+            document.body.style.overflow = 'hidden';
+        };
 
-    // Fermer
-    function closeImageZoom() {
-        // animation reverse
-        zoomedImage.classList.remove("opacity-100", "scale-100");
-        zoomedImage.classList.add("opacity-0", "scale-95");
+        // Fermer
+        function closeImageZoom() {
+            // animation reverse
+            zoomedImage.classList.remove("opacity-100", "scale-100");
+            zoomedImage.classList.add("opacity-0", "scale-95");
 
-        setTimeout(() => {
-            zoomModal.classList.add("hidden");
-            zoomModal.classList.remove("flex");
-            zoomedImage.src = "";
-        }, 180);
+            setTimeout(() => {
+                zoomModal.classList.add("hidden");
+                zoomModal.classList.remove("flex");
+                zoomedImage.src = "";
+            }, 180);
 
-        document.body.style.overflow = "";
-    }
-
-    closeZoomBtn.onclick = closeImageZoom;
-
-    // Fermer en cliquant hors de l'image
-    zoomModal.onclick = function(e) {
-        if (e.target === zoomModal) {
-            closeImageZoom();
+            document.body.style.overflow = "";
         }
-    };
 
-    // Fermer avec Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !zoomModal.classList.contains('hidden')) {
-            closeImageZoom();
-        }
-    });
-    </script>
-  </body>
-</html>
+        closeZoomBtn.onclick = closeImageZoom;
+
+        // Fermer en cliquant hors de l'image
+        zoomModal.onclick = function(e) {
+            if (e.target === zoomModal) {
+                closeImageZoom();
+            }
+        };
+
+        // Fermer avec Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !zoomModal.classList.contains('hidden')) {
+                closeImageZoom();
+            }
+        });
+      </script>
+      <script>
+        (function(){
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const modal = document.getElementById("conclureModal");
+                if (!modal) return;
+                const modalBody = document.getElementById("conclureModalBody");
+                const closeModalBtn = modal.querySelector(".close-modal");
+                let lastFocusedButton = null;
+
+                function openLoader(triggerEl) {
+                    modal.setAttribute("aria-hidden", "false");
+                    modal.style.display = "flex";
+                    document.body.style.overflow = "hidden";
+                    modalBody.innerHTML = `
+                        <div style="text-align:center;padding:40px;">
+                            <div class="spinner"></div>
+                            <p style="margin-top:10px;color:#bbb;">Chargement…</p>
+                        </div>`;
+                    if (triggerEl) {
+                        triggerEl.disabled = true;
+                        triggerEl.classList.add("loading");
+                    }
+                }
+
+                function closeModal() {
+                    modal.setAttribute("aria-hidden", "true");
+                    modal.style.display = "none";
+                    document.body.style.overflow = "";
+                    modalBody.innerHTML = "";
+                    if (lastFocusedButton) {
+                        try { lastFocusedButton.blur(); } catch(e){/*ignore*/}
+                        lastFocusedButton.disabled = false;
+                        lastFocusedButton.classList.remove("loading");
+                        lastFocusedButton = null;
+                    }
+                }
+
+                
+                modal.addEventListener("click", function(e){
+                    if (e.target === modal) closeModal();
+                });
+
+                if (closeModalBtn) closeModalBtn.addEventListener("click", closeModal);
+
+                
+                document.querySelectorAll(".open-conclure-modal").forEach(function(btn){
+                    btn.addEventListener("click", function(e){
+                        e.preventDefault();
+                        lastFocusedButton = btn;
+                        const url = btn.dataset.url;
+                        const pid = btn.dataset.conversationId || null;
+
+                        openLoader(btn);
+
+                        fetch(url, { headers: {'X-Requested-With': 'XMLHttpRequest'} })
+                            .then(function(res){
+                                if (!res.ok) throw new Error("Bad response");
+                                return res.text();
+                            })
+                            .then(function(html){
+                                
+                                modalBody.innerHTML = html;
+
+                                
+                                modalBody.querySelectorAll(".close-modal-btn").forEach(function(cbtn){
+                                    cbtn.addEventListener("click", function(ev){
+                                        ev.preventDefault();
+                                        closeModal();
+                                    });
+                                });
+
+                              
+                                const form = modalBody.querySelector("form");
+                                if (form) {
+                                    form.addEventListener("submit", function(ev){
+                                        ev.preventDefault();
+                                        const csrftoken = getCookie('csrftoken');
+                                        const fd = new FormData(form);
+
+                                        fetch(form.action, {
+                                            method: "POST",
+                                            headers: {
+                                                'X-Requested-With': 'XMLHttpRequest',
+                                                'X-CSRFToken': csrftoken
+                                            },
+                                            body: fd,
+                                            credentials: 'same-origin'
+                                        })
+                                        .then(function(resp){
+                                            
+                                            return resp.json().catch(function(){
+                                                return { success: resp.ok };
+                                            });
+                                        })
+                                        .then(function(data){
+                                            if (data && data.success) {
+                                               
+                                                if (pid) {
+                                                    window.location.href = "{% url 'list_conversations' %}";
+                                                    return;
+                                                }
+                                                
+                                                window.location.reload();
+                                            } else {
+                                               
+                                                console.error("Conclusion: réponse inattendue", data);
+                                                window.location.reload();
+                                            }
+                                        })
+                                        .catch(function(err){
+                                            console.error("Erreur lors du chargement:", err);
+                                            window.location.reload();
+                                        });
+                                    });
+                                }
+                            })
+                            .catch(function(err){
+                                console.error("Erreur fetch modal:", err);
+                                modalBody.innerHTML = `<div style="padding:40px;text-align:center;color:#aaa;">Erreur de chargement. <br><small>${err.message}</small></div>`;
+                                if (btn) { btn.disabled = false; btn.classList.remove("loading"); }
+                            });
+                    });
+                });
+            });
+        })();
+      </script>
+    </body>
+  </html>

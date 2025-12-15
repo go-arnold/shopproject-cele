@@ -1,9 +1,6 @@
 {% extends 'gestion/base.html' %}
 {% load static %}
 {% block title %}Supprimer {{ product.name }} - CELEBOBO ADMIN{% endblock %}
-{% block extra_css %}
-    {% include 'gestion/delete_product_styles.html' %}
-{% endblock %}
 {% block content %}
     {% include 'gestion/delete_product_partial.html' %}
 {% endblock %}

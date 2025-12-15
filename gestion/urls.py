@@ -29,6 +29,8 @@ urlpatterns = [
     path('ventes/export/pdf/', views.export_ventes_pdf, name='export_ventes_pdf'),
     path("graphs/", views.dashboard_ventes, name="dashboard_ventes"),
     path("dashboard/pdf/", views.dashboard_pdf, name="dashboard_pdf"),
+    path("conversation/<int:conversation_id>/conclure/",
+         views.conclure_discussion, name="conclure_discussion")
 
 
 

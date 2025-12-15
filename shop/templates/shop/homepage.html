@@ -839,41 +839,41 @@
             });
     </script>
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const lazyBgs = document.querySelectorAll(".lazy-bg");
-        const lazyyBgs = document.querySelectorAll(".lazyy-bg");
+        document.addEventListener("DOMContentLoaded", () => {
+            const lazyBgs = document.querySelectorAll(".lazy-bg");
+            const lazyyBgs = document.querySelectorAll(".lazyy-bg");
 
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    const bg = el.getAttribute("data-bg");
-                    el.style.backgroundImage = `
-                        linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
-                        url('${bg}')
-                    `;
-                    observer.unobserve(el);
-                }
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const bg = el.getAttribute("data-bg");
+                        el.style.backgroundImage = `
+                            linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
+                            url('${bg}')
+                        `;
+                        observer.unobserve(el);
+                    }
+                });
             });
-        });
 
-        const observer_bien = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    const bg = el.getAttribute("data-bg");
-                    el.style.backgroundImage = `
-                        url('${bg}')
-                    `;
-                    observer.unobserve(el);
-                }
+            const observer_bien = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const bg = el.getAttribute("data-bg");
+                        el.style.backgroundImage = `
+                            url('${bg}')
+                        `;
+                        observer.unobserve(el);
+                    }
+                });
             });
+
+
+            lazyBgs.forEach(bg => observer.observe(bg));
+            lazyyBgs.forEach(bg => observer_bien.observe(bg));
         });
-
-
-        lazyBgs.forEach(bg => observer.observe(bg));
-        lazyyBgs.forEach(bg => observer_bien.observe(bg));
-    });
     </script>
     <script src="{% static 'script/cart.js' %}"></script>
   </body>

@@ -149,13 +149,13 @@ WSGI_APPLICATION = 'shopproject.wsgi.application'
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'defaultdb',
         'USER': 'avnadmin',
-        'PASSWORD': 'AVNS_h-h3R0ygwjOsPqDausK',
-        'HOST': 'mt-base-cikuruspaces.c.aivencloud.com',
+        'PASSWORD': 'AVNS_446sx92s0iuMBGrgHcD',
+        'HOST': 'matabar-cikuruspaces.i.aivencloud.com',
         'PORT': '17101',
     }
 }"""
 
-"""DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'matabardb',
@@ -164,9 +164,9 @@ WSGI_APPLICATION = 'shopproject.wsgi.application'
         'HOST': 'localhost',
         'PORT': '5432',
     }
-}"""
+}
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv("dbname"),
@@ -176,7 +176,7 @@ DATABASES = {
         'PORT': os.getenv("port"),
     }
 
-}
+}"""
 
 
 # Password validation

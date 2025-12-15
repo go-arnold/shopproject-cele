@@ -24,6 +24,9 @@ from django.db.models import Sum, F, DecimalField
 from django.utils.timezone import now
 from django.db.models.functions import Coalesce
 from django.templatetags.static import static
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 
 
 def is_admin_user(user):
@@ -100,8 +103,26 @@ def dashboard(request):
     methods_data = [float(item['total']) for item in methodes_stats]
 
     recent_ventes = ventes.order_by('-date_achat')[:5]
-    orders = Order.objects.select_related(
-        'user').prefetch_related('items__product')
+
+    if request.user.groups.filter(name="mukubwa").exists():
+
+        orders = Order.objects.select_related('user', 'assigned_revendeur') \
+                              .prefetch_related('items__product') \
+                              .order_by('-created_at')
+    else:
+        try:
+            orders = Order.objects.filter(assigned_revendeur=request.user) \
+                .select_related('user') \
+                .prefetch_related('items__product') \
+                .order_by('-created_at')
+        except ObjectDoesNotExist:
+            messages.error(
+                request, "Aucune commande trouvée pour l'utilisateur spécifié ou les données n'existent pas.")
+            orders = []
+        except Exception as e:
+            messages.error(
+                request, f"Une erreur inattendue est survenue : {str(e)}")
+            orders = []
     qs = Conversation.objects.filter(
         participants=request.user).order_by("-created_at")
     paginator_sms = Paginator(qs, 5)
@@ -196,7 +217,11 @@ def dashboard(request):
 
 @admin_required
 def admin_products(request):
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     products_list = Product.objects.select_related(
         'category_fk').order_by('-date_added')
 
@@ -223,7 +248,11 @@ def admin_products(request):
 
 @admin_required
 def add_product(request):
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     if request.method == 'POST':
         try:
 
@@ -280,7 +309,11 @@ def add_product(request):
 
 @admin_required
 def edit_product(request, product_id):
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     product = get_object_or_404(Product, id=product_id)
 
     if request.method == 'POST':
@@ -340,7 +373,11 @@ def edit_product(request, product_id):
 
 @admin_required
 def delete_product(request, product_id):
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     product = get_object_or_404(Product, id=product_id)
     if request.method == 'POST':
         product_name = product.name
@@ -361,7 +398,11 @@ def delete_product(request, product_id):
 
 @admin_required
 def view_product(request, product_id):
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     product = get_object_or_404(
         Product.objects.select_related('category_fk'), id=product_id)
     context = {
@@ -408,7 +449,11 @@ def ajouter_vente(request):
 
 @admin_required
 def get_product_details(request, product_id):
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     try:
         produit = Product.objects.get(id=product_id)
         data = {
@@ -449,7 +494,7 @@ def supprimer_vente(request, vente_id):
     if request.method == 'POST':
         vente.delete()
         messages.success(request, "La vente a été supprimée avec succès.")
-        return redirect('liste_ventes')
+        return redirect('gestion:liste_ventes')
 
     return render(request, 'gestion/supprimer_vente.html', {'vente': vente})
 
@@ -485,6 +530,11 @@ def modifier_vente(request, vente_id):
 @admin_required
 def liste_ventes_rev(request):
     utilisateur = request.user
+
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if utilisateur in rev and utilisateur not in muk:
+        raise PermissionDenied()
 
     if utilisateur.groups.filter(name="revendeur").exists():
         return redirect('gestion:dashboard')
@@ -543,7 +593,11 @@ def liste_ventes_rev(request):
 @admin_required
 def export_ventes_excel(request):
     utilisateur = request.user
-
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     if utilisateur.groups.filter(name="mukubwa").exists():
         ventes = Vente.objects.select_related('produit', 'utilisateur')
     else:
@@ -576,6 +630,11 @@ def export_ventes_excel(request):
 
 @admin_required
 def export_ventes_pdf(request):
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     utilisateur = request.user
 
     if utilisateur.groups.filter(name="mukubwa").exists():
@@ -601,8 +660,14 @@ def export_ventes_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="ventes.pdf"'
     return response
 
+
 @csrf_exempt
 def dashboard_pdf(request):
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     if request.method == "POST":
         data = json.loads(request.body)
         images = data.get("images", [])
@@ -698,8 +763,14 @@ def dashboard_pdf(request):
 
     return HttpResponse(status=405)
 
+
 @admin_required
 def dashboard_ventes(request):
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if user in rev and user not in muk:
+        raise PermissionDenied()
     utilisateur = request.user
     today = timezone.now()
     if utilisateur.groups.filter(name="revendeur").exists():
@@ -821,3 +892,24 @@ def dashboard_ventes(request):
     }
 
     return render(request, "gestion/graphs.html", context)
+
+
+@admin_required
+def conclure_discussion(request, conversation_id):
+    user = request.user
+    rev = Group.objects.get(name="revendeur").user_set.all()
+    muk = Group.objects.get(name="mukubwa").user_set.all()
+    if (user not in rev) and (user not in muk):
+        raise PermissionDenied()
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    if request.method == 'POST':
+        conversation.related_order.status = "terminé"
+        conversation.related_order.save()
+        messages.success(
+            request, f"Le status de l'ordre associé à cette conversation a été mise à jour avec succès.")
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True})
+        return redirect('list_conversations')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'gestion/conclure_discussion_partial.html', {'conversation': conversation})
+    return render(request, 'gestion/conclure_discussion.html', {'conversation': conversation})

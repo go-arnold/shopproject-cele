@@ -155,7 +155,7 @@ WSGI_APPLICATION = 'shopproject.wsgi.application'
     }
 }"""
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'matabardb',
@@ -164,9 +164,9 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
     }
-}
+}"""
 
-"""DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv("dbname"),
@@ -176,7 +176,7 @@ DATABASES = {
         'PORT': os.getenv("port"),
     }
 
-}"""
+}
 
 
 # Password validation

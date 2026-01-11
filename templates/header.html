@@ -1,0 +1,214 @@
+{% load static %}
+<header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
+    <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
+        <a class="hover:text-white transition-colors" href="#">Assistant</a>
+        <a class="hover:text-white transition-colors"
+           href="{% url 'about_us' %}">À propos</a>
+        <a class="hover:text-white transition-colors" href="#">Articles</a>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
+        <div class="flex items-center gap-2.5">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'static-img/logo-white.png' %}"
+                     alt="CELEBOBO"
+                     loading="lazy"
+                     class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
+            </a>
+        </div>
+        <form method="GET"
+              action="{% url 'results' %}"
+              class="flex-1 max-w-2xl mx-auto hidden md:block">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
+                <input name="q"
+                       class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                       placeholder="Rechercher un produit..."
+                       type="search" />
+            </div>
+        </form>
+        <div class="flex items-center gap-1 sm:gap-4 ml-auto">
+            <button id="mobileSearchBtn"
+                    class="md:hidden flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
+                <span class="material-symbols-outlined text-xl">search</span>
+            </button>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'account_login' %}">
+                    <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
+                        S'inscrire / Se connecter
+                    </button>
+                </a>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <button class="flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <a href="{% url 'favorites_list' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-heart size-5 md:size-6">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+                        </svg>
+                    </a>
+                </button>
+                <button class="relative hidden md:flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <a href="{% url 'list_conversations' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-message-dots size-5 md:size-6">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 11v.01" />
+                            <path d="M8 11v.01" />
+                            <path d="M16 11v.01" />
+                            <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z" />
+                        </svg>
+                        <span id="msg-count"
+                              class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs  text-white hidden">{{ msg_count }}</span>
+                    </a>
+                </button>
+            {% endif %}
+            <button class="relative flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                <a href="{% url 'cart' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-cart size-5 md:size-6">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M17 17h-11v-14h-2" />
+                        <path d="M6 5l14 1l-1 7h-13" />
+                    </svg>
+                    <span id="cart-count"
+                          class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs  text-white hidden">{{ cart_count }}</span>
+                </a>
+            </button>
+            {% if user.is_authenticated %}
+                <button class="hidden md:flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <a href="{% url 'profile' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-user size-5 md:size-6">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                        </svg>
+                    </a>
+                </button>
+                {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
+                    <button class="relative flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                        <a href="{% url 'notifications' %}">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 class="icon icon-tabler icons-tabler-outline icon-tabler-bell-ringing size-5 md:size-6">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                                <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                                <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
+                                <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
+                            </svg>
+                            <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs  text-white">{{ not_read_notif }}</span>
+                        </a>
+                    </button>
+                    <button class="flex items-center justify-center rounded-lg sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                        <a href="{% url 'gestion:dashboard' %}">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 class="icon icon-tabler icons-tabler-outline icon-tabler-apps size-5 md:size-6">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                                <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                                <path d="M14 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                                <path d="M14 7l6 0" />
+                                <path d="M17 4l0 6" />
+                            </svg>
+                        </a>
+                    </button>
+                {% endif %}
+                <button class="flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <a href="{% url 'account_logout' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor"
+                             class="sm:w-6 sm:h-6 size-5 md:size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                        </svg>
+                    </a>
+                </button>
+            {% endif %}
+            {% if not user.is_authenticated %}
+                <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
+                    <a href="{% url 'account_login' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-user size-5 md:size-6">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                        </svg>
+                    </a>
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</header>
+<form method="GET"
+      action="{% url 'results' %}"
+      id="mobileSearchContainer"
+      class="hidden px-3 py-2 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
+    <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50 text-lg">search</span>
+        <input name="q"
+               class="w-full h-9 text-sm bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+               placeholder="Rechercher un produit..."
+               type="search" />
+    </div>
+</form>

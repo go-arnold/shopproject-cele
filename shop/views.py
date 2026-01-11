@@ -494,10 +494,12 @@ def assistant(request):
     })
 
 
+"""
 def profile(request):
     if not request.user.is_authenticated:
         return render(request, 'shop/login_required.html')
     return render(request, 'shop/profile.html')
+"""
 
 
 def messages(request):
@@ -523,7 +525,7 @@ def start_conversation_from_cart(request):
     cart = Cart(request)
 
     if len(cart) == 0:
-        raise Http404("Votre panier est vide.")
+        return redirect("all_products")
 
     # 1. CRÉER LA COMMANDE
     order = Order.objects.create(

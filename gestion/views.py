@@ -503,6 +503,8 @@ def supprimer_vente(request, vente_id):
 def modifier_vente(request, vente_id):
     vente = get_object_or_404(Vente, id=vente_id)
     produits = Product.objects.all()
+    if not request.user.groups.filter(name="mukubwa").exists():
+        raise PermissionDenied()
 
     if request.method == 'POST':
         produit_id = request.POST.get('produit_id')

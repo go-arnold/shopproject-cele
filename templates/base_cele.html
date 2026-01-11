@@ -13,6 +13,7 @@
               rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
               rel="stylesheet" />
+        <link rel="stylesheet" href='{% static "style_general.css" %}'>
         <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -81,8 +82,9 @@
                    class="w-64 flex-shrink-0 bg-white/5 dark:bg-black/20 p-3 sm:p-4 flex flex-col justify-between">
                 <div class="flex flex-col gap-6 sm:gap-8">
                     <div class="flex items-center justify-center gap-3 px-3 py-2 overflow-hidden">
-                        <a href={% url "gestion:dashboard" %}
-                            <img src="{% static "static-img/logo-white.png" %}"></a>
+                        <a href={% url "gestion:dashboard" %}>
+                            <img src="{% static "static-img/logo-white.png" %}">
+                        </a>
                     </div>
                     <!-- Menu de navigation -->
                     <div class="flex flex-col gap-1.5 sm:gap-2">
@@ -127,6 +129,18 @@
                 </div>
                 <!-- Profile section -->
                 <div class="flex flex-col gap-1.5 sm:gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'profile' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                       href="{% url 'account_logout' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor"
+                             class="w-5 h-5 sm:w-6 sm:h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                        </svg>
+                        <p class="text-sm font-medium">Me déconnecter</p>
+                    </a>
                     <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'profile' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                        href="{% url 'profile' %}">
                         <span class="material-symbols-outlined text-xl sm:text-2xl">account_circle</span>

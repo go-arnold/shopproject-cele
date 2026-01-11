@@ -208,6 +208,7 @@
             transform: translateY(0);
         }
     </style>
+    <link rel="stylesheet" href='{% static "style_general.css" %}'>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -245,7 +246,7 @@
         <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
           <!-- Top bar - Caché sur mobile -->
           <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
-            <a class="hover:text-white transition-colors" href="#">Aide</a>
+            <a class="hover:text-white transition-colors" href="#">Assistant</a>
             <a class="hover:text-white transition-colors"
                href="{% url 'about_us' %}">À propos</a>
             <a class="hover:text-white transition-colors" href="#">Articles</a>
@@ -292,41 +293,128 @@
                 <!-- Favoris -->
                 <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                   <a href="{% url 'favorites_list' %}">
-                    <span class="material-symbols-outlined text-xl">favorite</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-heart size-5 md:size-6">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+                    </svg>
                   </a>
                 </button>
                 <!-- Messages - Desktop only -->
                 <a href="{% url 'list_conversations' %}">
-                  <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                    <span class="material-symbols-outlined text-xl">mail</span>
-                    <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ msg_count }}</span>
+                  <button class="relative hidden md:flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-message-dots size-5 md:size-6">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 11v.01" />
+                      <path d="M8 11v.01" />
+                      <path d="M16 11v.01" />
+                      <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z" />
+                    </svg>
+                    <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs  text-white">{{ msg_count }}</span>
                   </button>
                 </a>
               {% endif %}
               <!-- Panier -->
               <a href="{% url 'cart' %}">
-                <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                  <span class="material-symbols-outlined text-xl">shopping_cart</span>
+                <button class="relative flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       width="24"
+                       height="24"
+                       viewBox="0 0 24 24"
+                       fill="none"
+                       stroke="currentColor"
+                       stroke-width="2"
+                       stroke-linecap="round"
+                       stroke-linejoin="round"
+                       class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-cart size-5 md:size-6">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                    <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                    <path d="M17 17h-11v-14h-2" />
+                    <path d="M6 5l14 1l-1 7h-13" />
+                  </svg>
                   <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
                 </button>
               </a>
               {% if user.is_authenticated %}
                 <!-- Profile - Desktop only -->
-                <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                <button class="hidden md:flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
                   <a href="{% url 'profile' %}">
-                    <span class="material-symbols-outlined text-xl">person</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-login size-5 md:size-6">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M15 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                      <path d="M21 12h-13l3 -3" />
+                      <path d="M11 15l-3 -3" />
+                    </svg>
                   </a>
                 </button>
                 {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
                   <a href="{% url 'notifications' %}">
-                    <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <span class="material-symbols-outlined text-xl">notification_add</span>
-                      <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
+                    <button class="relative flex items-center justify-center rounded-lg  sm:h-9 sm:w-9 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                           width="24"
+                           height="24"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           stroke-width="2"
+                           stroke-linecap="round"
+                           stroke-linejoin="round"
+                           class="icon icon-tabler icons-tabler-outline icon-tabler-bell-ringing size-5 md:size-6">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                        <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                        <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
+                        <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
+                      </svg>
+                      <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs  text-white">{{ not_read_notif }}</span>
                     </button>
                   </a>
                   <a href="{% url 'gestion:dashboard' %}">
                     <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <span class="material-symbols-outlined text-xl">apps</span>
+                      <svg xmlns="http://www.w3.org/2000/svg"
+                           width="24"
+                           height="24"
+                           viewBox="0 0 24 24"
+                           fill="none"
+                           stroke="currentColor"
+                           stroke-width="2"
+                           stroke-linecap="round"
+                           stroke-linejoin="round"
+                           class="icon icon-tabler icons-tabler-outline icon-tabler-apps size-5 md:size-6">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M14 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M14 7l6 0" />
+                        <path d="M17 4l0 6" />
+                      </svg>
                     </button>
                   </a>
                 {% endif %}
@@ -348,7 +436,21 @@
               {% if not user.is_authenticated %}
                 <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
                   <a href="{% url 'account_login' %}">
-                    <span class="material-symbols-outlined text-xl">person</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24"
+                         height="24"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="icon icon-tabler icons-tabler-outline icon-tabler-login size-5 md:size-6">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M15 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                      <path d="M21 12h-13l3 -3" />
+                      <path d="M11 15l-3 -3" />
+                    </svg>
                   </a>
                 </button>
               {% endif %}
@@ -543,19 +645,67 @@
           </a>
           <a href="{% url 'cart' %}">
             <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5">
-              <span class="material-symbols-outlined text-xl">shopping_cart</span>Panier
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   width="24"
+                   height="24"
+                   viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="2"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                   class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-cart size-5 md:size-6">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M17 17h-11v-14h-2" />
+                <path d="M6 5l14 1l-1 7h-13" />
+              </svg>
+              Panier
               <span class="cart-count absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white">{{ cart_count }}</span>
             </button>
           </a>
           <a href="{% url 'assistant' %}">
             <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
-              <span class="material-symbols-outlined text-xl">assistant</span>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   width="24"
+                   height="24"
+                   viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="2"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                   class="icon icon-tabler icons-tabler-outline icon-tabler-brain size-5 md:size-6">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8" />
+                <path d="M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8" />
+                <path d="M17.5 16a3.5 3.5 0 0 0 0 -7h-.5" />
+                <path d="M19 9.3v-2.8a3.5 3.5 0 0 0 -7 0" />
+                <path d="M6.5 16a3.5 3.5 0 0 1 0 -7h.5" />
+                <path d="M5 9.3v-2.8a3.5 3.5 0 0 1 7 0v10" />
+              </svg>
               Assistant
             </button>
           </a>
           <a href="{% url 'list_conversations' %}">
             <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 ">
-              <span class="material-symbols-outlined text-xl">forum</span>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   width="24"
+                   height="24"
+                   viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="2"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                   class="icon icon-tabler icons-tabler-outline icon-tabler-message-dots size-5 md:size-6">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M12 11v.01" />
+                <path d="M8 11v.01" />
+                <path d="M16 11v.01" />
+                <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z" />
+              </svg>
               Messages
               <span id="messagesCounter"
                     class="absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white hidden">
@@ -564,7 +714,21 @@
           </a>
           <a href="{% url 'profile' %}">
             <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
-              <span class="material-symbols-outlined text-xl">person</span>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   width="24"
+                   height="24"
+                   viewBox="0 0 24 24"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="2"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                   class="icon icon-tabler icons-tabler-outline icon-tabler-login size-5 md:size-6">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M15 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                <path d="M21 12h-13l3 -3" />
+                <path d="M11 15l-3 -3" />
+              </svg>
               Profil
             </button>
           </a>

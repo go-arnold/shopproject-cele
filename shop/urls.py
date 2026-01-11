@@ -26,7 +26,7 @@ urlpatterns = [
     path("remove-from-cart/", views_cart.remove_from_cart, name="remove_from_cart"),
     path("cart/", cart_view, name="cart"),
     path("assistant/", views.assistant, name="assistant"),
-    path("profile/", views.profile, name="profile"),
+    #    path("profile/", views.profile, name="profile"),
     path("messages/", views.messages, name="messages"),
     path("start-conversation/", views.start_conversation_from_cart,
          name="start_conversation_from_cart"),

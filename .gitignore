@@ -3,8 +3,11 @@ echo "*/node_modules/" > static/.gitignore
 Dockerfile
 .dockerignore
 .venv/
+/.venv/
+.vscode/
+/.vscode/
 
 .env
-
+tryout.txt
 db.sqlite3
 backup.sql

@@ -48,7 +48,7 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 SECRET_KEY = "django-insecure-33m#7*z((&*^oc%v4z(!o4kd+@+4m@g3m+ma=06k0o!by5rtih"
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 ALLOWED_HOSTS = ["*"]
@@ -113,6 +113,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -155,7 +156,7 @@ WSGI_APPLICATION = 'shopproject.wsgi.application'
     }
 }"""
 
-"""DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'matabardb',
@@ -164,9 +165,9 @@ WSGI_APPLICATION = 'shopproject.wsgi.application'
         'HOST': 'localhost',
         'PORT': '5432',
     }
-}"""
+}
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv("dbname"),
@@ -176,7 +177,7 @@ DATABASES = {
         'PORT': os.getenv("port"),
     }
 
-}
+}"""
 
 
 # Password validation
@@ -201,6 +202,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'Africa/Kigali'
 USE_I18N = True
+
 USE_L10N = True
 USE_TZ = True
 
@@ -223,6 +225,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_ADAPTER = 'gestion.adapters.CustomAccountAdapter'
+ACCOUNT_ADAPTER = "accounts.adapters.MyAccountAdapter"
 
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 
@@ -235,12 +238,16 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'arnoldciku@gmail.com'
 EMAIL_HOST_PASSWORD = 'ewhdyavamcdmbjyr'
 DEFAULT_FROM_EMAIL = 'arnoldciku@gmail.com'
+ACCOUNT_FORMS = {
+    "signup": "accounts.forms.PhoneSignupForm",
+}
 
 ACCOUNT_LOGIN_METHODS = ['email', 'username']
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*',
+                         'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
 ACCOUNT_LOGIN_BY_CODE_TIMEOUT = 600
 ACCOUNT_PASSWORD_RESET_BY_CODE_TIMEOUT = 600
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
+ACCOUNT_PHONE_VERIFICATION_ENABLED = False

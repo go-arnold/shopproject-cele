@@ -13,20 +13,47 @@ class Profile(models.Model):
         blank=True,
     )
     def_address = models.CharField(
-        max_length=60, null=True, blank=True,)
+        max_length=60,
+        null=True,
+        blank=True,
+    )
     def_country = models.CharField(
-        max_length=60, null=True, blank=True,)
+        max_length=60,
+        null=True,
+        blank=True,
+    )
     def_quarter_town = models.CharField(
-        max_length=60, null=True, blank=True,)
+        max_length=60,
+        null=True,
+        blank=True,
+    )
 
     deliv_address = models.CharField(
-        max_length=60, null=True, blank=True,)
+        max_length=60,
+        null=True,
+        blank=True,
+    )
     deliv_country = models.CharField(
-        max_length=60, null=True, blank=True,)
+        max_length=60,
+        null=True,
+        blank=True,
+    )
     deliv_quarter_town = models.CharField(
-        max_length=60, null=True, blank=True,)
+        max_length=60,
+        null=True,
+        blank=True,
+    )
     image = models.ImageField(
-        upload_to='profile_pics/', default='produits/avatar_kbwhgu.png')
+        upload_to="profile_pics/", default="produits/avatar_kbwhgu.png"
+    )
+    invited_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="revendeur",
+        null=True,
+        blank=True,
+    )
+    code_revendeur = models.CharField(max_length=4, default="0000")
 
     def __str__(self):
         return self.user.username

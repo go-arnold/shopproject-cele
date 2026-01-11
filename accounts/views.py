@@ -1,10 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from accounts.models import Profile
+
+User = get_user_model()
 
 
 @login_required
 def updateInfo(request):
+    # num_invited = User.objects.filter(profile__invited_by = request.user).count()
+    # num_invited = Profile.objects.filter(invited_by = request.user).count()
+
+    num_invited = request.user.revendeur.count()
+
     if request.method == "POST":
         form_type = request.POST.get("form_type")
         try:
@@ -14,6 +23,16 @@ def updateInfo(request):
                 user.first_name = request.POST.get("first_name", "").strip()
                 user.last_name = request.POST.get("last_name", "").strip()
                 user.profile.phone_number = request.POST.get("phone", "").strip()
+                code_revendeur = request.POST.get("revendeur_code", "").strip()
+                try:
+                    revendeur = User.objects.get(profile__code_revendeur=code_revendeur)
+                    user.invited_by = revendeur
+                except User.DoesNotExist:
+                    messages.error(
+                        request,
+                        "Aucun revendeur trouvé avec le code que vous avez entré",
+                    )
+                    return redirect("profile")
 
                 if "profile_image" in request.FILES:
                     profile.image = request.FILES["profile_image"]
@@ -55,4 +74,4 @@ def updateInfo(request):
             messages.error(request, str(e))
             return redirect("profile")
 
-    return render(request, "shop/profile.html")
+    return render(request, "shop/profile.html", {"num_invited": num_invited})

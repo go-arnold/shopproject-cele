@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 import cloudinary
 from dotenv import load_dotenv
-import psycopg2
 
 load_dotenv()
 
@@ -43,7 +42,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "accounts",
+    "accounts.apps.AccountsConfig",
     "shop",
     "gestion",
     "cloudinary",

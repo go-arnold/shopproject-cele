@@ -6,6 +6,7 @@ from gestion.views_components.dashboard import (
     ventes as dash_ventes,
     export_pdf as exp_pdf,
     discussions,
+    invites,
 )
 from gestion.views_components.produits import ajouter, modifier, supprimer, details
 from gestion.views_components.ventes import (
@@ -58,6 +59,11 @@ urlpatterns = [
     path("ventes/export/pdf/", export_pdf.export_ventes_pdf, name="export_ventes_pdf"),
     path("graphs/", dash_ventes.dashboard_ventes, name="dashboard_ventes"),
     path("dashboard/pdf/", exp_pdf.dashboard_pdf, name="dashboard_pdf"),
+    path(
+        "revendeurs/invites",
+        invites.inscriptions_par_revendeur,
+        name="invites_revendeur",
+    ),
     path(
         "conversation/<int:conversation_id>/conclure/",
         discussions.conclure_discussion,

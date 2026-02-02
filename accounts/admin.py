@@ -9,26 +9,30 @@ from .models import Profile
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
-    verbose_name_plural = 'Profiles'
-    fk_name = 'user'
-    readonly_fields = ('image_preview',)
+    verbose_name_plural = "Profiles"
+    fk_name = "user"
+    readonly_fields = ("image_preview", "code_revendeur")
 
     def image_preview(self, instance):
         if instance and instance.image:
-            return mark_safe(f'<img src="{instance.image.url}" style="max-height:120px;"/>')
-        return '(Pas d\'image)'
-    image_preview.short_description = 'Photo de profil'
+            return mark_safe(
+                f'<img src="{instance.image.url}" style="max-height:120px;"/>'
+            )
+        return "(Pas d'image)"
+
+    image_preview.short_description = "Photo de profil"
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'image_preview')
-    readonly_fields = ('image_preview',)
+    list_display = ("user", "image_preview")
+    readonly_fields = ("image_preview",)
 
     def image_preview(self, obj):
         if obj.image:
             return mark_safe(f'<img src="{obj.image.url}" style="max-height:50px;"/>')
-        return '(Pas d\'image)'
-    image_preview.short_description = 'Photo'
+        return "(Pas d'image)"
+
+    image_preview.short_description = "Photo"
 
 
 try:

@@ -30,13 +30,6 @@
             text-shadow: 0 0 20px rgba(100, 13, 95, 0.5);
         }
 
-        h2 {
-            text-align: left;
-            margin-top: 20px;
-            color: #c77dbf;
-            font-size: 20px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -67,26 +60,19 @@
             background-color: #140a24;
         }
 
-        tr:hover {
-            background-color: #2d1942;
-            transition: background-color 0.3s ease;
-        }
-
         td {
             color: #d4c5dd;
         }
         </style>
     </head>
     <body>
-        <!-- Logo centré -->
-        <img src="{{ logo_url }}" class="logo">
-        <!-- Titre principal -->
+        <img src="{{ logo_url }}" class="logo" alt="Logo">
         <h1>Liste des Ventes</h1>
         <table>
             <thead>
                 <tr>
                     <th>Produit</th>
-                    <th>Vendu Par</th>
+                    <th>Vendu par</th>
                     <th>Prix</th>
                     <th>Méthode</th>
                     <th>Date</th>
@@ -95,11 +81,21 @@
             <tbody>
                 {% for v in ventes %}
                     <tr>
-                        <td>{{ v.produit_nom }}</td>
-                        <td>{{ v.utilisateur.username }}</td>
-                        <td>{{ v.price_final|default:v.produit_prix }} USD</td>
+                        <td>{{ v.produit_nom_flat }}</td>
+                        <td>{{ v.utilisateur_username_flat }}</td>
+                        <td>
+                            {% if v.price_final %}
+                                {{ v.price_final }} USD
+                            {% else %}
+                                {{ v.produit_prix_flat }} USD
+                            {% endif %}
+                        </td>
                         <td>{{ v.method }}</td>
-                        <td>{{ v.date_achat }}</td>
+                        <td>{{ v.date_achat|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center;">Aucune vente trouvée</td>
                     </tr>
                 {% endfor %}
             </tbody>

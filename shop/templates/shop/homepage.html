@@ -5,18 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Accueil - Decouvrez tout ce dont vous avez besoin chez Celebobo</title>
-    <link rel="icon"
-          type="image/x-icon"
-          sizes="16x16"
-          href="{% static 'favicon.ico' %}">
-    <link rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="{% static 'static-img/sicon-32.png' %}">
-    <link rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="{% static 'static-img/sicon-16.png' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'sicon-mauve.svg' %}">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
           rel="stylesheet" />
@@ -26,92 +15,7 @@
           rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
           rel="stylesheet" />
-    <style>
-    .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  font-display: block; 
-}
-
-    /* Animation for fade-in sections */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.8s ease-out;
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Canvas background */
-    #particles {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background: transparent;
-    }
-
-    /* Mobile tab bar */
-    .mobile-tabbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-      backdrop-filter: blur(10px);
-      background-color: rgba(18, 18, 28, 0.8);
-      color: #162127 ;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .mobile-tabbar.hide {
-      transform: translateY(100%);
-    }
-    </style>
-    <style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-
-    /* Barre mobile masquée par défaut */
-    #mobileSearchContainer {
-      display: none;
-      position: fixed;
-      top: 4rem;
-      left: 0;
-      right: 0;
-      z-index: 40;
-      padding: 0.75rem 1rem;
-      backdrop-filter: blur(10px);
-      background-color: rgba(18, 18, 27, 0.95);
-      transform: translateY(-100%);
-      transition: transform 0.3s ease-in-out;
-    }
-
-    #mobileSearchContainer.active {
-      display: block;
-      transform: translateY(0);
-    }
-
-    /* Tab-bar */
-    .mobile-tabbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 50;
-      backdrop-filter: blur(10px);
-      background-color: rgba(18, 18, 28);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .mobile-tabbar.hide {
-      transform: translateY(100%);
-    }
-    </style>
+    <link rel="stylesheet" href='{% static "style_general.css" %}'>
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -143,149 +47,31 @@
     </script>
   </head>
   <body class="font-display bg-background-light dark:bg-background-dark text-[#EAEAEA] relative overflow-x-hidden">
-    <!-- Canvas particles background -->
     <canvas id="particles"></canvas>
     <div class="relative z-10 flex min-h-screen w-full flex-col group/design-root">
       <div class="layout-container flex h-full grow flex-col">
         <div class="flex flex-1 justify-center">
           <div class="layout-content-container flex w-full flex-col items-center justify-center">
-            <!-- HEADER -->
-            <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
-              <!-- Top bar - Caché sur mobile -->
-              <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
-                <a class="hover:text-white transition-colors" href="#">Aide</a>
-                <a class="hover:text-white transition-colors"
-                   href="{% url 'about_us' %}">À propos</a>
-                <a class="hover:text-white transition-colors" href="#">Articles</a>
-              </div>
-              <!-- Main header -->
-              <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
-                <!-- Logo -->
-                <div class="flex items-center gap-2.5">
-                  <a href="{% url 'home' %}">
-                    <img src="{% static 'static-img/logo-white.png' %}"
-                         alt="CELEBOBO"
-                         loading="lazy"
-                         class="h-8 sm:h-12 lg:h-14 w-auto object-contain">
-                  </a>
-                </div>
-                <!-- Desktop Search -->
-                <form method="GET"
-                      action="{% url 'results' %}"
-                      class="flex-1 max-w-2xl mx-auto hidden md:block">
-                  <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50">search</span>
-                    <input name="q"
-                           class="w-full h-10 bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                           placeholder="Rechercher un produit..."
-                           type="search" />
-                  </div>
-                </form>
-                <!-- Icons -->
-                <div class="flex items-center gap-1 sm:gap-4 ml-auto">
-                  <!-- Mobile Search Button -->
-                  <button id="mobileSearchBtn"
-                          class="md:hidden flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-3 text-white/80 hover:bg-white/10 hover:text-white transition">
-                    <span class="material-symbols-outlined text-xl">search</span>
-                  </button>
-                  {% if not user.is_authenticated %}
-                    <!-- Desktop: Button S'inscrire -->
-                    <a href="{% url 'account_login' %}">
-                      <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition">
-                        S'inscrire / Se connecter
-                      </button>
-                    </a>
-                  {% endif %}
-                  {% if user.is_authenticated %}
-                    <!-- Favoris -->
-                    <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <a href="{% url 'favorites_list' %}">
-                        <span class="material-symbols-outlined text-xl">favorite</span>
-                      </a>
-                    </button>
-                    <!-- Messages - Desktop only -->
-                    <a href="{% url 'list_conversations' %}">
-                      <button class="relative hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                        <span class="material-symbols-outlined text-xl">mail</span>
-                        <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ msg_count }}</span>
-                      </button>
-                    </a>
-                  {% endif %}
-                  <!-- Panier -->
-                  <a href="{% url 'cart' %}">
-                    <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <span class="material-symbols-outlined text-xl">shopping_cart</span>
-                      <span class="cart-count absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ cart_count }}</span>
-                    </button>
-                  </a>
-                  {% if user.is_authenticated %}
-                    <!-- Profile - Desktop only -->
-                    <button class="hidden md:flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <a href="{% url 'profile' %}">
-                        <span class="material-symbols-outlined text-xl">person</span>
-                      </a>
-                    </button>
-                    {% if request.user.groups.all.0.name == "mukubwa" or request.user.groups.all.0.name == "revendeur" %}
-                      <a href="{% url 'notifications' %}">
-                        <button class="relative flex items-center justify-center rounded-lg h-10 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                          <span class="material-symbols-outlined text-xl">notification_add</span>
-                          <span class="absolute top-1 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">{{ not_read_notif }}</span>
-                        </button>
-                      </a>
-                      <a href="{% url 'gestion:dashboard' %}">
-                        <button class="flex items-center justify-center rounded-lg h-8 w-8 px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                          <span class="material-symbols-outlined text-xl">apps</span>
-                        </button>
-                      </a>
-                    {% endif %}
-                    <!-- Logout -->
-                    <button class="flex items-center justify-center rounded-lg h-8  sm:h-8 sm:px-2.5 text-white/80 hover:bg-white/10 hover:text-white transition">
-                      <a href="{% url 'account_logout' %}">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.5"
-                             stroke="currentColor"
-                             class="w-5 h-5 sm:w-6 sm:h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                        </svg>
-                      </a>
-                    </button>
-                  {% endif %}
-                  <!-- Mobile: Icône de profil -->
-                  {% if not user.is_authenticated %}
-                    <button class="md:hidden flex items-center justify-center rounded-lg h-8 w-8 bg-primary text-white hover:bg-primary/90 transition">
-                      <a href="{% url 'account_login' %}">
-                        <span class="material-symbols-outlined text-xl">person</span>
-                      </a>
-                    </button>
-                  {% endif %}
-                </div>
-              </div>
-            </header>
-            <!-- MOBILE SEARCH CONTAINER OPTIMISÉ -->
-            <form method="GET"
-                  action="{% url 'results' %}"
-                  id="mobileSearchContainer"
-                  class="hidden px-3 py-2 md:hidden bg-background-light dark:bg-background-dark border-b border-white/10">
-              <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/50 text-lg">search</span>
-                <input name="q"
-                       class="w-full h-9 text-sm bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 text-white placeholder:text-white/50 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-                       placeholder="Rechercher un produit..."
-                       type="search" />
-              </div>
-            </form>
+            {% include "header.html" %}
             <!-- Main Content -->
             <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3 md:py-8 space-y-4 md:space-y-12 relative z-10">
-              <!-- Hero, Categories, New arrivals, etc. -->
+              {% if messages %}
+                <div class="space-y-3 mb-6">
+                  {% for message in messages %}
+                    <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+                      <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
+                      <button type="button"
+                              onclick="this.parentElement.remove()"
+                              class="text-xl leading-none opacity-70 hover:opacity-100 select-none">&times;</button>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
               <section class="@container">
                 <div class="@[480px]:p-3">
                   <div class="flex min-h-[32vh] md:min-h-[50vh] flex-col gap-3 @[480px]:gap-4 md:gap-7 @[480px]:rounded-lg items-center justify-center p-3 md:p-4 text-center bg-cover bg-center bg-no-repeat"
                        style="background-image: linear-gradient( rgba(18,18,28,0.55), rgba(18,18,28,0.85) ), url('{% static "static-img/bannerLL.png" %}')">
-                    <!-- Texte -->
                     <div class="flex flex-col gap-2 md:gap-3 max-w-md md:max-w-2xl">
-                      <!-- Mobile compact, Desktop légèrement réduit -->
                       <h1 class="text-white text-lg sm:text-xl md:text-5xl font-extrabold leading-snug md:leading-[1.15] tracking-tight">
                         Tout Ce Qu’il Vous Faut, Maintenant
                       </h1>
@@ -295,7 +81,6 @@
                         Faites-vous plaisir en quelques clics!
                       </p>
                     </div>
-                    <!-- Bouton -->
                     <a href="{% url 'all_products' %}"
                        class="inline-flex items-center justify-center h-9 px-4 text-xs sm:text-sm rounded-md md:h-10 md:px-6 md:text-sm md:rounded-lg bg-primary text-white font-bold hover:bg-primary/80 transition duration-300 hover:scale-105">
                       Acheter Maintenant
@@ -312,8 +97,7 @@
                   {% for category in categories %}
                     <a href="{% url 'category_detail' category.pk %}"
                        class="group relative overflow-hidden rounded-md sm:rounded-lg aspect-[2/1] flex flex-col justify-end p-2 sm:p-3 md:p-4 bg-cover bg-center transition-transform duration-300 hover:scale-105 lazy-bg"
-                       data-bg="{{ category.image.url }}">
-                      <!-- Mobile plus petit, desktop normal -->
+                       data-bg="{% if category.image %}{{ category.image.url }}{% else %}{% static 'static-img/bannerDD_8Py5ePT.png' %}{% endif %}">
                       <p class="text-white text-xs sm:text-sm md:text-lg font-semibold sm:font-bold leading-tight">{{ category.name }}</p>
                     </a>
                   {% endfor %}
@@ -325,19 +109,52 @@
                   Nouveautés
                 </h2>
                 <div class="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-4 mt-4">
-                  {% for product in new_products %}
-                    <div class="flex flex-col gap-1.5 lg:gap-2 group">
-                      <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark lazyy-bg"
-                           data-alt="{{ product.name }}"
-                           data-bg="{{ product.image.url }}">
+                  {% if new_products %}
+                    {% for product in new_products %}
+                      <div class="flex flex-col gap-1.5 lg:gap-2 group">
+                        <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark lazyy-bg"
+                             data-alt="{{ product.name }}"
+                             data-bg="{{ product.image.url }}">
+                          <button class="absolute bottom-2 right-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                            <a href="{% url 'product_detail' product.pk %}">
+                              <svg xmlns="http://www.w3.org/2000/svg"
+                                   fill="none"
+                                   viewBox="0 0 24 24"
+                                   stroke-width="1.5"
+                                   stroke="currentColor"
+                                   class="size-4 lg:size-5 md:size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                              </svg>
+                            </a>
+                          </button>
+                          <button id="addToCartj"
+                                  data-product-id="{{ product.id }}"
+                                  class="add-to-cart-btn absolute pointer-events-auto bottom-2 left-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                            <span class="material-symbols-outlined text-base lg:text-xl">shopping_cart</span>
+                          </button>
+                        </div>
+                        <div class="flex flex-col">
+                          <p class="text-white font-semibold text-xs lg:text-sm">{{ product.name }}</p>
+                          <p class="text-white/70 text-xs lg:text-sm">{{ product.price }} $</p>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                  {% endif %}
+                  {% if producte %}
+                    <div class="flex flex-col gap-1.5 lg:gap-2 group hidden sm:hidden md:flex">
+                      <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark"
+                           data-alt="{{ producte.name }}"
+                           style='background-image: url("{{ producte.image.url }}")'>
                         <button class="absolute bottom-2 right-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                          <a href="{% url 'product_detail' product.pk %}">
+                          <a href="{% url 'product_detail' producte.pk %}">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  fill="none"
                                  viewBox="0 0 24 24"
                                  stroke-width="1.5"
                                  stroke="currentColor"
-                                 class="size-4 lg:size-5">
+                                 class="size-4 lg:size-5 md:size-6">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
@@ -350,41 +167,12 @@
                         </button>
                       </div>
                       <div class="flex flex-col">
-                        <p class="text-white font-semibold text-xs lg:text-sm">{{ product.name }}</p>
-                        <p class="text-white/70 text-xs lg:text-sm">{{ product.price }} $</p>
+                        <p class="text-white font-semibold text-xs lg:text-sm">{{ producte.name }}</p>
+                        <p class="text-white/70 text-xs lg:text-sm">{{ producte.price }} $</p>
                       </div>
                     </div>
-                  {% endfor %}
-                  <div class="flex flex-col gap-1.5 lg:gap-2 group hidden sm:hidden md:flex">
-                    <div class="relative w-full bg-center bg-no-repeat aspect-[4/5] bg-cover rounded-lg overflow-hidden bg-secondary-dark"
-                         data-alt="{{ producte.name }}"
-                         style='background-image: url("{{ producte.image.url }}")'>
-                      <button class="absolute bottom-2 right-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        <a href="{% url 'product_detail' producte.pk %}">
-                          <svg xmlns="http://www.w3.org/2000/svg"
-                               fill="none"
-                               viewBox="0 0 24 24"
-                               stroke-width="1.5"
-                               stroke="currentColor"
-                               class="size-4 lg:size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                          </svg>
-                        </a>
-                      </button>
-                      <button id="addToCartj"
-                              data-product-id="{{ product.id }}"
-                              class="add-to-cart-btn absolute pointer-events-auto bottom-2 left-2 flex items-center justify-center size-8 lg:size-9 rounded-full bg-primary/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        <span class="material-symbols-outlined text-base lg:text-xl">shopping_cart</span>
-                      </button>
-                    </div>
-                    <div class="flex flex-col">
-                      <p class="text-white font-semibold text-xs lg:text-sm">{{ producte.name }}</p>
-                      <p class="text-white/70 text-xs lg:text-sm">{{ producte.price }} $</p>
-                    </div>
-                  </div>
+                  {% endif %}
                 </div>
-                <!-- Explore More Button -->
                 <div class="flex justify-center w-full mt-5 sm:mt-6">
                   <a href="{% url 'all_products' %}"
                      class="inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-primary text-white text-sm sm:text-base font-semibold hover:bg-primary/80 transition-all duration-300 hover:scale-105 shadow-md">
@@ -392,10 +180,8 @@
                   </a>
                 </div>
               </section>
-              <!-- Promotional Banner -->
               <section class="p-3 sm:p-4">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 bg-primary/20 rounded-xl p-5 sm:p-6 md:p-10 text-center md:text-left">
-                  <!-- Texte -->
                   <div class="flex flex-col gap-3 sm:gap-4 max-w-xl">
                     <h2 class="text-white text-xl sm:text-2xl md:text-3xl font-black leading-snug md:leading-tight tracking-tight">
                       Soldes de Fin d'année !
@@ -406,14 +192,12 @@
                       N'attendez pas, votre nouvelle tenue préférée est à un clic.
                     </p>
                   </div>
-                  <!-- Bouton -->
                   <a href="#"
                      class="flex-shrink-0 inline-flex items-center justify-center h-10 sm:h-11 md:h-12 px-6 sm:px-7 md:px-8 bg-primary text-white rounded-lg font-bold text-sm sm:text-base tracking-wide hover:bg-primary/80 transition duration-300 hover:scale-105">
                     Découvrir les Soldes
                   </a>
                 </div>
               </section>
-              <!-- Best Sellers -->
               <section>
                 <h2 class="text-white  text-lg sm:text-xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-1 text-center md:text-left">
                   Nos Meilleures Ventes
@@ -424,14 +208,11 @@
                     <div class="group relative flex flex-col overflow-hidden rounded-lg bg-surface-light dark:bg-surface-dark shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                       <a class="absolute inset-0 z-0 pointer-events-none"
                          href="{% url 'product_detail' product.pk %}"></a>
-                      <!-- IMAGE + PRICE TAG -->
                       <div class="relative">
                         <a href="{% url 'product_detail' product.pk %}">
-                          <!-- IMAGE COMPACTÉE -->
                           <div class="w-full h-[120px] xs:h-[130px] sm:h-[150px] bg-cover bg-center"
                                style="background-image: url('{{ product.image.url }}')"></div>
                         </a>
-                        <!-- PRICE TAG -->
                         <div class="absolute top-1 right-1 z-10 bg-primary text-white text-[8px] px-1.5 py-0.5 font-semibold rounded-full shadow-md sm:text-[10px] sm:px-2 md:text-xs md:px-3">
                           {{ product.price }}$
                         </div>
@@ -442,7 +223,7 @@
                               <svg xmlns="http://www.w3.org/2000/svg"
                                    viewBox="0 0 24 24"
                                    fill="currentColor"
-                                   class="size-5">
+                                   class="size-5 md:size-6">
                                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 00 1-.383-.012Z" />
                               </svg>
                             {% else %}
@@ -451,7 +232,7 @@
                                    viewBox="0 0 24 24"
                                    stroke-width="1.5"
                                    stroke="currentColor"
-                                   class="size-5">
+                                   class="size-5 md:size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                               </svg>
                             {% endif %}
@@ -466,17 +247,13 @@
                           {{ product.badge }}
                         </div>
                       </div>
-                      <!-- CONTENT -->
                       <div class="flex flex-1 flex-col px-3 pt-3 pb-1">
-                        <!-- TITRE COMPACT -->
                         <h3 class="text-[11px] font-semibold text-text-dark-primary dark:text-text-light-primary line-clamp-1">
                           {{ product.name }}
                         </h3>
-                        <!-- DESCRIPTION COMPACTE -->
                         <p class="mt-1 text-[10px] text-text-dark-secondary dark:text-text-light-secondary line-clamp-2">
                           {{ product.description }}
                         </p>
-                        <!-- RATING COMPACT -->
                         <div class="mt-2 flex items-center gap-1">
                           <div class="flex text-yellow-400">
                             <span class="material-symbols-outlined !text-[12px]">star</span>
@@ -494,16 +271,12 @@
                   {% endfor %}
                 </div>
               </section>
-              <!-- Section Contact -->
               <section id="contact" class="fade-in">
                 <div class="bg-white/5 rounded-xl p-6 sm:p-8 md:p-12 text-center">
-                  <!-- TITRE (centré partout) -->
                   <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">Contactez-nous</h2>
-                  <!-- SOUS-TEXTE (centré partout) -->
                   <p class="text-white/70 text-sm sm:text-base mb-6 sm:mb-8 max-w-2xl mx-auto">
                     Une question, une suggestion ? Nous serions ravis d’avoir de vos nouvelles.
                   </p>
-                  <!-- FORMULAIRE (compact sur mobile, normal desktop) -->
                   <form class="max-w-2xl mx-auto flex flex-col gap-3 sm:gap-4">
                     <input type="text"
                            placeholder="Votre nom"
@@ -530,351 +303,18 @@
                 </div>
               </section>
             </main>
-            <!-- Footer -->
-            <footer class="bg-black/20 mt-8 lg:mt-12">
-              <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
-                <!-- Mobile: Newsletter en haut -->
-                <div class="md:hidden mb-4">
-                  <h3 class="text-white font-bold text-sm">Restez informé</h3>
-                  <p class="text-[#888888] mt-1 text-xs">
-                    Abonnez-vous à notre newsletter pour recevoir les dernières
-                    nouveautés, Articles et plus encore.
-                  </p>
-                  <form class="flex mt-2 gap-2">
-                    <input class="form-input flex-grow w-full rounded-md text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-xs h-9"
-                           placeholder="Entrez votre e-mail"
-                           type="email" />
-                    <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md h-9 px-3 bg-primary text-white text-xs font-bold hover:bg-primary/80 transition-colors"
-                            type="submit">S'abonner</button>
-                  </form>
-                </div>
-                <!-- Mobile: 2 colonnes Info + Service / Desktop: grille complète -->
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
-                  <!-- Desktop: Newsletter (caché sur mobile) -->
-                  <div class="hidden md:block col-span-1 lg:col-span-2">
-                    <h3 class="text-white font-bold text-base">Restez informé</h3>
-                    <p class="text-[#888888] mt-2 text-sm">
-                      Abonnez-vous à notre newsletter pour recevoir les dernières
-                      nouveautés, Articles et plus encore.
-                    </p>
-                    <form class="flex mt-3 gap-2">
-                      <input class="form-input flex-grow w-full rounded-lg text-white bg-white/5 border-white/10 focus:ring-primary focus:border-primary text-sm h-10"
-                             placeholder="Entrez votre e-mail"
-                             type="email" />
-                      <button class="flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/80 transition-colors"
-                              type="submit">S'abonner</button>
-                    </form>
-                  </div>
-                  <div class="col-span-1">
-                    <h4 class="font-bold text-white text-sm lg:text-base">Information</h4>
-                    <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">À propos de
-                        nous</a>
-                      </li>
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Contact</a>
-                      </li>
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Carrières</a>
-                      </li>
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Blog</a>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="col-span-1">
-                    <h4 class="font-bold text-white text-sm lg:text-base">Service client</h4>
-                    <ul class="space-y-1.5 lg:space-y-2 mt-2 lg:mt-3 text-xs lg:text-sm">
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">FAQ</a>
-                      </li>
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Livraison &amp;
-                        Retours</a>
-                      </li>
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Guide des
-                        tailles</a>
-                      </li>
-                      <li>
-                        <a class="text-[#888888] hover:text-primary transition-colors" href="#">Politique de
-                        confidentialité</a>
-                      </li>
-                    </ul>
-                  </div>
-                  <!-- Desktop: Suivez-nous dans la grille / Mobile: caché -->
-                  <div class="hidden md:block col-span-1">
-                    <h4 class="font-bold text-white text-base">Suivez-nous</h4>
-                    <div class="flex space-x-4 mt-3">
-                      <a class="text-[#888888] hover:text-primary transition-colors" href="#">
-                        <svg aria-hidden="true"
-                             class="h-6 w-6"
-                             fill="currentColor"
-                             viewbox="0 0 24 24">
-                          <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
-                          </path>
-                        </svg>
-                      </a>
-                      <a class="text-[#888888] hover:text-primary transition-colors" href="#">
-                        <svg aria-hidden="true"
-                             class="h-6 w-6"
-                             fill="currentColor"
-                             viewbox="0 0 24 24">
-                          <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
-                          </path>
-                        </svg>
-                      </a>
-                      <a class="text-[#888888] hover:text-primary transition-colors" href="#">
-                        <svg aria-hidden="true"
-                             class="h-6 w-6"
-                             fill="currentColor"
-                             viewbox="0 0 24 24">
-                          <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
-                          </path>
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <!-- Mobile: Suivez-nous en bas -->
-                <div class="md:hidden mt-4">
-                  <h4 class="font-bold text-white text-sm">Suivez-nous</h4>
-                  <div class="flex space-x-3 mt-2">
-                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">
-                      <svg aria-hidden="true"
-                           class="h-5 w-5"
-                           fill="currentColor"
-                           viewbox="0 0 24 24">
-                        <path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd">
-                        </path>
-                      </svg>
-                    </a>
-                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">
-                      <svg aria-hidden="true"
-                           class="h-5 w-5"
-                           fill="currentColor"
-                           viewbox="0 0 24 24">
-                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
-                        </path>
-                      </svg>
-                    </a>
-                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">
-                      <svg aria-hidden="true"
-                           class="h-5 w-5"
-                           fill="currentColor"
-                           viewbox="0 0 24 24">
-                        <path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm-1.161 1.545a1.282 1.282 0 100 2.563 1.282 1.282 0 000-2.563zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.545a3.59 3.59 0 110 7.18 3.59 3.59 0 010-7.18z" fill-rule="evenodd">
-                        </path>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-                <div class="border-t border-white/10 mt-4 lg:mt-6 pt-3 lg:pt-5 text-center text-xs lg:text-sm text-[#888888]">
-                  <p>© 2025 CELEBOBO. Tous droits réservés.</p>
-                </div>
-              </div>
-            </footer>
+            {% include "footer.html" %}
           </div>
         </div>
       </div>
     </div>
-    <!-- Mobile Bottom Tab Bar -->
-    <nav id="mobileTabbar"
-         class="mobile-tabbar md:hidden flex justify-around py-1.5 text-white">
-      <a href="{% url 'home' %}">
-        <button class="flex flex-col items-center text-[0.65rem] gap-0.5 text-primary"
-                aria-label="Accueil">
-          <span class="material-symbols-outlined text-xl"
-                style="font-variation-settings: 'FILL' 1">storefront</span>Shop
-        </button>
-      </a>
-      <a href="{% url 'cart' %}">
-        <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5">
-          <span class="material-symbols-outlined text-xl">shopping_cart</span>Panier
-          <span class="cart-count absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white">{{ cart_count }}</span>
-        </button>
-      </a>
-      <a href="{% url 'assistant' %}">
-        <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
-          <span class="material-symbols-outlined text-xl">assistant</span>
-          Assistant
-        </button>
-      </a>
-      <a href="{% url 'list_conversations' %}">
-        <button class="relative flex flex-col items-center text-[0.65rem] gap-0.5 ">
-          <span class="material-symbols-outlined text-xl">forum</span>
-          Messages
-          <span id="messagesCounter"
-                class="absolute -top-0.5 right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[0.55rem] font-bold text-white hidden">
-          </span>
-        </button>
-      </a>
-      <a href="{% url 'profile' %}">
-        <button class="flex flex-col items-center text-[0.65rem] gap-0.5">
-          <span class="material-symbols-outlined text-xl">person</span>
-          Profil
-        </button>
-      </a>
-    </nav>
-    <!-- Scripts -->
+    {% include 'tabbar.html' %}
     <script>
-    /* === Particules === */
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-    let w, h;
-
-    function init() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-      particles = Array.from({ length: 80 }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.2,
-        dy: (Math.random() - 0.5) * 0.2,
-      }));
-    }
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(255,255,255,0.2)";
-      particles.forEach((p) => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > w) p.dx *= -1;
-        if (p.y < 0 || p.y > h) p.dy *= -1;
-      });
-      requestAnimationFrame(draw);
-    }
-    window.addEventListener("resize", init);
-    init();
-    draw();
-
-    /* === Tab bar hide on scroll === */
-    let lastScroll = 0;
-    const tabbar = document.getElementById("mobileTabbar");
-    window.addEventListener("scroll", () => {
-      const curr = window.scrollY;
-      if (curr > lastScroll && curr > 100) tabbar.classList.add("hide");
-      else tabbar.classList.remove("hide");
-      lastScroll = curr;
-    });
-
-    /* === Fade-in on scroll === */
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) e.target.classList.add("visible");
-      });
-    });
-    document
-      .querySelectorAll(".fade-in")
-      .forEach((el) => observer.observe(el));
+      const count = {{msg_count}} * 1; 
+      const countee = {{msg_count}} * 1;
+      const cart_count = {{cart_count}} * 1;
     </script>
-    <!-- JS -->
-    <script>
-    // Mobile search open/close
-    const searchBtn = document.getElementById("mobileSearchBtn");
-    const searchContainer = document.getElementById("mobileSearchContainer");
-
-    searchBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      searchContainer.classList.toggle("active");
-      const input = searchContainer.querySelector("input");
-      if (searchContainer.classList.contains("active")) input.focus();
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!searchContainer.contains(e.target) && !searchBtn.contains(e.target)) {
-        searchContainer.classList.remove("active");
-      }
-    });
-
-    // ===== Messages counter  =====
-        document.addEventListener("DOMContentLoaded", () => {
-            const count = {{msg_count}} * 1; 
-            const badge = document.getElementById("messagesCounter");
-
-            if (count > 0) {
-                badge.textContent = count;
-                badge.classList.remove("hidden");
-            } else {
-                badge.classList.add("hidden");
-            }
-        });
-    </script>
-    <script>
-            document.addEventListener("click", function (e) {
-                if (e.target.closest(".favorite-btn")) {
-                    const btn = e.target.closest(".favorite-btn");
-                    const productId = btn.dataset.product;
-
-                    fetch(`/favori/${productId}/toggle/`, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-                            "X-Requested-With": "XMLHttpRequest",
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.favori) {
-                            btn.innerHTML = `
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                                </svg>
-                                `;
-                        } else {
-                            btn.innerHTML = `
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                </svg>
-                                `;
-                        }
-                    })
-                }
-            });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const lazyBgs = document.querySelectorAll(".lazy-bg");
-            const lazyyBgs = document.querySelectorAll(".lazyy-bg");
-
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const el = entry.target;
-                        const bg = el.getAttribute("data-bg");
-                        el.style.backgroundImage = `
-                            linear-gradient(0deg, rgba(18,18,28,0.7) 0%, rgba(18,18,28,0) 50%),
-                            url('${bg}')
-                        `;
-                        observer.unobserve(el);
-                    }
-                });
-            });
-
-            const observer_bien = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const el = entry.target;
-                        const bg = el.getAttribute("data-bg");
-                        el.style.backgroundImage = `
-                            url('${bg}')
-                        `;
-                        observer.unobserve(el);
-                    }
-                });
-            });
-
-
-            lazyBgs.forEach(bg => observer.observe(bg));
-            lazyyBgs.forEach(bg => observer_bien.observe(bg));
-        });
-    </script>
+    <script src="{% static 'script_gen.js' %}"></script>
     <script src="{% static 'script/cart.js' %}"></script>
   </body>
 </html>

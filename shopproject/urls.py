@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('shop.urls')),
+    path('profile/', include('accounts.urls')),
     path('cele-admin/', include('gestion.urls')),
 
 

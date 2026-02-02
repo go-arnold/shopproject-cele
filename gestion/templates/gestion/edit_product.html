@@ -219,7 +219,8 @@
             const featureItem = document.createElement('div');
             featureItem.className = 'flex items-center gap-2';
             featureItem.innerHTML = `
-                <input type="text" name="features[]" placeholder="Ex: Batterie 5000mAh" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+               
+                <input type="text" name="features[]" placeholder="Ex: Batterie 5000mAh" class="w-full border border-border-dark  rounded-lg px-3 py-2 bg-background-dark px-4 py-2 text-text-dark-primary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none">
                 <button type="button" class="remove-feature bg-red-500 text-white px-3 py-1 rounded">Supprimer</button>
             `;
             featuresContainer.appendChild(featureItem);

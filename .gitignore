@@ -110,3 +110,9 @@ media/
 *.pid
 
 config_external/
+
+
+
+**/migrations/*
+!**/migrations/__init__.py
+

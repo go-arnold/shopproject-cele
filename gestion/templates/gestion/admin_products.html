@@ -67,20 +67,62 @@
                 <span class="truncate"> <a href="{% url 'gestion:add_product' %}">Ajouter un produit</a></span>
             </button>
         </div>
-        <div class="flex flex-wrap items-center gap-4 rounded-xl bg-background-light dark:bg-[#1E1E2D] p-4">
-            <div class="flex-grow min-w-64">
-                <label class="flex h-10 w-full flex-col">
-                    <form class="relative flex h-full w-full items-stretch"
-                          method="GET"
-                          action="{% url 'results' %}">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#888B93]">search</span>
-                        <input class="form-input flex h-full w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-none bg-black/10 dark:bg-background-dark text-black dark:text-white placeholder:text-[#888B93] pl-10 pr-4 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-primary"
-                               placeholder="Rechercher des produits..."
-                               value=""
-                               name="q" />
-                    </form>
-                </label>
-            </div>
+        <div class="rounded-xl bg-background-light dark:bg-[#1E1E2D] p-4">
+            <form method="GET"
+                  action=""
+                  class="flex flex-col gap-3 sm:flex-row sm:items-center flex-wrap">
+                <!-- Search -->
+                <div class="relative w-full sm:flex-1">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                    <input type="text"
+                           name="search"
+                           value="{{ search_query }}"
+                           placeholder="Rechercher des produits..."
+                           class="h-10 w-full rounded-lg bg-black/10 dark:bg-background-dark pl-10 pr-4 text-sm text-black dark:text-white placeholder:text-gray-400 outline-none transition focus:ring-2 focus:ring-primary" />
+                </div>
+                <!-- Category -->
+                <select name="category"
+                        class="h-10 w-full sm:w-auto rounded-lg bg-black/10 dark:bg-background-dark px-3 text-sm text-black dark:text-white outline-none transition focus:ring-2 focus:ring-primary">
+                    <option value="">Toutes les catégories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}"
+                                {% if category_filter == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+               
+                <select name="badge"
+                        class="h-10 w-full sm:w-auto rounded-lg bg-black/10 dark:bg-background-dark px-3 text-sm text-black dark:text-white outline-none transition focus:ring-2 focus:ring-primary">
+                    <option value="">Badge</option>
+                    <option value="nouveaute"
+                            {% if badge_filter == "nouveaute" %}selected{% endif %}>Nouveauté</option>
+                </select>
+                <input type="number"
+                       name="min_price"
+                       placeholder="Prix min"
+                       value="{{ min_price }}"
+                       class="h-10 w-full sm:w-auto rounded-lg bg-black/10 dark:bg-background-dark px-3 text-sm text-black dark:text-white outline-none transition focus:ring-2 focus:ring-primary" />
+                <input type="number"
+                       name="max_price"
+                       placeholder="Prix max"
+                       value="{{ max_price }}"
+                       class="h-10 w-full sm:w-auto rounded-lg bg-black/10 dark:bg-background-dark px-3 text-sm text-black dark:text-white outline-none transition focus:ring-2 focus:ring-primary" />
+                <input type="number"
+                       name="solde_min"
+                       placeholder="% Solde min"
+                       value="{{ solde_min }}"
+                       class="h-10 w-full sm:w-auto rounded-lg bg-black/10 dark:bg-background-dark px-3 text-sm text-black dark:text-white outline-none transition focus:ring-2 focus:ring-primary" />
+                <input type="number"
+                       name="solde_max"
+                       placeholder="% Solde max"
+                       value="{{ solde_max }}"
+                       class="h-10 w-full sm:w-auto rounded-lg bg-black/10 dark:bg-background-dark px-3 text-sm text-black dark:text-white outline-none transition focus:ring-2 focus:ring-primary" />
+                <button type="submit"
+                        class="h-10 w-full sm:w-auto rounded-lg bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-[#1E1E2D]">
+                    Filtrer
+                </button>
+            </form>
         </div>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {% for product in products %}
@@ -123,27 +165,32 @@
         </div>
         <div class="flex flex-wrap items-center justify-between gap-4 pt-4">
             <p class="text-sm text-[#888B93]">
-                Montrant jusqu'a <span class="font-semibold text-black dark:text-white"></span><span class="font-semibold text-black dark:text-white">{{ products.paginator.count }}</span> produits
+                Montrant jusqu'à
+                <span class="font-semibold text-black dark:text-white">{{ products.paginator.count }}</span> produits
             </p>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 {% if products.has_previous %}
-                    <button class="flex h-9 items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20">
-                        <a href="?page=1">&laquo; première</a>
-                    </button>
-                    <button class="flex h-9 items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white transition-colors hover:bg-primary/20">
-                        <a href="?page={{ products.previous_page_number }}">précédente &lsaquo;</a>
-                    </button>
+                    <a href="?page=1&{{ querystring }}"
+                       class="flex h-9 items-center justify-center bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20 px-3 rounded">
+                        &laquo; première
+                    </a>
+                    <a href="?page={{ products.previous_page_number }}&{{ querystring }}"
+                       class="flex h-9 items-center justify-center bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20 px-3 rounded">
+                        précédente &lsaquo;
+                    </a>
                 {% endif %}
-                <button class="flex h-9 p-2 items-center justify-center  bg-primary text-white text-sm font-bold">
-                    <span>Page {{ products.number }} sur {{ products.paginator.num_pages }}.</span>
-                </button>
+                <span class="flex h-9 p-2 items-center justify-center bg-primary text-white text-sm font-bold rounded">
+                    Page {{ products.number }} sur {{ products.paginator.num_pages }}
+                </span>
                 {% if products.has_next %}
-                    <button class="flex h-9  items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20">
-                        <a href="?page={{ products.next_page_number }}">suivante &rsaquo;</a>
-                    </button>
-                    <button class="flex h-9  items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white transition-colors hover:bg-primary/20">
-                        <a href="?page={{ products.paginator.num_pages }}">dernière &raquo;</a>
-                    </button>
+                    <a href="?page={{ products.next_page_number }}&{{ querystring }}"
+                       class="flex h-9 items-center justify-center bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20 px-3 rounded">
+                        suivante &rsaquo;
+                    </a>
+                    <a href="?page={{ products.paginator.num_pages }}&{{ querystring }}"
+                       class="flex h-9 items-center justify-center bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20 px-3 rounded">
+                        dernière &raquo;
+                    </a>
                 {% endif %}
             </div>
         </div>

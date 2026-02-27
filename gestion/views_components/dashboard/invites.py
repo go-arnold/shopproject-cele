@@ -16,7 +16,7 @@ def inscriptions_par_revendeur(request):
     except Group.DoesNotExist:
         revs = []
 
-    paginator = Paginator(revs, 3)
+    paginator = Paginator(revs, 20)
     page_number = request.GET.get("page")
     revendeurs = paginator.get_page(page_number)
 

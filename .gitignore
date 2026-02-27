@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -108,5 +109,12 @@ media/
 *.pyc
 *.db
 *.pid
+*.cpython-312.pyc
 
 config_external/
+staticfiles/
+
+
+**/migrations/*
+!**/migrations/__init__.py
+

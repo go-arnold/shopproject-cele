@@ -24,7 +24,7 @@ def liste_ventes(request):
             .order_by("-date_achat")
         )
 
-    paginator = Paginator(ventes_list, 7)
+    paginator = Paginator(ventes_list, 30)
     page_number = request.GET.get("page")
     ventes = paginator.get_page(page_number)
 
@@ -92,7 +92,7 @@ def liste_ventes_rev(request):
         except ValueError:
             pass
 
-    paginator = Paginator(ventes_list, 7)
+    paginator = Paginator(ventes_list, 30)
     page_number = request.GET.get("page")
     ventes = paginator.get_page(page_number)
 

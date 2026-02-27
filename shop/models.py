@@ -9,6 +9,8 @@ from decimal import Decimal, InvalidOperation
 from django.db.models import Avg
 from django.db.models import JSONField
 
+User = get_user_model()
+
 
 def validate_description_length(value):
     min_length = 20
@@ -238,11 +240,13 @@ class Vente(models.Model):
         ("Cash", "Cash"),
     ]
 
-    utilisateur = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    produit = models.ForeignKey(
-        Product, related_name="ventes", on_delete=models.CASCADE
+    utilisateur = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, db_index=True
     )
-    date_achat = models.DateTimeField(auto_now_add=True)
+    produit = models.ForeignKey(
+        Product, related_name="ventes", on_delete=models.CASCADE, db_index=True
+    )
+    date_achat = models.DateTimeField(auto_now_add=True, db_index=True)
     price_final = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )
@@ -268,9 +272,6 @@ class Vente(models.Model):
     @property
     def produit_categorie(self):
         return self.produit.category
-
-
-User = get_user_model()
 
 
 class Conversation(models.Model):

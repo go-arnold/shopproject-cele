@@ -82,7 +82,8 @@
                                 <th class="px-3 py-2 text-center">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-border-dark text-xs sm:text-sm">
+                        {% comment %} <tbody class="divide-y divide-border-dark text-xs sm:text-sm"> {% endcomment %}
+                        <tbody class=" divide-y divide-border-dark text-xs sm:text-sm [&>tr:nth-child(odd)]:bg-background-dark [&>tr:nth-child(even)]:bg-white/5 [&>tr:hover]:bg-white ">
                             {% for vente in ventes %}
                                 <tr class="hover:bg-white/5">
                                     <td class="px-3 py-2">{{ vente.date_achat|date:"d M Y, H:i" }}</td>
@@ -109,13 +110,12 @@
                         </tbody>
                     </table>
                 </div>
-                {% if ventes.has_other_pages %}
+                {% comment %} {% if ventes.has_other_pages %}
                     <nav class="mt-4 flex justify-center">
                         <ul class="flex gap-1 text-xs sm:text-sm">
                             {% if ventes.has_previous %}
                                 <li>
-                                    <a href="?page={{ ventes.previous_page_number }}"
-                                       class="px-3 py-1 border border-border-dark rounded">&laquo;</a>
+                                    <a href="?page={{ ventes.previous_page_number }}" class="px-3 py-1 border border-border-dark rounded">&laquo;</a>
                                 </li>
                             {% else %}
                                 <li>
@@ -129,15 +129,13 @@
                                     </li>
                                 {% else %}
                                     <li>
-                                        <a href="?page={{ num }}"
-                                           class="px-3 py-1 border border-border-dark rounded hover:bg-white/10">{{ num }}</a>
+                                        <a href="?page={{ num }}" class="px-3 py-1 border border-border-dark rounded hover:bg-white/10">{{ num }}</a>
                                     </li>
                                 {% endif %}
                             {% endfor %}
                             {% if ventes.has_next %}
                                 <li>
-                                    <a href="?page={{ ventes.next_page_number }}"
-                                       class="px-3 py-1 border border-border-dark rounded">&raquo;</a>
+                                    <a href="?page={{ ventes.next_page_number }}" class="px-3 py-1 border border-border-dark rounded">&raquo;</a>
                                 </li>
                             {% else %}
                                 <li>
@@ -146,7 +144,28 @@
                             {% endif %}
                         </ul>
                     </nav>
-                {% endif %}
+                {% endif %} {% endcomment %}
+                <div class="flex items-center gap-2 mt-3">
+                    {% if ventes.has_previous %}
+                        <button class="flex h-9 items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20">
+                            <a href="?page=1">&laquo; première</a>
+                        </button>
+                        <button class="flex h-9 items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white transition-colors hover:bg-primary/20">
+                            <a href="?page={{ ventes.previous_page_number }}">précédente &lsaquo;</a>
+                        </button>
+                    {% endif %}
+                    <button class="flex h-9 p-2 items-center justify-center  bg-primary text-white text-sm font-bold">
+                        <span>Page {{ ventes.number }} sur {{ ventes.paginator.num_pages }}.</span>
+                    </button>
+                    {% if ventes.has_next %}
+                        <button class="flex h-9  items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white text-sm font-medium transition-colors hover:bg-primary/20">
+                            <a href="?page={{ ventes.next_page_number }}">suivante &rsaquo;</a>
+                        </button>
+                        <button class="flex h-9  items-center justify-center  bg-black/10 dark:bg-background-dark text-black dark:text-white transition-colors hover:bg-primary/20">
+                            <a href="?page={{ ventes.paginator.num_pages }}">dernière &raquo;</a>
+                        </button>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

@@ -103,6 +103,11 @@
                             <span class="material-symbols-outlined text-xl sm:text-2xl">assignment_add</span>
                             <p class="text-sm font-medium">Enregistrer une vente</p>
                         </a>
+                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'bulk_enregistrer_vente' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                           href="{% url 'gestion:bulk_enregistrer_vente' %}">
+                            <span class="material-symbols-outlined text-xl sm:text-2xl">assignment_add</span>
+                            <p class="text-sm font-medium">Enregistrer une commande</p>
+                        </a>
                         <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'gestion:liste_ventes' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">receipt_long</span>

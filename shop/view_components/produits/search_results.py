@@ -11,7 +11,6 @@ User = get_user_model()
 def results(request):
     query = request.GET.get("q", "").strip()
 
-    # Preselect all products
     products = Product.objects.all()
 
     if request.user.is_authenticated:
@@ -23,7 +22,6 @@ def results(request):
     else:
         favorite_ids = set()
 
-    # Handle search query
     if query:
         keywords = query.split()
         q_object = Q()
@@ -39,7 +37,6 @@ def results(request):
 
         products = products.filter(q_object).distinct()
 
-    # Pagination
     paginator = Paginator(products, 12)
     page_num = request.GET.get("page")
 

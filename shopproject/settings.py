@@ -26,7 +26,7 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # Application definition

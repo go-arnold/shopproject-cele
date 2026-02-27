@@ -34,112 +34,162 @@
         </script>
         <style>
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        
-        /* Sidebar mobile overlay */
-        .sidebar-overlay {
-            display: none;
+
+        /* ─── OVERLAY ─────────────────────────────────────────────────── */
+        #sidebarOverlay {
             position: fixed;
-            top: 0; right: 40%; bottom: 0; left: 0;
-            /*background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)); */
-            background-color: rgba(0, 0, 0, 0.95);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
             z-index: 40;
-    }
-        
-        .sidebar-overlay.active {
-            display: block;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        /* Sidebar mobile */
-        aside {
-            transition: transform 0.3s ease-in-out;
+        #sidebarOverlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
-        
+
+        /* ─── SIDEBAR ─────────────────────────────────────────────────── */
+        aside#sidebar {
+            /* Desktop: always visible, no transition needed */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
         @media (max-width: 768px) {
-            aside {
+            aside#sidebar {
                 position: fixed;
                 top: 0;
                 left: 0;
-                height: 100vh;
+                height: 100dvh;      /* dynamic viewport height — handles mobile URL bar */
                 z-index: 50;
                 transform: translateX(-100%);
+                box-shadow: none;
             }
-            
-            aside.active {
+
+            aside#sidebar.active {
                 transform: translateX(0);
+                box-shadow: 8px 0 40px rgba(0, 0, 0, 0.5);
             }
+        }
+
+        /* ─── HAMBURGER ICON MORPH ───────────────────────────────────── */
+        #menuBtn .icon-menu,
+        #menuBtn .icon-close {
+            transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+        }
+        #menuBtn .icon-close {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.6);
+        }
+        #menuBtn.open .icon-menu {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.6);
+        }
+        #menuBtn.open .icon-close {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        /* ─── BODY LOCK ──────────────────────────────────────────────── */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        /* ─── NAV LINK ACTIVE INDICATOR ──────────────────────────────── */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%) scaleY(0);
+            width: 3px;
+            height: 60%;
+            background: #640c5f;
+            border-radius: 0 4px 4px 0;
+            transition: transform 0.2s ease;
+        }
+        .nav-link.active-link::before {
+            transform: translateY(-50%) scaleY(1);
         }
         </style>
         {% block extra_css %}{% endblock %}
     </head>
     <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
-        <!-- Overlay pour mobile -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <!-- Overlay mobile -->
+        <div id="sidebarOverlay"></div>
         <div class="flex h-screen">
-            <!-- Sidebar -->
             <aside id="sidebar"
-                   class="w-64 flex-shrink-0 bg-white/5 dark:bg-black/20 p-3 sm:p-4 flex flex-col justify-between">
+                   class="w-64 flex-shrink-0 bg-white/5 dark:bg-black/80 p-3 sm:p-4 flex flex-col justify-between">
                 <div class="flex flex-col gap-6 sm:gap-8">
                     <div class="flex items-center justify-center gap-3 px-3 py-2 overflow-hidden">
-                        <a href={% url "gestion:dashboard" %}>
-                            <img src="{% static "static-img/logo-white.png" %}">
+                        <a href="{% url 'gestion:dashboard' %}">
+                            <img src="{% static 'static-img/logo-white.png' %}" alt="Logo">
                         </a>
                     </div>
-                    <!-- Menu de navigation -->
-                    <div class="flex flex-col gap-1.5 sm:gap-2">
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                    <nav class="flex flex-col gap-1.5 sm:gap-2">
+                        <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'gestion:dashboard' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">dashboard</span>
                             <p class="text-sm font-medium">Tableau de bord</p>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'admin_products' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                        <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'admin_products' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'gestion:admin_products' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">inventory_2</span>
                             <p class="text-sm font-medium">Gestion de produits</p>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'ajouter_vente' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                        <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'ajouter_vente' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'gestion:ajouter_vente' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">assignment_add</span>
                             <p class="text-sm font-medium">Enregistrer une vente</p>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'bulk_enregistrer_vente' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                        <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'bulk_enregistrer_vente' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'gestion:bulk_enregistrer_vente' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">assignment_add</span>
                             <p class="text-sm font-medium">Enregistrer une commande</p>
                         </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                        <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'gestion:liste_ventes' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">receipt_long</span>
                             <p class="text-sm font-medium">Gestion de ventes</p>
                         </a>
                         {% if request.user.groups.all.0.name == "mukubwa" %}
-                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes_rev' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'liste_ventes_rev' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                                href="{% url 'gestion:liste_ventes_rev' %}">
                                 <span class="material-symbols-outlined text-xl sm:text-2xl">reviews</span>
                                 <p class="text-sm font-medium">Revoir les ventes</p>
                             </a>
-                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard_ventes' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard_ventes' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                                href="{% url 'gestion:dashboard_ventes' %}">
                                 <span class="material-symbols-outlined text-xl sm:text-2xl">monitoring</span>
                                 <p class="text-sm font-medium">Graphiques</p>
                             </a>
-                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'invites_revendeur' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'invites_revendeur' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                                href="{% url 'gestion:invites_revendeur' %}">
                                 <span class="material-symbols-outlined text-xl sm:text-2xl">how_to_reg</span>
                                 <p class="text-sm font-medium">Invités</p>
                             </a>
                         {% endif %}
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'home' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                        <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'home' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                            href="{% url 'home' %}">
                             <span class="material-symbols-outlined text-xl sm:text-2xl">group</span>
                             <p class="text-sm font-medium">Page Client</p>
                         </a>
-                    </div>
+                    </nav>
                 </div>
-                <!-- Profile section -->
+                <!-- Profile / Logout section -->
                 <div class="flex flex-col gap-1.5 sm:gap-2 mt-4">
-                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'profile' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                    <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-primary/10 hover:text-white transition-colors duration-200"
                        href="{% url 'account_logout' %}">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              fill="none"
@@ -151,7 +201,7 @@
                         </svg>
                         <p class="text-sm font-medium">Me déconnecter</p>
                     </a>
-                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'profile' %}bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                    <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'profile' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
                        href="{% url 'profile' %}">
                         <span class="material-symbols-outlined text-xl sm:text-2xl">account_circle</span>
                         <p class="text-sm font-medium">Mon Profil</p>
@@ -159,15 +209,16 @@
                 </div>
             </aside>
             <div class="flex flex-col flex-1 overflow-y-auto w-full md:w-auto">
-                <!-- Header -->
                 <header class="sticky top-0 z-10 flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 dark:border-white/10 bg-background-dark/80 backdrop-blur-sm px-3 sm:px-6 lg:px-8 py-3">
                     <div class="flex items-center gap-3 sm:gap-6 lg:gap-8 flex-1">
-                        <!-- Menu hamburger (mobile uniquement) -->
                         <button id="menuBtn"
-                                class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
-                            <span class="material-symbols-outlined">menu</span>
+                                aria-label="Ouvrir le menu"
+                                aria-expanded="false"
+                                aria-controls="sidebar"
+                                class="md:hidden relative flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
+                            <span class="icon-menu material-symbols-outlined text-2xl">menu</span>
+                            <span class="icon-close material-symbols-outlined text-2xl">close</span>
                         </button>
-                        <!-- Barre de recherche -->
                         <label class="flex-1 max-w-xs sm:max-w-md lg:max-w-lg">
                             <form class="flex w-full items-stretch rounded-lg h-9 sm:h-10"
                                   method="GET"
@@ -183,9 +234,10 @@
                         </label>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-4">
-                        <!-- Bouton Notifications -->
                         <button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 w-9 sm:h-10 sm:w-10 bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
-                            <a href="{% url 'notifications' %}"><span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span></a>
+                            <a href="{% url 'notifications' %}">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">notifications</span>
+                            </a>
                             {% if notif_signal %}
                                 <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -193,16 +245,16 @@
                                 </span>
                             {% endif %}
                         </button>
-                        <!-- Bouton Messages -->
                         <button class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 w-9 sm:h-10 sm:w-10 bg-white/5 dark:bg-black/20 text-gray-300 hover:text-white transition-colors">
-                            <a href="{% url 'list_conversations' %}"><span class="material-symbols-outlined text-xl sm:text-2xl">chat</span></a>
+                            <a href="{% url 'list_conversations' %}">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">chat</span>
+                            </a>
                             {% if notify_me %}
                                 <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
                                     <span class="relative inline-flex rounded-full h-full w-full bg-primary"></span>
                                 </span>
                             {% endif %}
                         </button>
-                        <!-- Profile User (caché sur très petit mobile) -->
                         <div class="hidden sm:flex items-center gap-2 sm:gap-3 pl-2">
                             {% if request.user.profile.image.url %}
                                 <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 sm:size-10"
@@ -226,12 +278,11 @@
                         </div>
                     </div>
                 </header>
-                <!-- Main Content -->
                 <main class="flex-1 p-4 sm:p-6 lg:p-8">
                     {% if messages %}
                         <div class="space-y-3 mb-6">
                             {% for message in messages %}
-                                <div class=" flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %} ">
+                                <div class="flex items-start justify-between gap-4 p-4 rounded-lg border {% if message.tags == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% endif %} {% if message.tags == 'error' %}bg-red-500/10 border-red-500/30 text-red-400{% endif %} {% if message.tags == 'warning' %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400{% endif %} {% if message.tags == 'info' %}bg-blue-500/10 border-blue-500/30 text-blue-400{% endif %}">
                                     <span class="text-sm font-medium leading-relaxed">{{ message }}</span>
                                     <button type="button"
                                             onclick="this.parentElement.remove()"
@@ -246,30 +297,55 @@
                 </main>
             </div>
         </div>
-        <!-- Script pour le menu mobile -->
         <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        
-        function toggleSidebar() {
-            sidebar.classList.toggle('active');
-            sidebarOverlay.classList.toggle('active');
-            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-        }
-        
-        menuBtn.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', toggleSidebar);
-        
-        // Fermer la sidebar lors du clic sur un lien (mobile)
-        const sidebarLinks = sidebar.querySelectorAll('a');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    toggleSidebar();
+        (function () {
+            const btn     = document.getElementById('menuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            let isOpen = false;
+
+            function openSidebar() {
+                isOpen = true;
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                btn.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+                document.body.classList.add('sidebar-open');
+            }
+
+            function closeSidebar() {
+                isOpen = false;
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                btn.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('sidebar-open');
+            }
+
+            function toggleSidebar() {
+                isOpen ? closeSidebar() : openSidebar();
+            }
+
+            btn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', closeSidebar);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && isOpen) closeSidebar();
+            });
+
+            sidebar.querySelectorAll('a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (window.innerWidth < 768) closeSidebar();
+                });
+            });
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth >= 768 && isOpen) {
+                    closeSidebar();
                 }
             });
-        });
+        })();
         </script>
         {% block extra_js %}
         {% endblock %}

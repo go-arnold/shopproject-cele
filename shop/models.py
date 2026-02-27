@@ -8,6 +8,7 @@ from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from django.db.models import Avg
 from django.db.models import JSONField
+from django.conf import settings
 
 User = get_user_model()
 
@@ -377,3 +378,18 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product}"
+
+
+class ChatLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    user_message = models.TextField()
+    bot_reply = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Log Chat"
+        verbose_name_plural = "Logs Chat"
+
+    def __str__(self):
+        return f"{self.user} — {self.created_at:%d/%m/%Y %H:%M}"

@@ -18,6 +18,8 @@ from shop.view_components.echanges import (
     notifications,
 )
 
+from shop.view_components.assistant import main
+
 
 urlpatterns = [
     path("", home.homeVue, name="home"),
@@ -47,7 +49,8 @@ urlpatterns = [
     path("update-cart/", cart.update_cart, name="update_cart"),
     path("remove-from-cart/", cart.remove_from_cart, name="remove_from_cart"),
     path("cart/", cart.cart_view, name="cart"),
-    path("assistant/", celebobo.assistant, name="assistant"),
+    path("assistant/", main.chat_page, name="assistant"),
+    path("assistant/message/", main.chat_message, name="chat_message"),
     path("messages/", liste.messages, name="messages"),
     path(
         "start-conversation/",

@@ -171,14 +171,14 @@
                         <label class="flex-1 max-w-xs sm:max-w-md lg:max-w-lg">
                             <form class="flex w-full items-stretch rounded-lg h-9 sm:h-10"
                                   method="GET"
-                                  action="{% url 'results' %}">
+                                  action="{% url 'gestion:admin_products' %}">
                                 <div class="text-gray-400 flex bg-white/5 dark:bg-black/20 items-center justify-center pl-3 sm:pl-4 rounded-l-lg border-r-0">
                                     <span class="material-symbols-outlined text-xl sm:text-2xl">search</span>
                                 </div>
                                 <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary border-none bg-white/5 dark:bg-black/20 h-full placeholder:text-gray-400 px-3 sm:px-4 text-sm sm:text-base font-normal"
                                        placeholder="Rechercher..."
                                        value=""
-                                       name="q" />
+                                       name="search" />
                             </form>
                         </label>
                     </div>

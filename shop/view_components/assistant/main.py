@@ -236,14 +236,14 @@ def chat_message(request):
 
         return JsonResponse({"reply": reply.strip()})
 
-    except Exception as e:
-        return JsonResponse(
-            {"error": "Une erreur est survenue. Veuillez réessayer."}, status=500
-        )
-
     # except Exception as e:
-    #     import traceback
+    #     return JsonResponse(
+    #         {"error": "Une erreur est survenue. Veuillez réessayer."}, status=500
+    #     )
 
-    #     print("=== ERREUR ASSISTANT ===")
-    #     traceback.print_exc()
-    #     return JsonResponse({"error": f"Erreur: {str(e)}"}, status=500)
+    except Exception as e:
+        import traceback
+
+        print("=== ERREUR ASSISTANT ===")
+        traceback.print_exc()
+        return JsonResponse({"error": f"Erreur: {str(e)}"}, status=500)

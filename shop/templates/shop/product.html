@@ -102,10 +102,11 @@
             <!-- Header -->
             <header class="site-header flex-col px-4 sm:px-6 lg:px-8 fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-background-light dark:bg-background-dark">
                 <div class="flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
-                    <a class="hover:text-white transition-colors" href="#">Assistant</a>
+                    <a class="hover:text-white transition-colors"
+                       href="{% url 'assistant' %}">Assistant</a>
                     <a class="hover:text-white transition-colors"
                        href="{% url 'about_us' %}">À propos</a>
-                    <a class="hover:text-white transition-colors" href="#">Articles</a>
+                    <a class="hover:text-white transition-colors" href="#">Guides</a>
                 </div>
                 <div class="flex items-center gap-6 lg:gap-8 py-4">
                     <!-- LOGO -->
@@ -732,7 +733,7 @@
                                     <a class="text-[#888888] hover:text-primary transition-colors" href="#">Carrières</a>
                                 </li>
                                 <li>
-                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Blog</a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Collaborer</a>
                                 </li>
                             </ul>
                         </div>

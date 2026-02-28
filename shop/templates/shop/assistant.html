@@ -4,6 +4,8 @@
 {% block extra_css %}
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap"
         rel="stylesheet">
+  <link rel="stylesheet"
+        href="{% static 'assets/css/materialdesignicons.min.css' %}">
   <style>
   :root {
     --cp-bg:       #0a0a0c;
@@ -818,9 +820,8 @@ box-sizing: border-box; } {% endcomment %}
           <button class="cp-send-btn"
                   id="cp-send-btn"
                   onclick="cpSend()"
-                  title="Envoyer"
-                  disabled>
-            <i class="mdi mdi-send"></i>
+                  title="Envoyer">
+            <span class="material-symbols-outlined text-xl">send</span>
           </button>
         </div>
         <p class="cp-hint">Entree pour envoyer &nbsp;&middot;&nbsp; Maj+Entree pour une nouvelle ligne</p>

@@ -76,10 +76,11 @@
             <header class="flex-col px-3 sm:px-6 lg:px-8 relative sticky top-0 z-40 bg-background-light dark:bg-background-dark w-full border-b border-white/20">
                 <!-- Top bar - Caché sur mobile -->
                 <div class="flex sm:flex items-center justify-end gap-6 py-2 border-b border-white/5 text-xs text-white/60">
-                    <a class="hover:text-white transition-colors" href="#">Assistant</a>
+                    <a class="hover:text-white transition-colors"
+                       href="{% url 'assistant' %}">Assistant</a>
                     <a class="hover:text-white transition-colors"
                        href="{% url 'about_us' %}">À propos</a>
-                    <a class="hover:text-white transition-colors" href="#">Articles</a>
+                    <a class="hover:text-white transition-colors" href="#">Guides</a>
                 </div>
                 <!-- Main header -->
                 <div class="flex items-center gap-2 sm:gap-6 lg:gap-8 py-2 sm:py-4">
@@ -547,7 +548,7 @@
                                     <a class="text-[#888888] hover:text-primary transition-colors" href="#">Carrières</a>
                                 </li>
                                 <li>
-                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Blog</a>
+                                    <a class="text-[#888888] hover:text-primary transition-colors" href="#">Collaborer</a>
                                 </li>
                             </ul>
                         </div>

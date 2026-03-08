@@ -40,7 +40,7 @@ def productVue(request, pk):
         "price_primary": product.price_primary,
         "category": product.category,
         "image": product.image.url if product.image else "",
-        "badge": product.badge,
+        "badge": product.current_badge,
         "current_badge": product.current_badge,
         "features": features,
         "rating": rat,

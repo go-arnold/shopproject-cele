@@ -29,94 +29,11 @@
                 },
             }
         </script>
+        
         <style>
-            body.lock-scroll { overflow: hidden; }
-            
-            @media (max-width: 768px) {
-                html { font-size: 14px; }
-            }
-            
-            .profile-avatar {
-                position: relative;
-                transition: all 0.3s ease;
-            }
-            
-            .profile-avatar:hover .avatar-overlay {
-                opacity: 1;
-            }
-            
-            .avatar-overlay {
-                position: absolute;
-                inset: 0;
-                background: rgba(100, 13, 95, 0.7);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                cursor: pointer;
-            }
-            
-            .form-section {
-                animation: slideUp 0.4s ease-out;
-            }
-            
-            @keyframes slideUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            .save-btn {
-                position: relative;
+            body.lock-scroll {
                 overflow: hidden;
-            }
-            
-            .save-btn::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 0;
-                height: 0;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.3);
-                transform: translate(-50%, -50%);
-                transition: width 0.6s, height 0.6s;
-            }
-            
-            .save-btn:active::before {
-                width: 300px;
-                height: 300px;
-            }
-            
-            .input-field {
-                transition: all 0.2s ease;
-            }
-            
-            .input-field:focus {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(100, 13, 95, 0.15);
-            }
-            
-            .address-card {
-                transition: all 0.3s ease;
-            }
-            
-            .address-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            }
-            
-            .toggle-switch {
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+            }        
         </style>
     </head>
     <body class="bg-background-light dark:bg-background-dark font-display text-sm sm:text-base">
@@ -164,7 +81,7 @@
                         </svg>
                         <span class="text-[0.7rem] sm:text-xs md:text-sm font-medium">Informations personnelles</span>
                     </a>
-                    <a href="#"
+                    <a href="{% url 'orders' %}"
                        class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-gray-700 dark:text-[#A0A0A0] hover:bg-white/10 hover:text-primary transition-all group">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              class="size-3.5 sm:size-4 group-hover:scale-110 transition-transform"

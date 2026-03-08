@@ -130,11 +130,11 @@
         <div id="sidebarOverlay"></div>
         <div class="flex h-screen">
             <aside id="sidebar"
-                   class="w-64 flex-shrink-0 bg-white/5 dark:bg-black/80 p-3 sm:p-4 flex flex-col justify-between">
+                   class="w-64 flex-shrink-0 bg-white/5 dark:bg-background-dark  p-3 sm:p-4 flex flex-col justify-between">
                 <div class="flex flex-col gap-6 sm:gap-8">
                     <div class="flex items-center justify-center gap-3 px-3 py-2 overflow-hidden">
                         <a href="{% url 'gestion:dashboard' %}">
-                            <img src="{% static 'static-img/logo-white.png' %}" alt="Logo">
+                            <img src="{% static 'static-img/logo-white.png' %}" alt="CELEBOBO">
                         </a>
                     </div>
                     <nav class="flex flex-col gap-1.5 sm:gap-2">
@@ -178,6 +178,11 @@
                                href="{% url 'gestion:invites_revendeur' %}">
                                 <span class="material-symbols-outlined text-xl sm:text-2xl">how_to_reg</span>
                                 <p class="text-sm font-medium">Invités</p>
+                            </a>
+                            <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'admin:index' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
+                               href="{% url 'admin:index' %}">
+                                <span class="material-symbols-outlined text-xl sm:text-2xl">admin_panel_settings</span>
+                                <p class="text-sm font-medium">Ma Base</p>
                             </a>
                         {% endif %}
                         <a class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'home' %}active-link bg-primary/50 text-white{% else %}text-gray-400 hover:bg-primary/10 hover:text-white{% endif %} transition-colors duration-200"
@@ -278,7 +283,7 @@
                         </div>
                     </div>
                 </header>
-                <main class="flex-1 p-4 sm:p-6 lg:p-8">
+                <main class="flex-1 p-4 sm:p-6 lg:p-8 z-0">
                     {% if messages %}
                         <div class="space-y-3 mb-6">
                             {% for message in messages %}

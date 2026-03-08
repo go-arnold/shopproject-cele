@@ -324,6 +324,11 @@
         </div>
         <!-- Mobile Bottom Tab Bar -->
         {% include 'tabbar.html' %}
+        <script>
+            const count = {{msg_count}} * 1; 
+            const countee = {{msg_count}} * 1;
+            const cart_count = {{cart_count}} * 1;
+        </script>
         <script src="{% static 'script_gen.js' %}"></script>
         <script src="{% static 'script/cart.js' %}"></script>
     </body>

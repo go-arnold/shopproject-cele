@@ -725,7 +725,7 @@
                     <div class="product-card fade-in" data-category="${product.category}">
                         <div class="product-image">
                             <span class="product-emoji"><img src="${product.image}" alt="image of ${product.name}" style="width:100%; height:auto;"></span>
-                            <span class="product-badge">${product.badge}</span>
+                            <span class="product-badge">${product.current_badge}</span>
                         </div>
                         <div class="product-info">
                             <div class="product-category">${getCategoryName(product.category)}</div>

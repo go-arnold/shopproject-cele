@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from accounts.models import Profile
+from shop.models import Order
 
 User = get_user_model()
 
@@ -75,3 +76,25 @@ def updateInfo(request):
             return redirect("profile")
 
     return render(request, "shop/profile.html", {"num_invited": num_invited})
+
+
+@login_required
+def order_history(request):
+    status_filter = request.GET.get('status')
+    
+    orders_queryset = Order.objects.select_related(
+        "user", "assigned_revendeur"
+    ).prefetch_related(
+        "items__product", "conversations"
+    ).order_by("-created_at")
+
+    if status_filter and status_filter != 'all':
+        orders_queryset = orders_queryset.filter(status__iexact=status_filter)
+
+    orders = orders_queryset[:25]
+
+    context = {
+        "orders": orders,
+        "current_status": status_filter or 'all'
+    }
+    return render(request, "shop/order_history.html", context)

@@ -27,7 +27,7 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 GEMINI_API_KEY = os.environ.get("GEMINI_KEY")
-DEBUG = os.environ.get("DEBUG")
+DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
 # Application definition

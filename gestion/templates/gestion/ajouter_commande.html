@@ -1,0 +1,252 @@
+{% extends 'base_cele.html' %}
+{% block title %}Enregistrer une commande — CELEBOBO ADMIN{% endblock %}
+{% block content %}
+    <div class="mx-auto max-w-4xl px-2 sm:px-4">
+        <!-- Header -->
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-text-dark-primary">
+                Enregistrer une commande
+            </h1>
+        </div>
+        <div class="flex flex-col gap-6 rounded-xl bg-component-dark p-3 sm:p-6">
+            <form method="POST" id="bulk-form">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <h2 class="mb-3 text-sm font-semibold uppercase tracking-widest text-text-dark-secondary">1. Trouver le client</h2>
+                    <label class="flex flex-col">
+                        <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Nom / Email du client</span>
+                        <input type="text"
+                               id="user-search"
+                               placeholder="Commencer à taper le nom ou email…"
+                               autocomplete="off"
+                               class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                    </label>
+                    <div id="search-spinner"
+                         class="mt-2 hidden flex items-center gap-2 text-xs text-text-dark-secondary">
+                        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                        Recherche en cours…
+                    </div>
+                    <div id="orders-list" class="mt-3 flex flex-col gap-3"></div>
+                </div>
+                <div id="order-detail" class="hidden">
+                    <div class="mb-4 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 px-4 py-3">
+                        <svg class="h-5 w-5 shrink-0 text-primary"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p id="order-selected-label"
+                           class="text-sm font-medium text-text-dark-primary"></p>
+                        <button type="button"
+                                id="change-order-btn"
+                                class="ml-auto text-xs text-text-dark-secondary underline hover:text-primary">
+                            Changer
+                        </button>
+                    </div>
+                    <input type="hidden" name="order_id" id="order_id_input" />
+                    <h2 class="mb-3 text-sm font-semibold uppercase tracking-widest text-text-dark-secondary">
+                        2. Produits de la commande
+                    </h2>
+                    <div id="items-container"
+                         class="mb-6 flex flex-col gap-3 rounded-lg border border-border-dark p-3 sm:p-4"></div>
+                    <h2 class="mb-3 text-sm font-semibold uppercase tracking-widest text-text-dark-secondary">
+                        3. Informations de paiement
+                    </h2>
+                    <div class="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-2">
+                        <div>
+                            <label class="flex flex-col">
+                                <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Vendu à (nom affiché)</span>
+                                <input type="text"
+                                       name="vendu_a"
+                                       id="vendu_a"
+                                       maxlength="50"
+                                       placeholder="Nom du client (optionnel)"
+                                       class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex flex-col">
+                                <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Date de la vente</span>
+                                <input type="date"
+                                       name="date_achat"
+                                       id="date_achat"
+                                       required
+                                       class="form-input h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                            </label>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="flex flex-col">
+                                <span class="pb-1 text-xs sm:text-sm font-medium text-text-dark-secondary">Méthode de paiement</span>
+                                <select name="method"
+                                        class="form-select h-10 md:h-12 w-full rounded-lg border border-border-dark bg-background-dark p-2 md:p-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+                                    {% for value, label in methods %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="my-6 border-t border-border-dark pt-4">
+                        <p class="text-xs text-text-dark-secondary leading-relaxed">
+                            Chaque article sera enregistré comme une vente individuelle. Vous pouvez ajuster le prix
+                            final par article si nécessaire — laissez vide pour utiliser le prix unitaire de la commande.
+                        </p>
+                    </div>
+                    <div class="flex flex-col-reverse gap-2 sm:flex-row-reverse sm:gap-3 border-t border-border-dark pt-4 sm:pt-6">
+                        <button type="submit"
+                                class="flex h-10 md:h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 sm:px-6 text-sm md:text-base font-bold text-white hover:bg-primary/90 sm:w-auto">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Enregistrer toutes les ventes
+                        </button>
+                        <a href="{% url 'gestion:dashboard' %}"
+                           class="flex h-10 md:h-12 w-full items-center justify-center rounded-lg bg-transparent px-4 sm:px-6 text-sm md:text-base font-medium text-text-dark-secondary hover:bg-white/10 sm:w-auto">
+                            Annuler
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script>
+  const SEARCH_URL = "{% url 'gestion:search_orders_by_user' %}";
+  let debounceTimer = null;
+
+  const userSearch      = document.getElementById('user-search');
+  const searchSpinner   = document.getElementById('search-spinner');
+  const ordersList      = document.getElementById('orders-list');
+  const orderDetail     = document.getElementById('order-detail');
+  const orderIdInput    = document.getElementById('order_id_input');
+  const orderLabel      = document.getElementById('order-selected-label');
+  const itemsContainer  = document.getElementById('items-container');
+  const changeOrderBtn  = document.getElementById('change-order-btn');
+  const venduAInput     = document.getElementById('vendu_a');
+
+  userSearch.addEventListener('input', function () {
+    clearTimeout(debounceTimer);
+    const q = this.value.trim();
+
+    if (q.length < 2) {
+      ordersList.innerHTML = '';
+      return;
+    }
+
+    debounceTimer = setTimeout(() => fetchOrders(q), 350);
+  });
+
+  async function fetchOrders(q) {
+    searchSpinner.classList.remove('hidden');
+    ordersList.innerHTML = '';
+
+    try {
+      const res  = await fetch(`${SEARCH_URL}?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      renderOrderCards(data.orders);
+    } catch (err) {
+      ordersList.innerHTML = `
+        <p class="text-xs text-red-400">Erreur lors de la recherche. Réessayez.</p>`;
+    } finally {
+      searchSpinner.classList.add('hidden');
+    }
+  }
+
+  function renderOrderCards(orders) {
+    if (!orders.length) {
+      ordersList.innerHTML = `
+        <p class="text-sm text-text-dark-secondary italic">
+          Aucune commande trouvée pour cette recherche.
+        </p>`;
+      return;
+    }
+
+    ordersList.innerHTML = orders.map(order => `
+      <div class="order-card cursor-pointer rounded-lg border border-border-dark bg-background-dark p-3 sm:p-4 hover:border-primary/60 hover:bg-primary/5 transition-colors" data-order='${JSON.stringify(order)}'>
+        <div class="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <p class="text-sm font-semibold text-text-dark-primary">
+              Commande #${order.id}
+              <span class="ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${order.status === 'Terminé' ? 'bg-green-500/20 text-green-400' : order.status === 'Traitement' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-500/20 text-gray-400'}">
+                ${order.status}
+              </span>
+            </p>
+            <p class="mt-0.5 text-xs text-text-dark-secondary">
+              ${order.user_display}
+              ${order.user_email ? '— ' + order.user_email : ''}
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-primary">${order.total_price} $</p>
+            <p class="text-xs text-text-dark-secondary">${order.created_at}</p>
+          </div>
+        </div>
+        <!-- Aperçu articles -->
+        <ul class="mt-2 space-y-0.5">
+          ${order.items.map(item => `
+            <li class="text-xs text-text-dark-secondary">
+              • ${item.product_name} × ${item.quantity}
+              <span class="text-text-dark-primary font-medium">(${item.unit_price} $ / u)</span>
+            </li>
+          `).join('')}
+        </ul>
+        <p class="mt-2 text-xs font-medium text-primary/80 text-right">
+          Cliquer pour sélectionner →
+        </p>
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.order-card').forEach(card => {
+      card.addEventListener('click', () => selectOrder(JSON.parse(card.dataset.order)));
+    });
+  }
+
+  function selectOrder(order) {
+    ordersList.innerHTML  = '';
+    userSearch.value      = `${order.user_display} — Commande #${order.id}`;
+    userSearch.disabled   = true;
+
+    venduAInput.value = order.user_display;
+
+    orderIdInput.value = order.id;
+
+    orderLabel.textContent =
+      `Commande #${order.id} — ${order.user_display} — ${order.total_price} $ — ${order.created_at}`;
+
+    itemsContainer.innerHTML = order.items.map(item => `
+      <div class="flex flex-col gap-2 rounded-lg border border-border-dark bg-background-dark/60 p-3 sm:flex-row sm:items-center sm:gap-4">
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-text-dark-primary">${item.product_name}</p>
+          <p class="text-xs text-text-dark-secondary">
+            Qté : <span class="font-medium text-text-dark-primary">${item.quantity}</span>
+            &nbsp;·&nbsp;
+            Prix unitaire commande : <span class="font-medium text-text-dark-primary">${item.unit_price} $</span>
+          </p>
+        </div>
+        <label class="flex flex-col sm:w-44">
+          <span class="pb-1 text-xs font-medium text-text-dark-secondary">
+            Prix final vendu ($)
+          </span>
+          <input type="number" step="0.1" name="price_final_${item.id}" placeholder="${item.unit_price}" class="form-input h-9 w-full rounded-lg border border-border-dark bg-background-dark p-2 text-sm placeholder:text-text-dark-secondary focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+        </label>
+      </div>
+    `).join('');
+
+    orderDetail.classList.remove('hidden');
+
+    orderDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  changeOrderBtn.addEventListener('click', () => {
+    orderDetail.classList.add('hidden');
+    orderIdInput.value   = '';
+    userSearch.value     = '';
+    userSearch.disabled  = false;
+    itemsContainer.innerHTML = '';
+    userSearch.focus();
+  });
+    </script>
+{% endblock %}

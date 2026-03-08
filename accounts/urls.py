@@ -4,8 +4,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('updateinfo/', views.updateInfo, name='profile'),
-
+    path("updateinfo/", views.updateInfo, name="profile"),
+    path("my_orders/", views.order_history, name="orders"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

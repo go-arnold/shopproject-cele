@@ -39,6 +39,14 @@ urlpatterns = [
     path("ventes_rev/", liste.liste_ventes_rev, name="liste_ventes_rev"),
     path("ventes/ajouter/", ajouter_v.ajouter_vente, name="ajouter_vente"),
     path(
+        "bulk-vente/", ajouter_v.bulk_enregistrer_vente, name="bulk_enregistrer_vente"
+    ),
+    path(
+        "api/orders/search/",
+        ajouter_v.search_orders_by_user,
+        name="search_orders_by_user",
+    ),
+    path(
         "ventes/<int:vente_id>/modifier/", mod_v.modifier_vente, name="modifier_vente"
     ),
     path(

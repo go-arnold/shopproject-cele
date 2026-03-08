@@ -110,6 +110,7 @@ media/
 *.db
 *.pid
 *.cpython-312.pyc
+*.cpython-313.pyc
 
 config_external/
 staticfiles/
@@ -118,3 +119,4 @@ staticfiles/
 **/migrations/*
 !**/migrations/__init__.py
 
+__pycache__

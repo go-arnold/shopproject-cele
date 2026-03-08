@@ -2,8 +2,7 @@ from utils.email_custom import send_html_email
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from shop.models import Notification
-from django.contrib.auth.models import Group
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -13,49 +12,36 @@ User = get_user_model()
 
 @login_required
 def notifications_view(request):
-    user = request.user
-    rev = Group.objects.get(name="revendeur").user_set.all()
-    muk = Group.objects.get(name="mukubwa").user_set.all()
-    if user not in rev and user not in muk:
+    if not request.user.groups.filter(name__in=["revendeur", "mukubwa"]).exists():
         raise PermissionDenied()
-    else:
-        notifications = Notification.objects.filter(user=user).order_by("-created_at")
-        # notif_count = int(notifications.count())
 
-        try:
-            revendeur_group = Group.objects.get(name="revendeur")
-            revendeurs = revendeur_group.user_set.all()
-            mukubwa_group = Group.objects.get(name="mukubwa")
-            mukubwas = mukubwa_group.user_set.all()
+    notifications_qs = (
+        Notification.objects.filter(user=request.user)
+        .select_related("conversation")
+        .order_by("-created_at")
+    )
 
-            s_users = User.objects.filter(is_superuser=True)
-        except Group.DoesNotExist:
-            revendeurs = []
-            mukubwas = []
-        paginator = Paginator(notifications, 10)
-        page = request.GET.get("page")
-        try:
-            page_obj = paginator.page(page)
-        except PageNotAnInteger:
-            page_obj = paginator.page(1)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
-        return render(
-            request,
-            "shop/mukubwa_revendeur.html",
-            {
-                "notifications": page_obj.object_list,
-                "revendeurs": revendeurs,
-                "mukubwas": mukubwas,
-                "s_users": s_users,
-                "page_obj": page_obj,
-                "paginator": paginator,
-                "is_paginated": page_obj.has_other_pages(),
-                "start_index": page_obj.start_index(),
-                "end_index": page_obj.end_index(),
-                "total_count": paginator.count,
-            },
-        )
+    revendeurs = User.objects.filter(groups__name="revendeur").only("username")
+    mukubwas = User.objects.filter(groups__name="mukubwa").only("username")
+    s_users = User.objects.filter(is_superuser=True).only("username")
+
+    paginator = Paginator(notifications_qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(
+        request,
+        "shop/mukubwa_revendeur.html",
+        {
+            "notifications": page_obj,
+            "revendeurs": revendeurs,
+            "mukubwas": mukubwas,
+            "s_users": s_users,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "is_paginated": page_obj.has_other_pages(),
+            "total_count": paginator.count,
+        },
+    )
 
 
 @login_required

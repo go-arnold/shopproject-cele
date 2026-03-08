@@ -40,7 +40,7 @@ def productVue(request, pk):
         "price_primary": product.price_primary,
         "category": product.category,
         "image": product.image.url if product.image else "",
-        "badge": product.badge,
+        "badge": product.current_badge,
         "current_badge": product.current_badge,
         "features": features,
         "rating": rat,
@@ -91,10 +91,6 @@ def productVue(request, pk):
         sampled_pks = random.sample(similar_pks, sample_count)
         similar_products = list(Product.objects.filter(pk__in=sampled_pks))
 
-    # If we don't have 4 similar products from the same category, fill the rest
-    # with random products from the rest of the catalogue (excluding current and
-    # already selected products). This ensures `similar_products` contains up to
-    # 6 items whenever possible.
     if len(similar_products) < 6:
         needed = 6 - len(similar_products)
         other_qs = Product.objects.exclude(pk=product.pk)

@@ -41,14 +41,15 @@ except Exception:
     pass
 
 
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    inlines = (ProfileInline,)
+# @admin.register(User)
+# class UserAdmin(BaseUserAdmin):
+#     inlines = (ProfileInline,)
 
-    def get_inline_instances(self, request, obj=None):
-        if not obj:
-            return []
-        return super().get_inline_instances(request, obj)
+#     def get_inline_instances(self, request, obj=None):
+#         if not obj:
+#             return []
+#         return super().get_inline_instances(request, obj)
 
 
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(User)

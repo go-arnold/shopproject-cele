@@ -1,4 +1,4 @@
-import json
+import json 
 from google import genai
 from google.genai import types
 from django.conf import settings
@@ -236,10 +236,7 @@ def chat_message(request):
 
         return JsonResponse({"reply": reply.strip()})
 
-    # except Exception as e:
-    #     return JsonResponse(
-    #         {"error": "Une erreur est survenue. Veuillez réessayer."}, status=500
-    #     )
+
 
     except Exception as e:
         import traceback

@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "gestion",
     "cloudinary",
     "widget_tweaks",
+    "django_celery_beat",
+    "django_celery_results",
 ]
 
 CLOUDINARY_STORAGE = {
@@ -203,3 +205,23 @@ ACCOUNT_PASSWORD_RESET_BY_CODE_TIMEOUT = 600
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = False
 ACCOUNT_PHONE_VERIFICATION_ENABLED = False
+
+
+REDIS_URL = os.getenv("REDIS_URL", default="redis://localhost:6379/0")
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+    }
+}
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TIMEZONE = "Africa/Kigali"
+
+
+CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": "none"}
+CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": "none"}

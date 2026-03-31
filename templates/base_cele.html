@@ -4,7 +4,8 @@
     <head>
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <link rel="shortcut icon" href="{% static 'static-img/sicon-32.png' %}" />
+        {% comment %} <link rel="shortcut icon" href="{% static 'static-img/sicon-32.png' %}" />  {% endcomment %}
+        <link rel="icon" type="image/svg+xml" href="{% static 'sicon-mauve.svg' %}">
         <title>
             {% block title %}Admin Dashboard{% endblock %}
         </title>
@@ -15,22 +16,22 @@
               rel="stylesheet" />
         <link rel="stylesheet" href='{% static "style_general.css" %}'>
         <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#640c5f",
-                        "background-light": "#f8f6f8",
-                        "background-dark": "#121828",
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary": "#640c5f",
+                            "background-light": "#f8f6f8",
+                            "background-dark": "#121828",
+                        },
+                        fontFamily: {
+                            "display": ["Inter", "sans-serif"]
+                        },
+                        borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
                     },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
                 },
-            },
-        }
+            }
         </script>
         <style>
         .material-symbols-outlined {

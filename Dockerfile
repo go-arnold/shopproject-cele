@@ -22,6 +22,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     curl \
     wget \
+    libpango1.0-0 \
+    libcairo2 \
+    libgdk-pixbuf2.0-0 \
+    shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
 
 # Verify Python version

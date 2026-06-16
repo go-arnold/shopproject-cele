@@ -274,6 +274,15 @@ class Vente(models.Model):
     def produit_categorie(self):
         return self.produit.category
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['utilisateur', '-date_achat'], name='vente_user_date_idx'),
+            models.Index(fields=['produit', '-date_achat'], name='vente_product_date_idx'),
+            models.Index(fields=['-date_achat'], name='vente_date_idx'),
+            models.Index(fields=['utilisateur', 'date_achat'], name='vente_user_sales_idx'),
+        ]
+        ordering = ['-date_achat']
+
 
 class Conversation(models.Model):
     participants = models.ManyToManyField(User, related_name="conversations")
@@ -296,6 +305,12 @@ class Conversation(models.Model):
     def __str__(self):
         return f"Conversation {self.id} — {self.created_at.strftime('%Y-%m-%d')}"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['-created_at'], name='conversation_created_idx'),
+        ]
+        ordering = ['-created_at']
+
 
 class Message(models.Model):
     conversation = models.ForeignKey(
@@ -315,9 +330,11 @@ class Message(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["conversation", "timestamp"]),
-            models.Index(fields=["sender"]),
+            models.Index(fields=["conversation", "-timestamp"], name='message_conv_time_idx'),
+            models.Index(fields=["sender", "-timestamp"], name='message_sender_time_idx'),
+            models.Index(fields=["-timestamp"], name='message_recent_idx'),
         ]
+        ordering = ['-timestamp']
 
 
 class Notification(models.Model):
@@ -344,6 +361,14 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notif to {self.user} — {self.title}"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', '-created_at'], name='notification_user_date_idx'),
+            models.Index(fields=['-created_at'], name='notification_recent_idx'),
+            models.Index(fields=['user', 'is_read'], name='notification_user_read_idx'),
+        ]
+        ordering = ['-created_at']
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="order_maker")
@@ -366,6 +391,15 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.id} by {self.user}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', '-created_at'], name='order_user_date_idx'),
+            models.Index(fields=['assigned_revendeur', '-created_at'], name='order_revendeur_date_idx'),
+            models.Index(fields=['status', '-created_at'], name='order_status_date_idx'),
+            models.Index(fields=['-created_at'], name='order_recent_idx'),
+        ]
+        ordering = ['-created_at']
 
 
 class OrderItem(models.Model):
@@ -393,3 +427,122 @@ class ChatLog(models.Model):
 
     def __str__(self):
         return f"{self.user} — {self.created_at:%d/%m/%Y %H:%M}"
+
+
+class ProductQuestion(models.Model):
+    """
+    Track all product-related questions asked via the AI assistant.
+    Used to build analytics reports on what products customers ask about.
+    """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="product_questions"
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="questions"
+    )
+    question_text = models.TextField(help_text="The question asked by user")
+    response_text = models.TextField(blank=True, help_text="AI assistant response")
+    
+    # Analytics fields
+    language = models.CharField(
+        max_length=5,
+        default="fr",
+        choices=[("fr", "French"), ("en", "English"), ("sw", "Swahili")]
+    )
+    sentiment = models.CharField(
+        max_length=20,
+        default="neutral",
+        choices=[
+            ("positive", "Positive"),
+            ("neutral", "Neutral"),
+            ("negative", "Negative"),
+            ("frustrated", "Frustrated"),
+        ]
+    )
+    keywords = models.JSONField(default=list, help_text="Extracted keywords from question")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["product", "-created_at"], name="pq_product_date_idx"),
+            models.Index(fields=["user", "-created_at"], name="pq_user_date_idx"),
+            models.Index(fields=["-created_at"], name="pq_recent_idx"),
+            models.Index(fields=["sentiment"], name="pq_sentiment_idx"),
+        ]
+
+    def __str__(self):
+        return f"Q: {self.question_text[:50]}... ({self.created_at:%Y-%m-%d})"
+
+
+class ProductQuestionManager(models.Manager):
+    """Custom manager for ProductQuestion analytics."""
+
+    def top_products(self, n=15, days=30):
+        """
+        Get top N most-asked products in the last N days.
+        
+        Returns:
+            QuerySet with annotations for question_count and latest_sentiment
+        """
+        from django.db.models import Count, Q
+        from django.utils import timezone
+        
+        cutoff_date = timezone.now() - timedelta(days=days)
+        return (
+            self.filter(
+                created_at__gte=cutoff_date,
+                product__isnull=False
+            )
+            .values("product")
+            .annotate(
+                question_count=Count("id"),
+                product_name=models.F("product__title"),
+                product_price=models.F("product__price"),
+                positive_count=Count("id", filter=Q(sentiment="positive")),
+                negative_count=Count("id", filter=Q(sentiment="negative")),
+            )
+            .order_by("-question_count")[:n]
+        )
+
+    def get_analytics_report(self, n=15, days=30):
+        """Get analytics report for the last N days with top N products."""
+        from django.db.models import Count, Q, Avg
+        
+        cutoff_date = timezone.now() - timedelta(days=days)
+        
+        top_products = self.top_products(n=n, days=days)
+        
+        total_questions = self.filter(
+            created_at__gte=cutoff_date
+        ).count()
+        
+        sentiment_dist = self.filter(
+            created_at__gte=cutoff_date
+        ).values("sentiment").annotate(count=Count("id"))
+        
+        language_dist = self.filter(
+            created_at__gte=cutoff_date
+        ).values("language").annotate(count=Count("id"))
+        
+        return {
+            "period_days": days,
+            "total_questions": total_questions,
+            "top_products": list(top_products),
+            "sentiment_distribution": {s["sentiment"]: s["count"] for s in sentiment_dist},
+            "language_distribution": {l["language"]: l["count"] for l in language_dist},
+            "generated_at": timezone.now().isoformat(),
+        }
+
+
+# Add custom manager to ProductQuestion
+ProductQuestion.objects = ProductQuestionManager.from_queryset(models.QuerySet)()

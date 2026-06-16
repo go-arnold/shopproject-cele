@@ -1,0 +1,19 @@
+[project]
+name = "shopproject"
+version = "0.1.0"
+description = "celebobo shopproject"
+authors = [
+    {name = "go-arnold",email = "arnoldciku@gmail.com"}
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+dj-database-url = "^3.1.2"
+
+
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

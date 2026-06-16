@@ -19,6 +19,14 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.shortcuts import render
+from gestion.views_components.task_health import (
+    health_check_full,
+    health_check_redis,
+    health_check_celery,
+    health_check_queue,
+    task_status,
+    task_retry,
+)
 
 urlpatterns = [
 
@@ -27,7 +35,14 @@ urlpatterns = [
     path('', include('shop.urls')),
     path('profile/', include('accounts.urls')),
     path('cele-admin/', include('gestion.urls')),
-
+    
+    # Health check and task monitoring endpoints
+    path('api/health/', health_check_full, name='health_check_full'),
+    path('api/health/redis/', health_check_redis, name='health_check_redis'),
+    path('api/health/celery/', health_check_celery, name='health_check_celery'),
+    path('api/health/queue/', health_check_queue, name='health_check_queue'),
+    path('api/tasks/<str:task_id>/', task_status, name='task_status'),
+    path('api/tasks/<str:task_id>/retry/', task_retry, name='task_retry'),
 
 ]
 

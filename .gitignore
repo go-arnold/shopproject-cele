@@ -120,3 +120,6 @@ staticfiles/
 !**/migrations/__init__.py
 
 __pycache__
+
+CLAUDE.md
+avoid/

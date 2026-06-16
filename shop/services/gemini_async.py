@@ -1,0 +1,236 @@
+"""
+Asynchronous Gemini API client using httpx.
+
+Replaces the sync google-genai client for all AI operations.
+Key benefits:
+- Non-blocking I/O using httpx.AsyncClient
+- True concurrency: process multiple requests in parallel
+- Better resource utilization (fewer threads needed)
+- Integrated timeout handling and retry logic
+- Full structured logging with metrics
+
+Usage:
+    client = await get_async_gemini_client()
+    response = await client.generate_content(
+        model="gemini-2.5-flash",
+        prompt="Your prompt here",
+        user_id=123,
+        task_id="task-uuid",
+    )
+"""
+
+import httpx
+import json
+import time
+import logging
+from typing import Optional, Dict, Any
+
+from shop.services.config import get_ai_config
+from shop.services.ai_logger import ai_logger, AICallMetrics
+
+logger = logging.getLogger(__name__)
+
+
+class AsyncGeminiClient:
+    """Async client for calling Gemini API via httpx."""
+
+    GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models"
+
+    def __init__(self, api_key: str, timeout: int = 30):
+        """
+        Initialize async Gemini client.
+
+        Args:
+            api_key: Gemini API key
+            timeout: Request timeout in seconds
+        """
+        self.api_key = api_key
+        self.timeout = timeout
+        logger.info(f"[AsyncGemini] Client initialized with timeout={timeout}s")
+
+    async def generate_content(
+        self,
+        model: str,
+        prompt: str,
+        temperature: float = 0.7,
+        top_p: float = 0.95,
+        max_tokens: int = 400,
+        user_id: Optional[int] = None,
+        task_id: Optional[str] = None,
+        event_name: str = "gemini_request",
+    ) -> Dict[str, Any]:
+        """
+        Call Gemini API asynchronously.
+
+        Args:
+            model: Model name (e.g., "gemini-2.5-flash")
+            prompt: Input prompt text
+            temperature: Temperature for generation (0-1)
+            top_p: Top-p for sampling (0-1)
+            max_tokens: Max output tokens
+            user_id: Optional user ID for logging
+            task_id: Optional Celery task ID for correlation
+            event_name: Event name for structured logging
+
+        Returns:
+            Dict with keys:
+                - "text": Generated text
+                - "tokens_in": Input token count
+                - "tokens_out": Output token count
+                - "latency_ms": Response time
+                - "status": "success"
+
+        Raises:
+            httpx.TimeoutException: If request times out
+            httpx.HTTPError: If HTTP call fails
+            Exception: For other API errors
+        """
+        config = get_ai_config()
+        prompt_length = len(prompt)
+
+        # Start logging with context manager
+        with ai_logger.track_call(
+            event_name, user_id, task_id, model, prompt_length
+        ) as metrics:
+            start_time = time.time()
+
+            try:
+                async with httpx.AsyncClient(
+                    timeout=httpx.Timeout(self.timeout)
+                ) as client:
+                    url = f"{self.GEMINI_API_URL}/{model}:generateContent"
+
+                    # Build request payload
+                    payload = {
+                        "contents": [
+                            {
+                                "role": "user",
+                                "parts": [{"text": prompt}],
+                            }
+                        ],
+                        "generationConfig": {
+                            "temperature": temperature,
+                            "topP": top_p,
+                            "maxOutputTokens": max_tokens,
+                        },
+                    }
+
+                    headers = {
+                        "Content-Type": "application/json",
+                        "x-goog-api-key": self.api_key,
+                    }
+
+                    # Make async request
+                    logger.debug(
+                        f"[AsyncGemini] Calling {model} with prompt_len={prompt_length}"
+                    )
+                    response = await client.post(url, json=payload, headers=headers)
+                    response.raise_for_status()
+
+                    data = response.json()
+
+                    # Extract text and token counts from response
+                    text = ""
+                    tokens_in = 0
+                    tokens_out = 0
+
+                    if "candidates" in data and data["candidates"]:
+                        candidate = data["candidates"][0]
+                        if (
+                            "content" in candidate
+                            and "parts" in candidate["content"]
+                        ):
+                            parts = candidate["content"]["parts"]
+                            if parts and "text" in parts[0]:
+                                text = parts[0]["text"]
+
+                    if "usageMetadata" in data:
+                        tokens_in = data["usageMetadata"].get("promptTokenCount", 0)
+                        tokens_out = data["usageMetadata"].get(
+                            "candidatesTokenCount", 0
+                        )
+
+                    latency_ms = (time.time() - start_time) * 1000
+
+                    # Log success with metrics
+                    ai_logger.log_call_success(
+                        metrics,
+                        response_length=len(text),
+                        tokens_input=tokens_in,
+                        tokens_output=tokens_out,
+                        latency_ms=latency_ms,
+                    )
+
+                    logger.info(
+                        f"[AsyncGemini] {event_name} success: "
+                        f"{tokens_in}→{tokens_out} tokens in {latency_ms:.0f}ms"
+                    )
+
+                    return {
+                        "text": text,
+                        "tokens_in": tokens_in,
+                        "tokens_out": tokens_out,
+                        "latency_ms": latency_ms,
+                        "status": "success",
+                    }
+
+            except httpx.TimeoutException as e:
+                latency_ms = (time.time() - start_time) * 1000
+                ai_logger.log_call_error(
+                    metrics, "TimeoutError", str(e), latency_ms
+                )
+                logger.error(
+                    f"[AsyncGemini] Timeout on {event_name} after {latency_ms:.0f}ms"
+                )
+                raise
+
+            except httpx.HTTPStatusError as e:
+                latency_ms = (time.time() - start_time) * 1000
+                error_msg = f"HTTP {e.response.status_code}: {e.response.text[:200]}"
+                ai_logger.log_call_error(
+                    metrics, "HTTPStatusError", error_msg, latency_ms
+                )
+                logger.error(f"[AsyncGemini] HTTP error on {event_name}: {error_msg}")
+                raise
+
+            except httpx.HTTPError as e:
+                latency_ms = (time.time() - start_time) * 1000
+                ai_logger.log_call_error(
+                    metrics, "HTTPError", str(e), latency_ms
+                )
+                logger.error(f"[AsyncGemini] HTTP error on {event_name}: {e}")
+                raise
+
+            except Exception as e:
+                latency_ms = (time.time() - start_time) * 1000
+                ai_logger.log_call_error(
+                    metrics, type(e).__name__, str(e), latency_ms
+                )
+                logger.error(
+                    f"[AsyncGemini] Unexpected error on {event_name}: {e}",
+                    exc_info=True,
+                )
+                raise
+
+
+# Singleton async client (lazy-initialized)
+_async_gemini_client: Optional[AsyncGeminiClient] = None
+
+
+async def get_async_gemini_client() -> AsyncGeminiClient:
+    """
+    Get or create async Gemini client (singleton).
+
+    Returns:
+        AsyncGeminiClient: Async Gemini client instance
+
+    Raises:
+        ValueError: If GEMINI_API_KEY not configured
+    """
+    global _async_gemini_client
+    if _async_gemini_client is None:
+        config = get_ai_config()
+        _async_gemini_client = AsyncGeminiClient(
+            config.gemini_api_key, config.gemini_timeout
+        )
+    return _async_gemini_client

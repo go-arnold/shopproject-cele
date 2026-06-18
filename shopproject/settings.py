@@ -30,7 +30,7 @@ load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_KEY")
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -131,16 +131,34 @@ WSGI_APPLICATION = "shopproject.wsgi.application"
 #     }
 # }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.getenv("DB_NAME"),
+#         "USER": os.getenv("DB_USER"),
+#         "PASSWORD": os.getenv("DB_PASSWORD"),
+#         "HOST": os.getenv("DB_HOST"),
+#         "PORT": os.getenv("DB_PORT"),
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "NAME": "postgres",
+        "USER": "postgres.sbxvsblxaqtdahwmpdsk",
+        "PASSWORD": "LeNouveauPassword1@AllAccounts",
+        "HOST": "aws-1-eu-west-1.pooler.supabase.com",
+        "PORT": "6543",
     }
 }
+
+
+# "host": "aws-1-eu-west-1.pooler.supabase.com",
+# "port": "6543",
+# "database": "postgres",
+# "user": "postgres.sbxvsblxaqtdahwmpdsk",
+# "password": "LeNouveauPassword1@AllAccounts"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -225,5 +243,6 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TIMEZONE = "Africa/Kigali"
 
 
-CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": "none"}
-CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": "none"}
+# CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": "none"}
+# CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": "none"}
+

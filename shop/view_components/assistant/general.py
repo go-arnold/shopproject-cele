@@ -54,7 +54,7 @@ def chat_page(request):
 
 @login_required
 @require_POST
-async def chat_message(request):
+def chat_message(request):
     """
     Receive user message, validate, and dispatch Celery task.
 
@@ -151,7 +151,7 @@ async def chat_message(request):
 
 @login_required
 @require_http_methods(["GET"])
-async def chat_poll(request, task_id: str):
+def chat_poll(request, task_id: str):
     """
     Poll the status and result of a chat task.
 
@@ -177,7 +177,7 @@ async def chat_poll(request, task_id: str):
 
     try:
         # Get result from cache (sync operation, very fast)
-        result = await sync_to_async(get_task_result)(task_id)
+        result = get_task_result(task_id)
 
         if result is None:
             logger.debug(

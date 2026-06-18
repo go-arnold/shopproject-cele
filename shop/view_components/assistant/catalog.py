@@ -177,6 +177,34 @@ def get_product_by_id(product_id: int) -> str:
     except Exception:
         return "Produit introuvable."
 
+def get_product_by_keywords(keywords: list[str]) -> str:
+    """Retourne le détail du produit le plus pertinent selon les mots-clés."""
+    try:
+        from shop.models import Product
+
+        q = Q()
+        for kw in keywords:
+            q |= Q(name__icontains=kw)
+            q |= Q(description__icontains=kw)
+            q |= Q(category_fk__name__icontains=kw)
+            q |= Q(category_legacy__icontains=kw)
+            q |= Q(features__name__icontains=kw)
+
+        p = (
+            Product.objects.filter(q)
+            .select_related("category_fk")
+            .prefetch_related("features")
+            .order_by("-date_added")
+            .first()
+        )
+
+        if not p:
+            return "Aucun produit trouvé correspondant à ces critères."
+
+        return _format_single_product_full(p)
+
+    except Exception:
+        return "Erreur lors de la recherche du produit."
 
 # ── Helpers de formatage ───────────────────────────────────────────────────────
 

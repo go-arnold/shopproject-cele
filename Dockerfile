@@ -74,4 +74,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Default to development mode if not specified
-ENV APP_MODE=prod
+ENV APP_MODE=dev

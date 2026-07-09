@@ -22,8 +22,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     curl \
     wget \
-    \
-
     libcairo2 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
@@ -33,7 +31,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     shared-mime-info \
     fontconfig \
     fonts-dejavu-core \
-    \
     && rm -rf /var/lib/apt/lists/*
 
 # Verify Python version

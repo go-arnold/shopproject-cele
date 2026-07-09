@@ -31,7 +31,7 @@ def dashboard(request):
     today = now().date()
     current_month = today.month
     current_year = today.year
-    
+
     # Optimized notification query (was N+1)
     notifications = Notification.objects.select_related('user').filter(
         user=request.user
@@ -143,4 +143,4 @@ def dashboard(request):
         "habits_courant_profit": habits_courant_profit,
         "habits_croissance": habits_croissance,
     }
-    return render(request, "gestion/dashboard.html", context)
+    return render(request, "gestion/dash.html", context)

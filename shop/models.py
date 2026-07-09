@@ -9,6 +9,7 @@ from decimal import Decimal, InvalidOperation
 from django.db.models import Avg
 from django.db.models import JSONField
 from django.conf import settings
+from pgvector.django import VectorField, HnswIndex
 
 User = get_user_model()
 
@@ -429,11 +430,74 @@ class ChatLog(models.Model):
         return f"{self.user} — {self.created_at:%d/%m/%Y %H:%M}"
 
 
+class ProductQuestionManager(models.Manager):
+    """Custom manager for ProductQuestion analytics."""
+
+    def top_products(self, n=15, days=30):
+        """
+        Get top N most-asked products in the last N days.
+
+        Returns:
+            QuerySet with annotations for question_count and latest_sentiment
+        """
+        from django.db.models import Count, Q
+        from django.utils import timezone
+
+        cutoff_date = timezone.now() - timedelta(days=days)
+        return (
+            self.filter(
+                created_at__gte=cutoff_date,
+                product__isnull=False
+            )
+            .values("product")
+            .annotate(
+                question_count=Count("id"),
+                product_name=models.F("product__name"),
+                product_price=models.F("product__price"),
+                positive_count=Count("id", filter=Q(sentiment="positive")),
+                negative_count=Count("id", filter=Q(sentiment="negative")),
+            )
+            .order_by("-question_count")[:n]
+        )
+
+    def get_analytics_report(self, n=15, days=30):
+        """Get analytics report for the last N days with top N products."""
+        from django.db.models import Count, Q, Avg
+        from django.utils import timezone
+
+        cutoff_date = timezone.now() - timedelta(days=days)
+
+        top_products = self.top_products(n=n, days=days)
+
+        total_questions = self.filter(
+            created_at__gte=cutoff_date
+        ).count()
+
+        sentiment_dist = self.filter(
+            created_at__gte=cutoff_date
+        ).values("sentiment").annotate(count=Count("id"))
+
+        language_dist = self.filter(
+            created_at__gte=cutoff_date
+        ).values("language").annotate(count=Count("id"))
+
+        return {
+            "period_days": days,
+            "total_questions": total_questions,
+            "top_products": list(top_products),
+            "sentiment_distribution": {s["sentiment"]: s["count"] for s in sentiment_dist},
+            "language_distribution": {l["language"]: l["count"] for l in language_dist},
+            "generated_at": timezone.now().isoformat(),
+        }
+
+
 class ProductQuestion(models.Model):
     """
     Track all product-related questions asked via the AI assistant.
     Used to build analytics reports on what products customers ask about.
     """
+    objects = ProductQuestionManager()
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -484,65 +548,37 @@ class ProductQuestion(models.Model):
         return f"Q: {self.question_text[:50]}... ({self.created_at:%Y-%m-%d})"
 
 
-class ProductQuestionManager(models.Manager):
-    """Custom manager for ProductQuestion analytics."""
+class ProductEmbedding(models.Model):
+    """
+    Vector representation of a product, used for RAG retrieval by the AI
+    assistant. One row per product; re-embedded whenever the product changes
+    (see shop/signals.py -> shop/tasks/embeddings.py).
+    """
 
-    def top_products(self, n=15, days=30):
-        """
-        Get top N most-asked products in the last N days.
-        
-        Returns:
-            QuerySet with annotations for question_count and latest_sentiment
-        """
-        from django.db.models import Count, Q
-        from django.utils import timezone
-        
-        cutoff_date = timezone.now() - timedelta(days=days)
-        return (
-            self.filter(
-                created_at__gte=cutoff_date,
-                product__isnull=False
+    EMBEDDING_DIMENSIONS = 768
+
+    product = models.OneToOneField(
+        Product, on_delete=models.CASCADE, related_name="embedding"
+    )
+    embedding = VectorField(dimensions=EMBEDDING_DIMENSIONS)
+    embedded_text = models.TextField(
+        help_text="Exact text sent to the embedding model, kept for audit/debugging."
+    )
+    metadata = models.JSONField(default=dict, blank=True)
+    model_name = models.CharField(max_length=64, default="gemini-embedding-001")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            HnswIndex(
+                name="product_embedding_hnsw",
+                fields=["embedding"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_cosine_ops"],
             )
-            .values("product")
-            .annotate(
-                question_count=Count("id"),
-                product_name=models.F("product__title"),
-                product_price=models.F("product__price"),
-                positive_count=Count("id", filter=Q(sentiment="positive")),
-                negative_count=Count("id", filter=Q(sentiment="negative")),
-            )
-            .order_by("-question_count")[:n]
-        )
+        ]
 
-    def get_analytics_report(self, n=15, days=30):
-        """Get analytics report for the last N days with top N products."""
-        from django.db.models import Count, Q, Avg
-        
-        cutoff_date = timezone.now() - timedelta(days=days)
-        
-        top_products = self.top_products(n=n, days=days)
-        
-        total_questions = self.filter(
-            created_at__gte=cutoff_date
-        ).count()
-        
-        sentiment_dist = self.filter(
-            created_at__gte=cutoff_date
-        ).values("sentiment").annotate(count=Count("id"))
-        
-        language_dist = self.filter(
-            created_at__gte=cutoff_date
-        ).values("language").annotate(count=Count("id"))
-        
-        return {
-            "period_days": days,
-            "total_questions": total_questions,
-            "top_products": list(top_products),
-            "sentiment_distribution": {s["sentiment"]: s["count"] for s in sentiment_dist},
-            "language_distribution": {l["language"]: l["count"] for l in language_dist},
-            "generated_at": timezone.now().isoformat(),
-        }
-
-
-# Add custom manager to ProductQuestion
-ProductQuestion.objects = ProductQuestionManager.from_queryset(models.QuerySet)()
+    def __str__(self):
+        return f"Embedding for {self.product_id}"

@@ -8,4 +8,6 @@ Celery tasks for background processing:
 Import tasks in this module to ensure Celery autodiscovery finds them.
 """
 
-__all__ = []
+from .embeddings import upsert_product_embedding_task, delete_product_embedding_task
+
+__all__ = ["upsert_product_embedding_task", "delete_product_embedding_task"]

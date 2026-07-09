@@ -18,7 +18,6 @@ from shop.view_components.echanges import (
     notifications,
 )
 
-from shop.view_components.assistant import main
 from shop.view_components.assistant.general import chat_page, chat_message, chat_poll
 
 
@@ -51,8 +50,6 @@ urlpatterns = [
     path("update-cart/", cart.update_cart, name="update_cart"),
     path("remove-from-cart/", cart.remove_from_cart, name="remove_from_cart"),
     path("cart/", cart.cart_view, name="cart"),
-    # path("assistant/", main.chat_page, name="assistant"),
-    # path("assistant/message/", main.chat_message, name="chat_message"),
     path("assistant/", chat_page, name="assistant"),
     path("message/", chat_message, name="chat_message"),
     path("poll/<str:task_id>/", chat_poll, name="chat_poll"),

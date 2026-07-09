@@ -22,7 +22,6 @@ Design principles:
 """
 
 import logging
-import asyncio
 from celery import shared_task
 from django.core.cache import cache
 from asgiref.sync import async_to_sync
@@ -91,6 +90,7 @@ def process_chat_message_task(
         latency_ms = response.latency_ms
         tokens_in = response.tokens_in
         tokens_out = response.tokens_out
+        matched_product_id = response.matched_product_id
 
         # Cache result immediately (BEFORE secondary tasks)
         # This enables fast client polling
@@ -114,11 +114,12 @@ def process_chat_message_task(
 
         # Secondary operations (non-blocking)
         # Dispatch support email if complaint detected
-        if intent_data.get("is_complaint") and intent_data.get("complaint_type"):
+        complaint_type = intent_data.get("complaint_type")
+        if intent_data.get("is_complaint") and complaint_type not in (None, "", "aucun"):
             send_support_email_task.delay(
                 task_id=task_id,
                 cache_key=cache_key,
-                complaint_type=intent_data["complaint_type"],
+                complaint_type=complaint_type,
                 complaint_summary=intent_data.get("complaint_summary", ""),
                 client_message=message,
                 user_id=user_id,
@@ -132,6 +133,17 @@ def process_chat_message_task(
             bot_reply=reply,
         )
         logger.debug(f"[Task] {task_id} chat log queued")
+
+        # Track product question for analytics (non-blocking, genuinely fire-and-forget)
+        track_product_question_task.delay(
+            user_id=user_id,
+            product_id=matched_product_id,
+            question_text=message,
+            response_text=reply,
+            language=intent_data.get("language", "fr"),
+            sentiment=intent_data.get("sentiment", "neutral"),
+        )
+        logger.debug(f"[Task] {task_id} product question tracking queued")
 
     except Exception as exc:
         logger.error(f"[Task] {task_id} failed: {exc}", exc_info=True)
@@ -196,7 +208,6 @@ def send_support_email_task(
             _send_email,
         )
         from shop.services.assistant_service import generate_support_email_async
-        import asyncio
 
         # Get recipient emails
         mukubwa_emails = _get_mukubwa_emails()
@@ -218,7 +229,14 @@ def send_support_email_task(
             return
 
         # Send email
-        success = _send_email(email_data, mukubwa_emails, user_id)
+        user = None
+        if user_id:
+            from django.contrib.auth import get_user_model
+
+            User = get_user_model()
+            user = User.objects.filter(pk=user_id).first()
+
+        success = _send_email(email_data, mukubwa_emails, user)
 
         if success:
             # Update cache to indicate support email was sent
@@ -290,6 +308,43 @@ def save_chat_log_task(
     except Exception as e:
         logger.warning(f"[LogTask] Failed to save chat log: {e}")
         # This failure is non-critical, log and continue
+
+
+# ── Product question tracking task ────────────────────────────────────────────
+@shared_task(
+    name="shop.assistant.tasks.track_product_question",
+    ignore_result=True,
+    max_retries=1,
+    default_retry_delay=3,
+    time_limit=15,
+)
+def track_product_question_task(
+    user_id: int | None,
+    product_id: int | None,
+    question_text: str,
+    response_text: str,
+    language: str,
+    sentiment: str,
+) -> None:
+    """
+    Record a product question for analytics. Genuinely fire-and-forget:
+    dispatched with .delay() and never awaited on the chat response path.
+    """
+    try:
+        from shop.models import ProductQuestion
+
+        ProductQuestion.objects.create(
+            user_id=user_id,
+            product_id=product_id,
+            question_text=question_text,
+            response_text=response_text,
+            language=language,
+            sentiment=sentiment,
+        )
+        logger.debug(f"[TrackTask] Recorded product question for user {user_id}")
+
+    except Exception as e:
+        logger.warning(f"[TrackTask] Failed to record product question: {e}")
 
 
 # ── Helper: Get cached task result ─────────────────────────────────────────────

@@ -57,6 +57,7 @@ openpyxl
 packaging
 pathspec
 pillow
+pgvector
 platformdirs
 prompt_toolkit
 proto-plus

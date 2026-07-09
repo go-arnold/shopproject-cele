@@ -2,10 +2,10 @@
 Core AI assistant orchestration service.
 
 All AI operations are async-first. This service:
-1. Orchestrates calls to Gemini API
-2. Manages caching and context retrieval
-3. Handles intent analysis, response generation, email generation
-4. Provides structured, observable operations
+1. Retrieves relevant products via pgvector semantic search (RAG)
+2. Calls Gemini with structured (schema-enforced) output
+3. Summarizes older conversation history to keep prompts small and cheap
+4. Handles support-email generation
 
 Usage:
     from shop.services.assistant_service import process_user_message_async
@@ -18,23 +18,34 @@ Usage:
     )
 """
 
+import hashlib
 import json
-import re
 import logging
 from typing import Optional
 from dataclasses import dataclass
 
+from asgiref.sync import sync_to_async
+from django.core.cache import cache
+
 from shop.services.gemini_async import get_async_gemini_client
 from shop.services.config import get_ai_config
-from shop.services.ai_logger import ai_logger
+from shop.services.embedding_service import embed_query
+from shop.selectors.product_search import semantic_search
+from shop.view_components.assistant.catalog import format_product_full
 from shop.view_components.assistant.constants import (
     SYSTEM_PROMPT,
-    INTENT_ANALYSIS_PROMPT,
     SUPPORT_EMAIL_PROMPT,
+    HISTORY_SUMMARY_PROMPT,
+    FUSED_RESPONSE_SCHEMA,
+    EMAIL_RESPONSE_SCHEMA,
+    MAX_PRODUCTS_FOCUS,
+    HISTORY_SUMMARY_THRESHOLD,
+    HISTORY_RECENT_MESSAGES,
 )
-from asgiref.sync import sync_to_async
 
 logger = logging.getLogger(__name__)
+
+HISTORY_SUMMARY_CACHE_PREFIX = "celebobo_history_summary_"
 
 
 @dataclass
@@ -44,11 +55,12 @@ class AssistantResponse:
 
     Attributes:
         text: Generated response text
-        intent: Intent analysis results
+        intent: Intent analysis results (language, sentiment, complaint fields)
         tokens_in: Input tokens used
         tokens_out: Output tokens generated
         latency_ms: Total latency
         language: Detected user language
+        matched_product_id: Top RAG match, if any (for analytics tracking)
     """
 
     text: str
@@ -57,6 +69,7 @@ class AssistantResponse:
     tokens_out: int
     latency_ms: float
     language: str = "fr"
+    matched_product_id: Optional[int] = None
 
 
 async def process_user_message_async(
@@ -69,12 +82,11 @@ async def process_user_message_async(
     Main entry point for processing user messages asynchronously.
 
     Pipeline:
-    1. Extract keywords from message (pure Python, <10ms)
-    2. Search catalog using keywords (async DB via sync_to_async)
-    3. Build fused prompt (system + catalog + history + message)
-    4. Call Gemini asynchronously
-    5. Parse response and return metrics
-    6. Track product question (async, fire-and-forget)
+    1. Embed the user's message and retrieve relevant products (pgvector RAG)
+    2. Summarize older history if the conversation has grown long
+    3. Call Gemini with the system prompt as system_instruction and a JSON
+       response schema (no more regex-parsed free-text JSON)
+    4. Return the reply + intent, never falling back to unparsed model output
 
     Args:
         message: User message to process
@@ -84,161 +96,70 @@ async def process_user_message_async(
 
     Returns:
         AssistantResponse: Complete response with metrics
-
-    Raises:
-        ValueError: If configuration is missing
-        httpx.TimeoutException: If Gemini request times out
     """
     config = get_ai_config()
 
-    try:
-        logger.info(
-            f"[AssistantService] Processing message from user {user_id}, "
-            f"task {task_id}, message_len={len(message)}"
-        )
+    logger.info(
+        f"[AssistantService] Processing message from user {user_id}, "
+        f"task {task_id}, message_len={len(message)}"
+    )
 
-        # Step 1: Extract keywords (pure Python, fast)
-        keywords = _extract_keywords(message)
-        logger.debug(f"[AssistantService] Extracted keywords: {keywords}")
+    # Step 1: RAG retrieval — embed the query, find relevant products
+    products = await _retrieve_relevant_products(message)
+    products_ctx = await sync_to_async(_format_products_ctx)(products)
+    matched_product_id = products[0].pk if products else None
 
-        # Step 2: Fetch catalog context (async DB)
-        from shop.view_components.assistant.catalog import (
-            quick_search,
-            get_compact_catalog,
-        )
+    # Step 2: Summarize older history if the conversation has grown long
+    history_summary, recent_history = await _prepare_history(
+        history, user_id, task_id
+    )
 
-        if keywords:
-            products_ctx = await sync_to_async(quick_search)(keywords, limit=5)
-            logger.debug(f"[AssistantService] Found products by keyword search")
-        else:
-            products_ctx = await sync_to_async(get_compact_catalog)(limit=20)
-            logger.debug(f"[AssistantService] Using compact catalog")
+    # Step 3: Build prompt and call Gemini with structured output
+    fused_prompt = _build_fused_prompt(
+        products_ctx=products_ctx,
+        history_summary=history_summary,
+        recent_history=recent_history,
+        message=message,
+    )
+    logger.debug(f"[AssistantService] Fused prompt built, len={len(fused_prompt)}")
 
-        # Step 3: Build fused prompt
-        fused_prompt = _build_fused_prompt(
-            system_prompt=SYSTEM_PROMPT,
-            products_ctx=products_ctx,
-            history=history,
-            message=message,
-            max_history=config.max_history_messages,
-        )
-        logger.debug(f"[AssistantService] Fused prompt built, len={len(fused_prompt)}")
+    client = await get_async_gemini_client()
+    response_data = await client.generate_content(
+        model=config.gemini_model,
+        prompt=fused_prompt,
+        temperature=config.temperature,
+        top_p=config.top_p,
+        max_tokens=config.max_tokens,
+        system_instruction=SYSTEM_PROMPT,
+        response_schema=FUSED_RESPONSE_SCHEMA,
+        user_id=user_id,
+        task_id=task_id,
+        event_name="process_user_message",
+    )
 
-        # Step 4: Call Gemini asynchronously
-        client = await get_async_gemini_client()
-        response_data = await client.generate_content(
-            model=config.gemini_model,
-            prompt=fused_prompt,
-            temperature=config.temperature,
-            top_p=config.top_p,
-            max_tokens=config.max_tokens,
-            user_id=user_id,
-            task_id=task_id,
-            event_name="process_user_message",
-        )
+    # Step 4: Parse structured response. Never show unparsed model text to the user.
+    reply, intent_data = _parse_fused_response(response_data["text"])
+    if not reply:
+        reply = _error_message(intent_data.get("language", "fr"))
+        logger.warning("[AssistantService] Could not parse structured reply, using error message")
 
-        # Step 5: Parse response
-        reply, intent_data = _parse_fused_response(response_data["text"])
+    result = AssistantResponse(
+        text=reply,
+        intent=intent_data,
+        tokens_in=response_data["tokens_in"],
+        tokens_out=response_data["tokens_out"],
+        latency_ms=response_data["latency_ms"],
+        language=intent_data.get("language", "fr"),
+        matched_product_id=matched_product_id,
+    )
 
-        if not reply:
-            reply = _error_message(intent_data.get("language", "fr"))
-            logger.warning(f"[AssistantService] Empty reply, using error message")
+    logger.info(
+        f"[AssistantService] Message processed successfully: "
+        f"{result.tokens_in}→{result.tokens_out} tokens, "
+        f"{result.latency_ms:.0f}ms latency"
+    )
 
-        result = AssistantResponse(
-            text=reply,
-            intent=intent_data,
-            tokens_in=response_data["tokens_in"],
-            tokens_out=response_data["tokens_out"],
-            latency_ms=response_data["latency_ms"],
-            language=intent_data.get("language", "fr"),
-        )
-
-        logger.info(
-            f"[AssistantService] Message processed successfully: "
-            f"{result.tokens_in}→{result.tokens_out} tokens, "
-            f"{result.latency_ms:.0f}ms latency"
-        )
-
-        # Step 6: Track product question asynchronously (fire-and-forget)
-        # This runs without blocking the main response
-        try:
-            await sync_to_async(_track_product_question)(
-                message=message,
-                response=reply,
-                user_id=user_id,
-                keywords=keywords,
-                intent=intent_data,
-            )
-        except Exception as e:
-            logger.warning(f"[AssistantService] Failed to track question: {e}")
-
-        return result
-
-    except Exception as e:
-        logger.error(
-            f"[AssistantService] Error processing message: {e}", exc_info=True
-        )
-        raise
-
-
-async def analyze_intent_async(
-    message: str,
-    history: list[dict],
-    user_id: Optional[int] = None,
-    task_id: Optional[str] = None,
-) -> dict:
-    """
-    Analyze user intent asynchronously (lightweight call).
-
-    Returns a dict with intent fields:
-    - language: "fr" | "en" | "sw"
-    - is_complaint: bool
-    - complaint_type: str or None
-    - sentiment: "positive" | "neutral" | "negative" | "frustrated"
-    - needs_product_search: bool
-    - search_terms: list[str]
-    - etc.
-
-    Args:
-        message: User message to analyze
-        history: Chat history
-        user_id: Optional user ID for logging
-        task_id: Optional Celery task ID
-
-    Returns:
-        dict: Intent analysis results
-    """
-    config = get_ai_config()
-
-    try:
-        history_summary = _build_history_summary(history)
-        prompt = INTENT_ANALYSIS_PROMPT.format(
-            message=message,
-            history_summary=history_summary,
-        )
-
-        client = await get_async_gemini_client()
-        response_data = await client.generate_content(
-            model=config.gemini_model,
-            prompt=prompt,
-            temperature=0.1,
-            top_p=0.95,
-            max_tokens=300,
-            user_id=user_id,
-            task_id=task_id,
-            event_name="analyze_intent",
-        )
-
-        intent = _parse_intent_response(response_data["text"])
-        logger.debug(
-            f"[AssistantService] Intent analyzed: {intent.get('language')}, "
-            f"complaint={intent.get('is_complaint')}"
-        )
-        return intent
-
-    except Exception as e:
-        logger.warning(f"[AssistantService] Intent analysis failed: {e}")
-        return {}
+    return result
 
 
 async def generate_support_email_async(
@@ -251,22 +172,22 @@ async def generate_support_email_async(
     """
     Generate support email content asynchronously.
 
-    Args:
-        complaint_type: Type of complaint
-        client_message: Original client message
-        complaint_summary: Summary of the issue
-        user_id: Optional user ID
-        task_id: Optional Celery task ID
+    Falls back to a static HTML template if Gemini generation fails, so a
+    complaint never goes unnotified just because the model call errored.
 
     Returns:
-        dict: Email data with "subject" and "body_html" keys
+        dict: Email data with "subject", "body_html", "priority" keys
     """
     config = get_ai_config()
 
-    try:
-        from shop.view_components.assistant.support import COMPLAINT_LABELS
+    from shop.view_components.assistant.support import (
+        COMPLAINT_LABELS,
+        _fallback_email_template,
+    )
 
-        label = COMPLAINT_LABELS.get(complaint_type, complaint_type)
+    label = COMPLAINT_LABELS.get(complaint_type, complaint_type)
+
+    try:
         prompt = SUPPORT_EMAIL_PROMPT.format(
             complaint_type=label,
             client_message=client_message[:500],
@@ -279,185 +200,162 @@ async def generate_support_email_async(
             prompt=prompt,
             temperature=0.2,
             max_tokens=800,
+            response_schema=EMAIL_RESPONSE_SCHEMA,
             user_id=user_id,
             task_id=task_id,
             event_name="generate_support_email",
         )
 
         email_data = _parse_json_response(response_data["text"])
-        logger.debug(f"[AssistantService] Support email generated")
-        return email_data
+        if email_data:
+            logger.debug("[AssistantService] Support email generated")
+            return email_data
 
     except Exception as e:
         logger.warning(f"[AssistantService] Email generation failed: {e}")
-        return {}
+
+    user = await _get_user(user_id)
+    return _fallback_email_template(complaint_type, client_message, complaint_summary, user)
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
 
-def _extract_keywords(message: str) -> list[str]:
-    """
-    Extract product keywords from message (Python only, no AI call).
+async def _get_user(user_id: Optional[int]):
+    if not user_id:
+        return None
+    from django.contrib.auth import get_user_model
 
-    Quickly identifies if message mentions products by checking for
-    trigger words (prix, phone, téléphone, etc.).
+    User = get_user_model()
+    try:
+        return await sync_to_async(User.objects.get)(pk=user_id)
+    except User.DoesNotExist:
+        return None
 
-    Args:
-        message: User message
 
-    Returns:
-        list[str]: Extracted keywords, or empty list if not a product query
-    """
-    words = re.findall(r"\b\w{3,}\b", message.lower())
+def _format_products_ctx(products: list) -> str:
+    """Sync: format_product_full touches the ORM (category FK, features, rating aggregate)."""
+    if not products:
+        return "Aucun produit du catalogue ne correspond clairement à cette question."
+    return "\n\n".join(format_product_full(p) for p in products)
 
-    product_triggers = {
-        "prix",
-        "price",
-        "combien",
-        "how much",
-        "bei",
-        "produit",
-        "product",
-        "téléphone",
-        "phone",
-        "samsung",
-        "iphone",
-        "ordinateur",
-        "laptop",
-        "casque",
-        "écouteur",
-        "montre",
-        "watch",
-        "tablette",
-        "tablet",
-        "disponible",
-        "available",
-        "stock",
-    }
 
-    # If no product trigger, return empty (not a product query)
-    if not any(w in product_triggers for w in words):
+async def _retrieve_relevant_products(message: str) -> list:
+    """Embed the query and fetch semantically relevant products. Never raises."""
+    try:
+        query_vector = await embed_query(message)
+        return await sync_to_async(semantic_search)(
+            query_vector, limit=MAX_PRODUCTS_FOCUS
+        )
+    except Exception as e:
+        logger.warning(f"[AssistantService] Product retrieval failed: {e}")
         return []
 
-    stop_words = {
-        "le",
-        "la",
-        "les",
-        "un",
-        "une",
-        "des",
-        "du",
-        "de",
-        "et",
-        "ou",
-        "est",
-        "the",
-        "a",
-        "an",
-        "is",
-        "are",
-        "do",
-        "what",
-        "how",
-    }
 
-    return [w for w in words if w not in stop_words and len(w) >= 3]
+async def _prepare_history(
+    history: list[dict], user_id: Optional[int], task_id: Optional[str]
+) -> tuple[str, list[dict]]:
+    """
+    Split history into an (optionally cached) summary of older turns plus the
+    raw recent turns, so the prompt stays small once a conversation grows.
+    """
+    if len(history) <= HISTORY_SUMMARY_THRESHOLD:
+        return "", history
+
+    older = history[: -HISTORY_RECENT_MESSAGES]
+    recent = history[-HISTORY_RECENT_MESSAGES:]
+    summary = await _get_or_build_history_summary(older, user_id, task_id)
+    return summary, recent
+
+
+async def _get_or_build_history_summary(
+    older: list[dict], user_id: Optional[int], task_id: Optional[str]
+) -> str:
+    history_text = "\n".join(
+        f"{'Client' if m.get('role') == 'user' else 'Assistant'}: {m.get('text', '')}"
+        for m in older
+    )
+    cache_key = HISTORY_SUMMARY_CACHE_PREFIX + hashlib.sha256(
+        history_text.encode("utf-8")
+    ).hexdigest()
+
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    try:
+        config = get_ai_config()
+        client = await get_async_gemini_client()
+        response_data = await client.generate_content(
+            model=config.gemini_model,
+            prompt=HISTORY_SUMMARY_PROMPT.format(history_text=history_text),
+            temperature=0.1,
+            max_tokens=150,
+            user_id=user_id,
+            task_id=task_id,
+            event_name="summarize_history",
+        )
+        summary = (response_data.get("text") or "").strip()
+    except Exception as e:
+        logger.warning(f"[AssistantService] History summarization failed: {e}")
+        summary = ""
+
+    cache.set(cache_key, summary, config.cache_timeout_seconds)
+    return summary
 
 
 def _build_fused_prompt(
-    system_prompt: str,
     products_ctx: str,
-    history: list[dict],
+    history_summary: str,
+    recent_history: list[dict],
     message: str,
-    max_history: int,
 ) -> str:
-    """Build the complete fused prompt."""
-    history_text = ""
-    for msg in history[-max_history:]:
-        role = "Client" if msg.get("role") == "user" else "Assistant"
-        history_text += f"{role}: {msg.get('text', '')}\n"
+    """Build the complete fused prompt (system prompt is sent separately as system_instruction)."""
+    history_text = "\n".join(
+        f"{'Client' if m.get('role') == 'user' else 'Assistant'}: {m.get('text', '')}"
+        for m in recent_history
+    )
 
-    return f"""{system_prompt}
+    summary_block = (
+        f"RÉSUMÉ DE LA CONVERSATION PRÉCÉDENTE :\n{history_summary}\n\n"
+        if history_summary
+        else ""
+    )
 
-─── CATALOGUE PRODUITS ───
+    return f"""─── CATALOGUE PRODUITS PERTINENT ───
 {products_ctx}
 ─────────────────────────
 
-HISTORIQUE RÉCENT :
+{summary_block}HISTORIQUE RÉCENT :
 {history_text}
 
 MESSAGE CLIENT :
 {message}
-
-INSTRUCTION INTERNE :
-Réponds en JSON avec exactement cette structure :
-{{
-  "reply": "Ta réponse au client ici (texte complet, formaté pour le chat)",
-  "intent": {{
-    "language": "fr" | "en" | "sw",
-    "sentiment": "positive" | "neutral" | "negative" | "frustrated"
-  }}
-}}
-
-Retourne UNIQUEMENT ce JSON, aucun texte autour, aucun markdown.
 """
 
 
-def _build_history_summary(history: list[dict]) -> str:
-    """Build a short summary of recent history."""
-    if not history:
-        return "Aucun historique."
-    recent = history[-4:]
-    parts = []
-    for msg in recent:
-        role = "Client" if msg.get("role") == "user" else "Assistant"
-        text = str(msg.get("text", ""))[:100]
-        parts.append(f"{role}: {text}")
-    return " | ".join(parts)
-
-
-def _parse_fused_response(raw: str) -> tuple[str, dict]:
-    """Parse fused JSON response (reply + intent)."""
+def _parse_fused_response(raw: str) -> tuple[Optional[str], dict]:
+    """
+    Parse the schema-enforced JSON response. Returns (None, {}) on any failure
+    so the caller falls back to a localized error message — never to raw
+    unparsed model output.
+    """
     try:
-        cleaned = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`").strip()
-        if not cleaned.startswith("{"):
-            cleaned = '{"reply": "' + cleaned
-
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            data = json.loads(match.group())
-            return data.get("reply", "").strip(), data.get("intent", {})
-    except (json.JSONDecodeError, Exception):
-        pass
-
-    return raw.strip(), {}
-
-
-def _parse_intent_response(raw: str) -> dict:
-    """Parse intent-only JSON response."""
-    try:
-        cleaned = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`").strip()
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            return json.loads(match.group())
-    except (json.JSONDecodeError, Exception):
-        pass
-
-    return {}
+        data = json.loads(raw)
+        reply = data.get("reply", "").strip()
+        intent = data.get("intent", {})
+        return (reply or None), intent
+    except (json.JSONDecodeError, AttributeError, TypeError):
+        logger.warning("[AssistantService] Failed to parse structured response")
+        return None, {}
 
 
 def _parse_json_response(raw: str) -> dict:
-    """Parse any JSON response robustly."""
+    """Parse a schema-enforced JSON response defensively."""
     try:
-        cleaned = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`").strip()
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            return json.loads(match.group())
-    except (json.JSONDecodeError, Exception):
-        pass
-
-    return {}
+        return json.loads(raw)
+    except (json.JSONDecodeError, TypeError):
+        return {}
 
 
 def _error_message(language: str = "fr") -> str:
@@ -468,49 +366,3 @@ def _error_message(language: str = "fr") -> str:
         "sw": "Samahani, kuna tatizo la kiufundi. Tafadhali jaribu tena: +250791449879.",
     }
     return messages.get(language, messages["fr"])
-
-
-def _track_product_question(
-    message: str,
-    response: str,
-    user_id: Optional[int],
-    keywords: list[str],
-    intent: dict,
-) -> None:
-    """
-    Track a product question in the database (sync, called via sync_to_async).
-    
-    This runs asynchronously and does not block the main response.
-    Called after the response is returned to the user.
-    
-    Args:
-        message: User's question
-        response: Assistant's response
-        user_id: User ID (if available)
-        keywords: Extracted keywords
-        intent: Intent analysis results
-    """
-    from shop.models import ProductQuestion
-    from shop.view_components.assistant.catalog import get_product_by_keywords
-    
-    try:
-        # Try to find the product being asked about
-        product = None
-        if keywords:
-            product = get_product_by_keywords(keywords, limit=1)
-            if isinstance(product, list) and product:
-                product = product[0]
-        
-        # Store the question
-        pq = ProductQuestion.objects.create(
-            user_id=user_id,
-            product=product,
-            question_text=message,
-            response_text=response,
-            language=intent.get("language", "fr"),
-            sentiment=intent.get("sentiment", "neutral"),
-            keywords=keywords,
-        )
-        logger.debug(f"[AssistantService] Tracked product question: {pq.id}")
-    except Exception as e:
-        logger.warning(f"[AssistantService] Failed to track question: {e}")

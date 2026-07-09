@@ -82,7 +82,7 @@ def get_ai_config() -> AIConfig:
         gemini_api_key=api_key,
         gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
         gemini_timeout=int(os.getenv("GEMINI_TIMEOUT", "30")),
-        max_tokens=int(os.getenv("GEMINI_MAX_TOKENS", "400")),
+        max_tokens=int(os.getenv("GEMINI_MAX_TOKENS", "800")),
         temperature=float(os.getenv("GEMINI_TEMPERATURE", "0.7")),
         top_p=float(os.getenv("GEMINI_TOP_P", "0.95")),
         max_history_messages=int(os.getenv("GEMINI_MAX_HISTORY", "6")),

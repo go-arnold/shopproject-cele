@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.postgres",
     "django.contrib.sessions",
     "django.contrib.messages",
     "cloudinary_storage",
@@ -131,33 +132,16 @@ WSGI_APPLICATION = "shopproject.wsgi.application"
 #     }
 # }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("DB_NAME"),
-#         "USER": os.getenv("DB_USER"),
-#         "PASSWORD": os.getenv("DB_PASSWORD"),
-#         "HOST": os.getenv("DB_HOST"),
-#         "PORT": os.getenv("DB_PORT"),
-#     }
-# }
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres.sbxvsblxaqtdahwmpdsk",
-        "PASSWORD": "LeNouveauPassword1@AllAccounts",
-        "HOST": "aws-1-eu-west-1.pooler.supabase.com",
-        "PORT": "6543",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
-
-
-# "host": "aws-1-eu-west-1.pooler.supabase.com",
-# "port": "6543",
-# "database": "postgres",
-# "user": "postgres.sbxvsblxaqtdahwmpdsk",
 # "password": "LeNouveauPassword1@AllAccounts"
 
 # Password validation
@@ -211,7 +195,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "arnoldciku@gmail.com"
-EMAIL_HOST_PASSWORD = "ewhdyavamcdmbjyr"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "arnoldciku@gmail.com"
 ACCOUNT_FORMS = {
     "signup": "accounts.forms.PhoneSignupForm",

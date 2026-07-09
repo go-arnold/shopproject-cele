@@ -58,6 +58,8 @@ class AsyncGeminiClient:
         user_id: Optional[int] = None,
         task_id: Optional[str] = None,
         event_name: str = "gemini_request",
+        system_instruction: Optional[str] = None,
+        response_schema: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Call Gemini API asynchronously.
@@ -71,6 +73,13 @@ class AsyncGeminiClient:
             user_id: Optional user ID for logging
             task_id: Optional Celery task ID for correlation
             event_name: Event name for structured logging
+            system_instruction: Optional system prompt sent via Gemini's dedicated
+                systemInstruction field (higher priority than conversation content,
+                and not vulnerable to being overridden by injected history/messages)
+            response_schema: Optional JSON schema. When set, the response is
+                forced into application/json matching this schema (Gemini's
+                native structured-output mode) instead of free-text JSON that
+                has to be regex-parsed.
 
         Returns:
             Dict with keys:
@@ -100,6 +109,15 @@ class AsyncGeminiClient:
                 ) as client:
                     url = f"{self.GEMINI_API_URL}/{model}:generateContent"
 
+                    generation_config = {
+                        "temperature": temperature,
+                        "topP": top_p,
+                        "maxOutputTokens": max_tokens,
+                    }
+                    if response_schema is not None:
+                        generation_config["responseMimeType"] = "application/json"
+                        generation_config["responseSchema"] = response_schema
+
                     # Build request payload
                     payload = {
                         "contents": [
@@ -108,12 +126,12 @@ class AsyncGeminiClient:
                                 "parts": [{"text": prompt}],
                             }
                         ],
-                        "generationConfig": {
-                            "temperature": temperature,
-                            "topP": top_p,
-                            "maxOutputTokens": max_tokens,
-                        },
+                        "generationConfig": generation_config,
                     }
+                    if system_instruction:
+                        payload["systemInstruction"] = {
+                            "parts": [{"text": system_instruction}]
+                        }
 
                     headers = {
                         "Content-Type": "application/json",
@@ -211,6 +229,73 @@ class AsyncGeminiClient:
                     exc_info=True,
                 )
                 raise
+
+    async def embed_content(
+        self,
+        text: str,
+        task_type: str,
+        model: str = "gemini-embedding-001",
+        output_dimensionality: int = 768,
+    ) -> list[float]:
+        """
+        Embed a single piece of text asynchronously.
+
+        Args:
+            text: Text to embed
+            task_type: "RETRIEVAL_DOCUMENT" for indexed content, "RETRIEVAL_QUERY"
+                for search queries. Gemini's asymmetric embedding mode - using the
+                right task_type on each side materially improves retrieval accuracy.
+            model: Embedding model name
+            output_dimensionality: Vector size (768 balances accuracy vs storage)
+
+        Returns:
+            list[float]: The embedding vector
+        """
+        vectors = await self.batch_embed_contents(
+            [text], task_type, model=model, output_dimensionality=output_dimensionality
+        )
+        return vectors[0]
+
+    async def batch_embed_contents(
+        self,
+        texts: list[str],
+        task_type: str,
+        model: str = "gemini-embedding-001",
+        output_dimensionality: int = 768,
+    ) -> list[list[float]]:
+        """
+        Embed multiple texts in a single round trip (used by the bulk seeding
+        command to avoid one HTTP call per product).
+
+        Returns:
+            list[list[float]]: One embedding vector per input text, same order.
+        """
+        async with httpx.AsyncClient(timeout=httpx.Timeout(self.timeout)) as client:
+            url = f"{self.GEMINI_API_URL}/{model}:batchEmbedContents"
+            payload = {
+                "requests": [
+                    {
+                        "model": f"models/{model}",
+                        "content": {"parts": [{"text": text}]},
+                        "taskType": task_type,
+                        "outputDimensionality": output_dimensionality,
+                    }
+                    for text in texts
+                ]
+            }
+            headers = {
+                "Content-Type": "application/json",
+                "x-goog-api-key": self.api_key,
+            }
+
+            response = await client.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+
+            return [
+                embedding["values"]
+                for embedding in data.get("embeddings", [])
+            ]
 
 
 # Singleton async client (lazy-initialized)

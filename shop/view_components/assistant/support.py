@@ -3,15 +3,10 @@ Gestion des plaintes clients.
 Génère et envoie un email HTML aux membres du groupe "mukubwa".
 """
 
-import json
 import re
 import logging
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-from google.genai import types
-
-from .constants import SUPPORT_EMAIL_PROMPT, MODEL_NAME
-from .intent import get_gemini_client
 
 logger = logging.getLogger(__name__)
 
@@ -29,72 +24,6 @@ PRIORITY_COLORS = {
     "normale": "#d97706",
     "basse":   "#16a34a",
 }
-
-
-def send_support_alert(
-    complaint_type: str,
-    client_message: str,
-    complaint_summary: str | None,
-    user,
-) -> bool:
-    """
-    Génère un email HTML via Gemini et l'envoie aux membres du groupe "mukubwa".
-    Retourne True si l'envoi a réussi.
-    """
-    try:
-        mukubwa_emails = _get_mukubwa_emails()
-        if not mukubwa_emails:
-            logger.warning("[Support] Aucun membre dans le groupe 'mukubwa'.")
-            return False
-
-        email_data = _generate_email_content(
-            complaint_type=complaint_type,
-            client_message=client_message,
-            complaint_summary=complaint_summary or "Non spécifié",
-            user=user,
-        )
-
-        return _send_email(email_data, mukubwa_emails, user)
-
-    except Exception as e:
-        logger.error(f"[Support] Erreur send_support_alert: {e}")
-        return False
-
-
-def _generate_email_content(
-    complaint_type: str,
-    client_message: str,
-    complaint_summary: str,
-    user,
-) -> dict:
-    """Appelle Gemini pour générer un email HTML structuré."""
-    try:
-        prompt = SUPPORT_EMAIL_PROMPT.format(
-            complaint_type=COMPLAINT_LABELS.get(complaint_type, complaint_type),
-            client_message=client_message[:500],
-            complaint_summary=complaint_summary,
-        )
-
-        client = get_gemini_client()
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=[{"role": "user", "parts": [{"text": prompt}]}],
-            config=types.GenerateContentConfig(
-                temperature=0.2,
-                max_output_tokens=800,
-            ),
-        )
-
-        raw = getattr(response, "text", "") or ""
-        cleaned = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`").strip()
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            return json.loads(match.group())
-
-    except Exception as e:
-        logger.warning(f"[Support] Gemini email generation failed: {e}")
-
-    return _fallback_email_template(complaint_type, client_message, complaint_summary, user)
 
 
 def _fallback_email_template(complaint_type, client_message, summary, user) -> dict:

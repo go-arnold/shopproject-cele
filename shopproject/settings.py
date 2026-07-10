@@ -140,6 +140,9 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
+        'OPTIONS': {
+            'sslmode': 'require', 
+        },
     }
 }
 # "password": "LeNouveauPassword1@AllAccounts"
@@ -226,7 +229,12 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TIMEZONE = "Africa/Kigali"
 
-
-# CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": "none"}
-# CELERY_REDIS_BACKEND_USE_SSL = {"ssl_cert_reqs": "none"}
+# Many hosted Redis providers (Aiven, Upstash, Redis Cloud...) require TLS on
+# the public internet, exposed via the rediss:// scheme. Without explicit SSL
+# params, Celery's worker can fail the handshake at startup - silently, from
+# the outside: the web process still queues tasks fine (producer side is
+# unaffected), but nothing ever consumes them, so polling for a result just
+# returns not_found forever. This must be set whenever REDIS_URL is rediss://.
+if REDIS_URL.startswith("rediss://"):
+    CELERY_BROKER_USE_SSL = {"ssl_cert_reqs": "none"}
 

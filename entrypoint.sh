@@ -59,7 +59,18 @@ if [ "$MODE" = "dev" ]; then
     celery -A shopproject worker -l info --concurrency=4 &
     CELERY_PID=$!
     sleep 3
-    echo -e "${GREEN}   ✓ Celery Worker is running (PID: $CELERY_PID)${NC}"
+
+    # Verify the worker actually connected and is consuming tasks (not just that
+    # the process launched). Without this, a broker connection failure (e.g. a
+    # rediss:// TLS handshake issue) fails silently: the web process can still
+    # queue tasks fine, but nothing ever consumes them.
+    if kill -0 $CELERY_PID 2>/dev/null && celery -A shopproject inspect ping --timeout=10 > /dev/null 2>&1; then
+        echo -e "${GREEN}   ✓ Celery Worker is running and responding (PID: $CELERY_PID)${NC}"
+    else
+        echo -e "${RED}   ✗ Celery Worker failed to start or is not responding to broker pings.${NC}"
+        echo -e "${RED}     Background tasks (including the AI assistant) will silently hang.${NC}"
+        echo -e "${RED}     Check CELERY_BROKER_URL / REDIS_URL and TLS settings above.${NC}"
+    fi
     
     # Terminal 3: Celery Beat (Scheduler)
     echo -e "${BLUE}Starting Celery Beat...${NC}"

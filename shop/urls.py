@@ -18,7 +18,7 @@ from shop.view_components.echanges import (
     notifications,
 )
 
-from shop.view_components.assistant.general import chat_page, chat_message, chat_poll
+from shop.view_components.assistant.general import chat_page, chat_message
 
 
 
@@ -52,7 +52,6 @@ urlpatterns = [
     path("cart/", cart.cart_view, name="cart"),
     path("assistant/", chat_page, name="assistant"),
     path("message/", chat_message, name="chat_message"),
-    path("poll/<str:task_id>/", chat_poll, name="chat_poll"),
     path("messages/", liste.messages, name="messages"),
     path(
         "start-conversation/",

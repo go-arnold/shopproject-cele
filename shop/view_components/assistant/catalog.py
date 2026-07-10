@@ -14,10 +14,10 @@ def format_product_full(p) -> str:
 
     if p.price_solde:
         lines.append(
-            f"  Prix : ~~{p.price} FC~~ → **{p.price_solde} FC** (-{p.solde_percent}% 🔥)"
+            f"  Prix : ~~${p.price}~~ → **${p.price_solde}** (-{p.solde_percent}% 🔥)"
         )
     else:
-        lines.append(f"  Prix : **{p.price} FC**")
+        lines.append(f"  Prix : **${p.price}**")
 
     if p.description:
         lines.append(f"  Description : {p.description}")

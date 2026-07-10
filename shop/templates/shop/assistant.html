@@ -178,19 +178,6 @@ html, body { height: 100%; margin: 0; padding: 0; }
   40%            { transform: translateY(-5px); opacity: 1; }
 }
 
-/* ── Searching state (différent du typing) ── */
-.cp-searching {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: var(--cp-muted);
-  padding: 4px 0;
-}
-.cp-searching-icon {
-  width: 14px; height: 14px; border: 2px solid var(--cp-primary);
-  border-top-color: transparent; border-radius: 50%;
-  animation: cpSpin 0.8s linear infinite; flex-shrink: 0;
-}
-@keyframes cpSpin { to { transform: rotate(360deg); } }
-
 /* ── Input bar ── */
 .cp-input-area {
   flex-shrink: 0; padding: 10px 16px 14px;
@@ -329,11 +316,6 @@ html, body { height: 100%; margin: 0; padding: 0; }
   var CSRF      = "{{ csrf_token }}";
   var USER_INIT = "{{ request.user.get_short_name|default:request.user.username|default:'U' }}".charAt(0).toUpperCase();
 
-  // Construit l'URL de poll avec un placeholder remplacé dynamiquement
-  var POLL_BASE = "{% url 'chat_poll' task_id='12345' %}".replace('12345/', '');
-  var POLL_INTERVAL_MS  = 1000;   // 1 seconde entre chaque poll
-  var POLL_MAX_ATTEMPTS = 60;     // 60 secondes max
-
   // ── État ───────────────────────────────────────────────────────────────────
   var messagesEl = document.getElementById('cp-messages');
   var inputEl    = document.getElementById('cp-input');
@@ -378,8 +360,10 @@ html, body { height: 100%; margin: 0; padding: 0; }
     appendMsg('user', text);
     history.push({ role: 'user', text: text });
 
-    // Indicateur de recherche (différent du simple typing)
-    var searchingEl = appendSearching();
+    var typingEl = appendTyping();
+    var botMsgEl  = null;
+    var bubbleEl  = null;
+    var fullReply = '';
 
     try {
       var res = await fetch(CHAT_URL, {
@@ -388,100 +372,51 @@ html, body { height: 100%; margin: 0; padding: 0; }
         body: JSON.stringify({ message: text, history: history.slice(-10) })
       });
 
-      var data = await res.json();
-
-      if (data.error) {
-        searchingEl.remove();
-        appendMsg('bot', data.error, true);
-        isLoading = false;
-        inputEl.focus();
+      if (!res.ok || !res.body) {
+        if (typingEl) { typingEl.remove(); }
+        appendMsg('bot', 'Une erreur est survenue. Veuillez réessayer.', true);
+        finishLoading();
         return;
       }
 
-      // Lancer le polling
-      startPolling(data.task_id, searchingEl);
+      var reader  = res.body.getReader();
+      var decoder = new TextDecoder();
+
+      while (true) {
+        var result = await reader.read();
+        if (result.done) break;
+
+        var chunk = decoder.decode(result.value, { stream: true });
+        if (!chunk) continue;
+
+        if (!botMsgEl) {
+          if (typingEl) { typingEl.remove(); typingEl = null; }
+          botMsgEl = appendMsg('bot', '');
+          bubbleEl = botMsgEl.querySelector('.cp-bubble');
+        }
+
+        fullReply += chunk;
+        bubbleEl.innerHTML = formatMessage(fullReply);
+        scrollDown();
+      }
+
+      if (!fullReply.trim()) {
+        if (typingEl) { typingEl.remove(); }
+        appendMsg('bot', 'Une erreur est survenue. Veuillez réessayer.', true);
+      } else {
+        history.push({ role: 'bot', text: fullReply });
+        if (history.length > 20) { history = history.slice(-20); }
+      }
 
     } catch (_) {
-      searchingEl.remove();
-      appendMsg('bot', 'Connexion impossible. Vérifiez votre réseau.', true);
-      isLoading = false;
-      inputEl.focus();
+      if (typingEl) { typingEl.remove(); }
+      if (!fullReply) {
+        appendMsg('bot', 'Connexion impossible. Vérifiez votre réseau.', true);
+      }
+    } finally {
+      finishLoading();
     }
   };
-
-  // ── Système de polling ─────────────────────────────────────────────────────
-  function startPolling(taskId, indicatorEl) {
-    var attempts = 0;
-    var typingEl = null;  
-    var isRequestInFlight = false; 
-
-    var interval = setInterval(async function () {
-      if (isRequestInFlight) return;
-      attempts++;
-
-      if (attempts > POLL_MAX_ATTEMPTS) {
-        clearInterval(interval);
-        if (indicatorEl) { indicatorEl.remove(); }
-        if (typingEl)    { typingEl.remove(); }
-        appendMsg('bot', 'La réponse a pris trop de temps. Veuillez réessayer.', true);
-        finishLoading();
-        return;
-      }
-
-      try {
-        isRequestInFlight = true; 
-        var res = await fetch(POLL_BASE + taskId + "/");
-        var data = await res.json();
-        isRequestInFlight = false;
-
-        if (data.status === 'processing') {
-          // Après 2 secondes : passer de "recherche" à "typing"
-          if (attempts === 2 && indicatorEl) {
-            indicatorEl.remove();
-            indicatorEl = null;
-            typingEl = appendTyping();
-          }
-          return; // Continuer à poller
-        }
-
-        clearInterval(interval);
-        if (indicatorEl) { indicatorEl.remove(); }
-        if (typingEl)    { typingEl.remove(); }
-
-        if (data.status === 'done' && data.reply) {
-          var msgEl = appendMsg('bot', data.reply);
-
-          // Badge support envoyé
-          if (data.support_sent) {
-            var badge = document.createElement('div');
-            badge.className = 'cp-support-badge';
-            badge.innerHTML = '✓ Notre équipe a été notifiée';
-            msgEl.querySelector('.cp-bwrap').appendChild(badge);
-          }
-
-          history.push({ role: 'bot', text: data.reply });
-          if (history.length > 20) { history = history.slice(-20); }
-
-        } else {
-          var errorReply = (data.reply) ? data.reply : 'Une erreur est survenue. Veuillez réessayer.';
-          appendMsg('bot', errorReply, data.status === 'error');
-        }
-
-        finishLoading();
-
-      } catch (err) {
-        isRequestInFlight = false;
-        // Erreur réseau pendant le poll : continuer à essayer (silencieux)
-        if (attempts > 5) {
-          clearInterval(interval);
-          if (indicatorEl) { indicatorEl.remove(); }
-          if (typingEl)    { typingEl.remove(); }
-          appendMsg('bot', 'Connexion perdue. Veuillez réessayer.', true);
-          finishLoading();
-        }
-      }
-    }, POLL_INTERVAL_MS);
-  }
 
   function finishLoading() {
     isLoading = false;
@@ -529,24 +464,6 @@ html, body { height: 100%; margin: 0; padding: 0; }
           formatMessage(text) +
         '</div>' +
         '<div class="cp-time">' + getTime() + '</div>' +
-      '</div>';
-    messagesEl.appendChild(div);
-    scrollDown();
-    return div;
-  }
-
-  function appendSearching() {
-    var div = document.createElement('div');
-    div.className = 'cp-msg bot';
-    div.innerHTML =
-      '<div class="cp-avatar">' + botAvatarSVG() + '</div>' +
-      '<div class="cp-bwrap">' +
-        '<div class="cp-bubble">' +
-          '<div class="cp-searching">' +
-            '<div class="cp-searching-icon"></div>' +
-            '<span>Recherche en cours...</span>' +
-          '</div>' +
-        '</div>' +
       '</div>';
     messagesEl.appendChild(div);
     scrollDown();

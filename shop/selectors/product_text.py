@@ -17,11 +17,11 @@ def build_product_document(product) -> str:
 
     if product.price_solde:
         lines.append(
-            f"Prix : {product.price} FC, actuellement en promotion à "
-            f"{product.price_solde} FC (-{product.solde_percent}%)."
+            f"Prix : {product.price} USD, actuellement en promotion à "
+            f"{product.price_solde} USD (-{product.solde_percent}%)."
         )
     else:
-        lines.append(f"Prix : {product.price} FC.")
+        lines.append(f"Prix : {product.price} USD.")
 
     if product.description:
         lines.append(f"Description : {product.description}")

@@ -1,0 +1,55 @@
+{% load allauth %}
+{% if attrs.type == "checkbox" or attrs.type == "radio" %}
+    <div class="flex items-center gap-2">
+        <input {% if attrs.required %}required{% endif %}
+               {% if attrs.disabled %}disabled{% endif %}
+               {% if attrs.readonly %}readonly{% endif %}
+               {% if attrs.checked %}checked{% endif %}
+               {% if attrs.name %}name="{{ attrs.name }}"{% endif %}
+               {% if attrs.id %}id="{{ attrs.id }}"{% endif %}
+               {% if attrs.value is not None %}value="{{ attrs.value }}"{% endif %}
+               type="{{ attrs.type }}"
+               class="h-3.5 w-3.5 rounded border-[#3A2739] bg-[#1E1E2C] text-primary focus:outline-none focus:ring-1 focus:ring-primary">
+        <label for="{{ attrs.id }}" class="text-[11px] text-gray-300">
+            {% slot label %}
+            {% endslot %}
+        </label>
+    </div>
+{% else %}
+    <div class="flex flex-col gap-1">
+        <label for="{{ attrs.id }}" class="text-[11px] font-medium text-gray-300">
+            {% slot label %}
+            {% endslot %}
+        </label>
+        {% if attrs.type == "textarea" %}
+            <textarea {% if attrs.required %}required{% endif %}
+                      {% if attrs.rows %}rows="{{ attrs.rows }}"{% endif %}
+                      {% if attrs.disabled %}disabled{% endif %}
+                      {% if attrs.readonly %}readonly{% endif %}
+                      {% if attrs.name %}name="{{ attrs.name }}"{% endif %}
+                      {% if attrs.id %}id="{{ attrs.id }}"{% endif %}
+                      {% if attrs.placeholder %}placeholder="{{ attrs.placeholder }}"{% endif %}
+                      class="w-full rounded-lg border border-[#3A2739] bg-[#1E1E2C] px-3 py-2 text-xs text-white placeholder:text-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50">{% slot value %}{% endslot %}</textarea>
+        {% else %}
+            <input {% if attrs.required %}required{% endif %}
+                   {% if attrs.disabled %}disabled{% endif %}
+                   {% if attrs.readonly %}readonly{% endif %}
+                   {% if attrs.name %}name="{{ attrs.name }}"{% endif %}
+                   {% if attrs.id %}id="{{ attrs.id }}"{% endif %}
+                   {% if attrs.placeholder %}placeholder="{{ attrs.placeholder }}"{% endif %}
+                   {% if attrs.autocomplete %}autocomplete="{{ attrs.autocomplete }}"{% endif %}
+                   {% if attrs.value is not None %}value="{{ attrs.value }}"{% endif %}
+                   type="{{ attrs.type }}"
+                   class="h-9 w-full rounded-lg border border-[#3A2739] bg-[#1E1E2C] px-3 text-xs text-white placeholder:text-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50">
+        {% endif %}
+        {% if slots.help_text %}
+            <span class="text-[10px] text-gray-500">
+                {% slot help_text %}
+                {% endslot %}
+            </span>
+        {% endif %}
+        {% if attrs.errors %}
+            <p class="text-[10px] text-red-400">{{ attrs.errors }}</p>
+        {% endif %}
+    </div>
+{% endif %}

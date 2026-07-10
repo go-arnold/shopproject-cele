@@ -63,17 +63,17 @@ def valid_long_description():
 # ------------------ COMMAND ------------------
 
 class Command(BaseCommand):
-    help = "Seed massive realistic data"
+    help = "Seed lightweight realistic data (40-60 items total)"
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.SUCCESS("🌱 Seeding BIG data..."))
+        self.stdout.write(self.style.SUCCESS("🌱 Seeding a small scale dataset..."))
 
-        revendeur_group = Group.objects.get(name="revendeur")
-        mukubwa_group = Group.objects.get(name="mukubwa")
+        revendeur_group, _ = Group.objects.get_or_create(name="revendeur")
+        mukubwa_group, _ = Group.objects.get_or_create(name="mukubwa")
 
-        # ---------------- USERS ----------------
+        # ---------------- USERS (Total: ~8) ----------------
         users = []
-        for i in range(200):
+        for i in range(8):
             user = User.objects.create_user(
                 username=limit(fake.user_name() + str(i), 150),
                 email=limit(fake.email(), 254),
@@ -106,9 +106,9 @@ class Command(BaseCommand):
             profile.code_revendeur = str(random.randint(1000, 9999))
             profile.save()
 
-        # ---------------- CATEGORIES ----------------
+        # ---------------- CATEGORIES (Total: 3) ----------------
         categories = []
-        for _ in range(20):
+        for _ in range(3):
             cat = Category.objects.create(
                 name=limit(fake.unique.word().capitalize(), 100),
                 description=fake.text(100)
@@ -116,9 +116,9 @@ class Command(BaseCommand):
             cat.image.save(f"cat_{cat.id}.jpg", generate_image_file(), save=True)
             categories.append(cat)
 
-        # ---------------- PRODUCTS ----------------
+        # ---------------- PRODUCTS (Total: ~10) ----------------
         products = []
-        for _ in range(500):
+        for _ in range(10):
             price = Decimal(random.randint(10, 500))
 
             product = Product.objects.create(
@@ -135,6 +135,7 @@ class Command(BaseCommand):
                 delivery_policy_phase2=fake.text(100),
             )
 
+            # Restored all 4 image fields per product
             for field in ["image", "image_one", "image_two", "image_three"]:
                 getattr(product, field).save(
                     f"{field}_{product.id}.jpg",
@@ -146,7 +147,7 @@ class Command(BaseCommand):
                 product.price_solde = price - Decimal(random.randint(1, 5))
                 product.save()
 
-            for _ in range(random.randint(1, 5)):
+            for _ in range(random.randint(1, 2)):
                 Feature.objects.create(
                     product=product,
                     name=limit(fake.word(), 100)
@@ -154,17 +155,17 @@ class Command(BaseCommand):
 
             products.append(product)
 
-        # ---------------- TESTIMONIES ----------------
-        for _ in range(2000):
+        # ---------------- TESTIMONIES (Total: ~5) ----------------
+        for _ in range(5):
             Testimony.objects.create(
                 product=random.choice(products),
                 utilisateur=random.choice(users),
                 rating=random.randint(1, 5),
-                message=fake.text(300)
+                message=fake.text(150)
             )
 
-        # ---------------- FAVORITES ----------------
-        for _ in range(2000):
+        # ---------------- FAVORITES (Total: ~5) ----------------
+        for _ in range(5):
             try:
                 FavoriteProduct.objects.create(
                     utilisateur=random.choice(users),
@@ -173,8 +174,8 @@ class Command(BaseCommand):
             except:
                 pass
 
-        # ---------------- SALES ----------------
-        for _ in range(1500):
+        # ---------------- SALES (Total: ~5) ----------------
+        for _ in range(5):
             Vente.objects.create(
                 utilisateur=random.choice(users),
                 produit=random.choice(products),
@@ -183,11 +184,11 @@ class Command(BaseCommand):
                 vendu_a=limit(fake.name(), 50)
             )
 
-        # ---------------- ORDERS ----------------
+        # ---------------- ORDERS (Total: ~5) ----------------
         orders = []
         revendeurs = User.objects.filter(groups__name="revendeur")
 
-        for _ in range(500):
+        for _ in range(5):
             user = random.choice(users)
             order = Order.objects.create(
                 user=user,
@@ -197,9 +198,9 @@ class Command(BaseCommand):
             )
 
             total = Decimal(0)
-            for _ in range(random.randint(1, 5)):
+            for _ in range(random.randint(1, 2)):
                 product = random.choice(products)
-                qty = random.randint(1, 3)
+                qty = random.randint(1, 2)
                 price = product.price
 
                 OrderItem.objects.create(
@@ -214,8 +215,9 @@ class Command(BaseCommand):
             order.save()
             orders.append(order)
 
-        # ---------------- CONVERSATIONS ----------------
-        for _ in range(300):
+        # ---------------- CONVERSATIONS (Total: ~3) ----------------
+        conversations = []
+        for _ in range(3):
             conv = Conversation.objects.create(
                 is_from_cart=random.random() < 0.3,
                 related_order=random.choice(orders) if random.random() < 0.3 else None
@@ -224,7 +226,7 @@ class Command(BaseCommand):
             participants = random.sample(users, k=2)
             conv.participants.add(*participants)
 
-            for _ in range(random.randint(1, 10)):
+            for _ in range(random.randint(1, 2)):
                 msg = Message.objects.create(
                     conversation=conv,
                     sender=random.choice(participants),
@@ -237,18 +239,19 @@ class Command(BaseCommand):
                         generate_image_file(size=(200, 200)),
                         save=True
                     )
+            conversations.append(conv)
 
-        # ---------------- NOTIFICATIONS ----------------
-        conversations = list(Conversation.objects.all())
-        for _ in range(1000):
-            Notification.objects.create(
-                user=random.choice(users),
-                conversation=random.choice(conversations),
-                title=limit(fake.sentence(nb_words=6), 200),
-                body=fake.text(100),
-                type=random.choice(["order", "chat"]),
-                is_read=random.choice([True, False]),
-                is_order_assigned=random.choice([True, False]),
-            )
+        # ---------------- NOTIFICATIONS (Total: ~5) ----------------
+        if conversations:
+            for _ in range(5):
+                Notification.objects.create(
+                    user=random.choice(users),
+                    conversation=random.choice(conversations),
+                    title=limit(fake.sentence(nb_words=4), 200),
+                    body=fake.text(50),
+                    type=random.choice(["order", "chat"]),
+                    is_read=random.choice([True, False]),
+                    is_order_assigned=random.choice([True, False]),
+                )
 
-        self.stdout.write(self.style.SUCCESS("✅ BIG DATA SEEDED SUCCESSFULLY"))
+        self.stdout.write(self.style.SUCCESS("✅ LIGHTWEIGHT DATA SEEDED SUCCESSFULLY"))

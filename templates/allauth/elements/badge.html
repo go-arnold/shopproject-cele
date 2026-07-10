@@ -1,0 +1,6 @@
+{% load allauth %}
+<strong {% if attrs.title %}title="{{ attrs.title }}"{% endif %}
+        class="inline-block rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-semibold text-primary">
+    {% slot %}
+    {% endslot %}
+</strong>

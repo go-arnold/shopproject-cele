@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="dark" lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block head_title %}Celebobo{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'static-img/sicon-32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'static-img/sicon-16.png' %}">
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+              rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+              rel="stylesheet" />
+        <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#640D5F",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#12121B",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+        </script>
+        <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-size: 18px;
+            vertical-align: middle;
+        }
+        </style>
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    <body class="bg-background-light dark:bg-background-dark font-display text-[13px] leading-normal text-[#E0E0E0]">
+        {% block body %}
+            <div class="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6">
+                <main class="w-full max-w-sm">
+                    <!-- Logo -->
+                    <div class="mb-3 flex flex-col items-center">
+                        <a href="{% url 'home' %}">
+                            <img class="h-9 w-auto sm:h-10" src="{% static 'static-img/logo-white.png' %}" alt="Celebobo">
+                        </a>
+                    </div>
+                    <!-- Card -->
+                    <div class="w-full rounded-xl border border-white/5 bg-[#1E1E2C]/60 p-5 shadow-xl sm:p-6">
+                        {% if messages %}
+                            <div class="mb-3 space-y-1.5">
+                                {% for message in messages %}
+                                    <div class="rounded-lg px-2.5 py-2 text-[11px] {% if message.tags == 'error' %}bg-red-800/40 text-red-300{% elif message.tags == 'success' %}bg-green-800/40 text-green-300{% elif message.tags == 'warning' %}bg-yellow-800/30 text-yellow-300{% else %}bg-blue-800/40 text-blue-300{% endif %}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% block content %}
+                        {% endblock content %}
+                    </div>
+                </main>
+            </div>
+        {% endblock body %}
+        {% block extra_body %}
+        {% endblock extra_body %}
+    </body>
+</html>

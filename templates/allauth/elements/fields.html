@@ -1,0 +1,23 @@
+{% load allauth widget_tweaks %}
+{% if attrs.form.non_field_errors %}
+    <div class="rounded-lg bg-red-800/40 p-2 text-[11px] text-red-300">
+        {{ attrs.form.non_field_errors|striptags }}
+    </div>
+{% endif %}
+{% for field in attrs.form %}
+    {% if field.field.widget.input_type == "checkbox" %}
+        <div class="flex items-center gap-2">
+            {{ field|add_class:"h-3.5 w-3.5 rounded border-[#3A2739] bg-[#1E1E2C] text-primary focus:outline-none focus:ring-1 focus:ring-primary" }}
+            <label for="{{ field.id_for_label }}" class="text-[11px] text-gray-300">{{ field.label }}</label>
+        </div>
+    {% else %}
+        <div class="flex flex-col gap-1">
+            {% if not attrs.unlabeled %}
+                <label for="{{ field.id_for_label }}" class="text-[11px] font-medium text-gray-300">{{ field.label }}</label>
+            {% endif %}
+            {{ field|add_class:"h-9 w-full rounded-lg border border-[#3A2739] bg-[#1E1E2C] px-3 text-xs text-white placeholder:text-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50" }}
+            {% if field.help_text %}<span class="text-[10px] text-gray-500">{{ field.help_text }}</span>{% endif %}
+            {% if field.errors %}<p class="text-[10px] text-red-400">{{ field.errors|striptags }}</p>{% endif %}
+        </div>
+    {% endif %}
+{% endfor %}

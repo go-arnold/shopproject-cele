@@ -1,0 +1,11 @@
+{% load allauth %}
+<details {% if attrs.open %}open{% endif %} class="mt-3 rounded-lg border border-[#3A2739] p-3">
+    <summary class="cursor-pointer text-[11px] font-medium text-gray-300">
+        {% slot summary %}
+        {% endslot %}
+    </summary>
+    <div class="mt-3">
+        {% slot body %}
+        {% endslot %}
+    </div>
+</details>
